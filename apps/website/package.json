@@ -1,8 +1,14 @@
 {
   "name": "website",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "eleventy --config=eleventy.config.ts --serve",
+    "build": "eleventy --config=eleventy.publish.config.ts"
+  },
+  "dependencies": {
+    "@11ty/eleventy": "^3.1.6",
+    "@11ty/font-awesome": "^1.0.1"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
