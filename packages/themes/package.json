@@ -1,11 +1,7 @@
 {
-  "name": "bulma-themes",
+  "name": "@attakei/bulma-themes",
   "module": "index.ts",
   "type": "module",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "devDependencies": {
     "@types/bun": "latest"
   },
