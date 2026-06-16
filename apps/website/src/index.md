@@ -1,7 +1,7 @@
 ---
 layout: index.html
 title: Color Themes for Bulma
-theme: brite
+theme: pulse
 ---
 
 Hello Bulma users!
