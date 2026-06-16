@@ -1,6 +1,14 @@
-import { pathToFileURL } from "node:url";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import type { EleventyConfig } from "@11ty/eleventy";
 import fontAwesomePlugin from "@11ty/font-awesome";
+
+const themesDistDir = resolve(
+  dirname(
+    fileURLToPath(import.meta.resolve("@attakei/bulma-themes/package.json")),
+  ),
+  "dist",
+);
 
 export const config = {
   dir: {
@@ -26,5 +34,6 @@ export default async function (eleventyConfig: EleventyConfig) {
   });
   eleventyConfig.addPassthroughCopy({
     "./assets/": "assets",
+    [themesDistDir]: "dist",
   });
 }
