@@ -9,31 +9,30 @@
   <style>
     body { margin: 0; }
     .thumb { padding: 1rem; }
-    .thumb .title { margin-bottom: 0.75rem; }
-    .thumb .buttons,
-    .thumb .tags { margin-bottom: 0.75rem; }
+    .thumb .buttons { gap: 0.1rem; }
   </style>
 </head>
 
 <body>
+  <nav class="navbar is-primary" role="navigation" aria-label="thumbnail">
+    <div class="navbar-brand">
+      <a class="navbar-item">
+        <strong>{{ themePage.data.title }}</strong>
+      </a>
+    </div>
+  </nav>
+  <section class="hero is-light">
+    <div class="hero-body has-text-centered">
+      <p class="subtitle">{{ themePage.data.description }}</p>
+    </div>
+  </section>
   <div class="thumb">
-    <p class="title is-5">{{ themePage.data.title }}</p>
-    <div class="buttons are-small">
-      <button class="button is-primary">Primary</button>
-      <button class="button is-info">Info</button>
-      <button class="button is-success">Success</button>
-      <button class="button is-warning">Warning</button>
-      <button class="button is-danger">Danger</button>
-    </div>
-    <div class="tags">
-      <span class="tag is-primary">Primary</span>
-      <span class="tag is-info">Info</span>
-      <span class="tag is-success">Success</span>
-      <span class="tag is-warning">Warning</span>
-      <span class="tag is-danger">Danger</span>
-    </div>
-    <div class="notification is-primary is-light p-3">
-      Sample notification using the theme palette.
+    <div class="buttons is-centered">
+      <button class="button is-small is-primary">Primary</button>
+      <button class="button is-small is-info">Info</button>
+      <button class="button is-small is-success">Success</button>
+      <button class="button is-small is-warning">Warning</button>
+      <button class="button is-small is-danger">Danger</button>
     </div>
   </div>
 </body>
