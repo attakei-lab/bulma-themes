@@ -25,6 +25,27 @@
       </div>
     </div>
   </section>
+  <section class="section" id="gallery">
+    <div class="container">
+      <h2 class="title">Themes</h2>
+      <div class="columns is-multiline">
+        {% for theme in collections.theme %}
+        <div class="column is-one-third">
+          <div class="card">
+            <div class="card-image">
+              <iframe src="{{ site.base_path }}/theme/{{ theme.fileSlug }}/thumb/"
+                      loading="lazy"
+                      style="width:100%; height:320px; border:0; pointer-events:none; display:block;"></iframe>
+            </div>
+            <footer class="card-footer">
+              <a href="{{ site.base_path }}/theme/{{ theme.fileSlug }}/" class="card-footer-item">Preview</a>
+            </footer>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
   {% include "footer.html" %}
 </body>
 

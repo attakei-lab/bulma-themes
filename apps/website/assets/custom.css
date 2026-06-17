@@ -17,3 +17,23 @@ footer.footer, div.footer {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
+
+/* @11ty/font-awesome plugin emits dimensionless <svg>; mirror FA's official
+   .svg-inline--fa sizing so icons fit their containers. */
+.svg-inline--fa {
+  display: inline-block;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -0.125em;
+}
+
+/* Themes dropdown: lay out theme links in a 3-column grid.
+   Scope to Bulma's reveal selectors so the dropdown stays display:none
+   until hovered / active (otherwise the .nav-themes specificity would
+   override Bulma's default-hidden state). */
+.navbar-item.has-dropdown.is-active .navbar-dropdown.nav-themes,
+.navbar-item.has-dropdown.is-hoverable:hover .navbar-dropdown.nav-themes,
+.navbar-item.has-dropdown.is-hoverable:focus-within .navbar-dropdown.nav-themes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(8rem, 1fr));
+}

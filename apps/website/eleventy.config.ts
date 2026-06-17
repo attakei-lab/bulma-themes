@@ -20,7 +20,12 @@ export const config = {
 };
 
 export default async function (eleventyConfig: EleventyConfig) {
-  eleventyConfig.addPlugin(fontAwesomePlugin);
+  eleventyConfig.addPlugin(fontAwesomePlugin, {
+    defaultAttributes: {
+      class: "svg-inline--fa",
+      "aria-hidden": "true",
+    },
+  });
   eleventyConfig.addDataExtension("ts", {
     read: false,
     parser: async (filePath) => {
@@ -36,4 +41,7 @@ export default async function (eleventyConfig: EleventyConfig) {
     "./assets/": "assets",
     [themesDistDir]: "dist",
   });
+  eleventyConfig.addCollection("theme", (api) =>
+    api.getFilteredByGlob("./src/theme/*.md"),
+  );
 }
