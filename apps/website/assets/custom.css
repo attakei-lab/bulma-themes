@@ -17,3 +17,12 @@ footer.footer, div.footer {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
+
+/* @11ty/font-awesome plugin emits dimensionless <svg>; mirror FA's official
+   .svg-inline--fa sizing so icons fit their containers. */
+.svg-inline--fa {
+  display: inline-block;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -0.125em;
+}
