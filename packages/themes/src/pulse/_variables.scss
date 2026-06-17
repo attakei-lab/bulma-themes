@@ -1,0 +1,111 @@
+// ============================================================
+// Pulse theme variables.
+//
+// This file is compiled by `build.ts` into three CSS variants
+// per theme (the directory name is used as the theme name):
+//   - dist/<theme>/theme.min.css       (variables applied on :root)
+//   - dist/<theme>/theme.data.min.css  (variables applied on [data-theme=<theme>])
+//   - dist/<theme>/theme.full.min.css  (Bulma bundle + variables on :root)
+//
+// Downstream consumers can also `@use` this file with
+// `with (...)` to override individual values and run their own
+// build, e.g.:
+//
+//   @use ".../pulse/variables" as pulse with (
+//     $primary-h: 280,
+//     $radius: 0.25rem,
+//   );
+//   :root { @include pulse.variables; }
+// ============================================================
+
+// --- scheme / background ---
+$scheme-h: 260 !default;
+$scheme-s: 33% !default;
+$scheme-main-l: 100% !default;
+$background-l: 98% !default;
+
+// --- text ---
+$text-h: 256 !default;
+$text-s: 22% !default;
+$text-l: 15% !default;
+$text-strong-l: 10% !default;
+
+// --- primary / link ---
+$primary-h: 266 !default;
+$primary-s: 51% !default;
+$primary-l: 39% !default;
+// Bulma's default primary-invert lightness lands on a dark tone for our
+// purple primary, leaving low-contrast text on primary backgrounds; force
+// it to white so primary surfaces match the original Pulse look.
+$primary-invert-l: 100% !default;
+$link-h: 266 !default;
+$link-s: 51% !default;
+$link-l: 39% !default;
+
+// --- admonition palette ---
+$info-h: 199 !default;
+$info-s: 100% !default;
+$info-l: 43% !default;
+$success-h: 143 !default;
+$success-s: 81% !default;
+$success-l: 40% !default;
+$warning-h: 38 !default;
+$warning-s: 87% !default;
+$warning-l: 53% !default;
+$danger-h: 0 !default;
+$danger-s: 97% !default;
+$danger-l: 61% !default;
+
+// --- radius ---
+$radius-small: 0 !default;
+$radius: 0 !default;
+// Bulma uses --bulma-radius-medium for both .button.is-medium and
+// .button.is-large; zero it out to keep button sizes visually flat.
+$radius-medium: 0 !default;
+$radius-large: 0 !default;
+
+@mixin variables {
+  --bulma-scheme-h: #{$scheme-h};
+  --bulma-scheme-s: #{$scheme-s};
+  --bulma-scheme-main-l: #{$scheme-main-l};
+  --bulma-background-l: #{$background-l};
+
+  --bulma-text-h: #{$text-h};
+  --bulma-text-s: #{$text-s};
+  --bulma-text-l: #{$text-l};
+  --bulma-text-strong-l: #{$text-strong-l};
+
+  --bulma-primary-h: #{$primary-h};
+  --bulma-primary-s: #{$primary-s};
+  --bulma-primary-l: #{$primary-l};
+  --bulma-primary-invert-l: #{$primary-invert-l};
+  --bulma-link-h: #{$link-h};
+  --bulma-link-s: #{$link-s};
+  --bulma-link-l: #{$link-l};
+
+  --bulma-info-h: #{$info-h};
+  --bulma-info-s: #{$info-s};
+  --bulma-info-l: #{$info-l};
+  --bulma-success-h: #{$success-h};
+  --bulma-success-s: #{$success-s};
+  --bulma-success-l: #{$success-l};
+  --bulma-warning-h: #{$warning-h};
+  --bulma-warning-s: #{$warning-s};
+  --bulma-warning-l: #{$warning-l};
+  --bulma-danger-h: #{$danger-h};
+  --bulma-danger-s: #{$danger-s};
+  --bulma-danger-l: #{$danger-l};
+
+  --bulma-radius-small: #{$radius-small};
+  --bulma-radius: #{$radius};
+  --bulma-radius-medium: #{$radius-medium};
+  --bulma-radius-large: #{$radius-large};
+
+  // Match Pulse's text-style link button: white background with link-colored
+  // text and border, equivalent to the default .is-inverted appearance.
+  .button.is-link {
+    --bulma-button-background-l: var(--bulma-link-invert-l);
+    --bulma-button-color-l: var(--bulma-link-l);
+    --bulma-button-border-l: var(--bulma-link-l);
+  }
+}
