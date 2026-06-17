@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ themePage.data.title }} — thumbnail</title>
+  <link rel="stylesheet" href="{{ site.base_path }}/dist/{{ themePage.fileSlug }}/theme.full.min.css">
+  <style>
+    body { margin: 0; }
+    .thumb { padding: 1rem; }
+    .thumb .title { margin-bottom: 0.75rem; }
+    .thumb .buttons,
+    .thumb .tags { margin-bottom: 0.75rem; }
+  </style>
+</head>
+
+<body>
+  <div class="thumb">
+    <p class="title is-5">{{ themePage.data.title }}</p>
+    <div class="buttons are-small">
+      <button class="button is-primary">Primary</button>
+      <button class="button is-info">Info</button>
+      <button class="button is-success">Success</button>
+      <button class="button is-warning">Warning</button>
+      <button class="button is-danger">Danger</button>
+    </div>
+    <div class="tags">
+      <span class="tag is-primary">Primary</span>
+      <span class="tag is-info">Info</span>
+      <span class="tag is-success">Success</span>
+      <span class="tag is-warning">Warning</span>
+      <span class="tag is-danger">Danger</span>
+    </div>
+    <div class="notification is-primary is-light p-3">
+      Sample notification using the theme palette.
+    </div>
+  </div>
+</body>
+
+</html>

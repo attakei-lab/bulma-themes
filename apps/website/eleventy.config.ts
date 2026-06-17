@@ -41,4 +41,7 @@ export default async function (eleventyConfig: EleventyConfig) {
     "./assets/": "assets",
     [themesDistDir]: "dist",
   });
+  eleventyConfig.addCollection("theme", (api) =>
+    api.getFilteredByGlob("./src/theme/*.md"),
+  );
 }
