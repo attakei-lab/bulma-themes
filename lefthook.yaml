@@ -13,3 +13,6 @@ pre-commit:
     - name: 'yamllint'
       run: 'uv run yamllint {staged_files}'
       glob: '*.{yml,yaml}'
+    - name: 'actionlint'
+      run: 'actionlint {staged_files}'
+      glob: '.github/workflows/*.{yml,yaml}'
