@@ -2,7 +2,7 @@ pre-commit:
   parallel: true
   jobs:
     - name: 'Biome'
-      run: 'bun run biome check {staged_files}'
+      run: 'bun run biome check --fix {staged_files}'
       glob: '*.{js,ts,jsx,tsx}'
       stage_fixed: true
     - name: 'Stylelint'
