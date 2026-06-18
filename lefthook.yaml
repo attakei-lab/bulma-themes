@@ -9,3 +9,6 @@ pre-commit:
       run: 'bun run stylelint --fix {staged_files}'
       glob: '*.{css,scss,sass}'
       stage_fixed: true
+    - name: 'yamllint'
+      run: 'uv run yamllint {staged_files}'
+      glob: '*.{yml,yaml}'

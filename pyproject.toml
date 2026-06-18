@@ -1,0 +1,10 @@
+[project]
+name = "bulma-themes"
+version = "0.0.0"
+requires-python = ">=3.14"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "yamllint>=1.38.0",
+]

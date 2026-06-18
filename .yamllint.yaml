@@ -1,0 +1,8 @@
+---
+extends: default
+
+ignore:
+  # This file is edit by aqua.
+  - 'aqua.yaml'
+  # This path does not have user files.
+  - '**/node_modules/**/*'
