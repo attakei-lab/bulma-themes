@@ -1,5 +1,7 @@
 {
   "name": "@attakei/bulma-themes",
+  "license": "MIT",
+  "author": "Kazuya Takei",
   "type": "module",
   "scripts": {
     "build": "bun build.ts",
