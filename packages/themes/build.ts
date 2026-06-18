@@ -1,7 +1,14 @@
+// SPDX-License-Identifier: MIT
 import { mkdir, readdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as sass from "sass";
+
+const HOMEPAGE = "https://github.com/attakei-lab/bulma-themes";
+const banner = (theme: string, variant: string, debug: boolean): string => {
+  const head = `/*! @attakei/bulma-themes/${theme} (${variant}) | MIT License | ${HOMEPAGE} */`;
+  return debug ? `${head}\n` : head;
+};
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_DIR = resolve(__dirname, "src");
@@ -55,7 +62,7 @@ async function compileVariant(
 
   await mkdir(outDir, { recursive: true });
 
-  let css = result.css;
+  let css = banner(theme, variant.name, debug) + result.css;
   if (debug && result.sourceMap) {
     const mapFile = `${outFile}.map`;
     css += `\n/*# sourceMappingURL=${variant.name}.${ext}.map */\n`;
