@@ -1,5 +1,5 @@
 import type { EleventyConfig } from "@11ty/eleventy";
-import baseConfig, { config } from "./eleventy.config";
+import baseConfig, { config } from "./eleventy.config.ts";
 
 export { config };
 
