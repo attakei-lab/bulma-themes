@@ -1,0 +1,8 @@
+# Claude Code per-developer state — local-only, never commit.
+# Covers the canonical settings.local.json plus any future
+# `<feature>.local.json` / `<name>.local` files Claude may introduce.
+*.local.json
+*.local
+
+# Temporary checkouts created by `Agent` calls with isolation: "worktree".
+worktrees/
