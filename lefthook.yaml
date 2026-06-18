@@ -11,7 +11,7 @@ pre-commit:
       glob: '*.{css,scss,sass}'
       stage_fixed: true
     - name: 'yamllint'
-      run: 'uv run yamllint {staged_files}'
+      run: 'yamllint {staged_files}'
       glob: '*.{yml,yaml}'
     - name: 'actionlint'
       run: 'actionlint {staged_files}'
