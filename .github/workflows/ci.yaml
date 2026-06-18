@@ -12,9 +12,6 @@ on:
   schedule:
     - cron: '0 9 * * 5'  # 18:00 on Friday Asia/Tokyo
 
-env:
-  UV_NO_SYNC: 1
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -24,7 +21,6 @@ jobs:
       - name: 'Configure dependencies'
         run: |
           bun install
-          uv sync --all-extras --frozen
       - name: 'Run linters'
         run: |
           bun lefthook run pre-commit --all-files
