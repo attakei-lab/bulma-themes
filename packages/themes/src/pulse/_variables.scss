@@ -1,22 +1,22 @@
-// ============================================================
-// Pulse theme variables.
-//
-// This file is compiled by `build.ts` into three CSS variants
-// per theme (the directory name is used as the theme name):
-//   - dist/<theme>/theme.min.css       (variables applied on :root)
-//   - dist/<theme>/theme.data.min.css  (variables applied on [data-theme=<theme>])
-//   - dist/<theme>/theme.full.min.css  (Bulma bundle + variables on :root)
-//
-// Downstream consumers can also `@use` this file with
-// `with (...)` to override individual values and run their own
-// build, e.g.:
-//
-//   @use ".../pulse/variables" as pulse with (
-//     $primary-h: 280,
-//     $radius: 0.25rem,
-//   );
-//   :root { @include pulse.variables; }
-// ============================================================
+/*
+ * Pulse theme variables.
+ *
+ * This file is compiled by `build.ts` into three CSS variants
+ * per theme (the directory name is used as the theme name):
+ *   - dist/<theme>/theme.min.css       (variables applied on :root)
+ *   - dist/<theme>/theme.data.min.css  (variables applied on [data-theme=<theme>])
+ *   - dist/<theme>/theme.full.min.css  (Bulma bundle + variables on :root)
+ *
+ * Downstream consumers can also `@use` this file with
+ * `with (...)` to override individual values and run their own
+ * build, e.g.:
+ *
+ *   @use ".../pulse/variables" as pulse with (
+ *     $primary-h: 280,
+ *     $radius: 0.25rem,
+ *   );
+ *   :root { @include pulse.variables; }
+ */
 
 // --- scheme / background ---
 $scheme-h: 260 !default;
@@ -34,6 +34,7 @@ $text-strong-l: 10% !default;
 $primary-h: 266 !default;
 $primary-s: 51% !default;
 $primary-l: 39% !default;
+
 // Bulma's default primary-invert lightness lands on a dark tone for our
 // purple primary, leaving low-contrast text on primary backgrounds; force
 // it to white so primary surfaces match the original Pulse look.
@@ -59,6 +60,7 @@ $danger-l: 61% !default;
 // --- radius ---
 $radius-small: 0 !default;
 $radius: 0 !default;
+
 // Bulma uses --bulma-radius-medium for both .button.is-medium and
 // .button.is-large; zero it out to keep button sizes visually flat.
 $radius-medium: 0 !default;
@@ -69,12 +71,10 @@ $radius-large: 0 !default;
   --bulma-scheme-s: #{$scheme-s};
   --bulma-scheme-main-l: #{$scheme-main-l};
   --bulma-background-l: #{$background-l};
-
   --bulma-text-h: #{$text-h};
   --bulma-text-s: #{$text-s};
   --bulma-text-l: #{$text-l};
   --bulma-text-strong-l: #{$text-strong-l};
-
   --bulma-primary-h: #{$primary-h};
   --bulma-primary-s: #{$primary-s};
   --bulma-primary-l: #{$primary-l};
@@ -82,7 +82,6 @@ $radius-large: 0 !default;
   --bulma-link-h: #{$link-h};
   --bulma-link-s: #{$link-s};
   --bulma-link-l: #{$link-l};
-
   --bulma-info-h: #{$info-h};
   --bulma-info-s: #{$info-s};
   --bulma-info-l: #{$info-l};
@@ -95,7 +94,6 @@ $radius-large: 0 !default;
   --bulma-danger-h: #{$danger-h};
   --bulma-danger-s: #{$danger-s};
   --bulma-danger-l: #{$danger-l};
-
   --bulma-radius-small: #{$radius-small};
   --bulma-radius: #{$radius};
   --bulma-radius-medium: #{$radius-medium};

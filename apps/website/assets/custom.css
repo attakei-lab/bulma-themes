@@ -4,6 +4,7 @@ body {
   min-height: 100vh;
   flex-direction: column;
 }
+
 section[id] {
   scroll-margin-top: var(--bulma-navbar-height);
 }
@@ -12,6 +13,7 @@ section[id] {
   position: sticky;
   top: 0;
 }
+
 footer.footer, div.footer {
   margin-top: auto;
   padding-top: 2rem;
@@ -19,7 +21,9 @@ footer.footer, div.footer {
 }
 
 /* @11ty/font-awesome plugin emits dimensionless <svg>; mirror FA's official
-   .svg-inline--fa sizing so icons fit their containers. */
+   .svg-inline--fa sizing so icons fit their containers. The class name is
+   defined upstream by FontAwesome, so the kebab-case lint rule is skipped. */
+/* stylelint-disable-next-line selector-class-pattern */
 .svg-inline--fa {
   display: inline-block;
   height: 1em;

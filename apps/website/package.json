@@ -1,6 +1,7 @@
 {
   "name": "website",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "eleventy --config=eleventy.config.ts --serve",
     "build": "eleventy --config=eleventy.publish.config.ts"

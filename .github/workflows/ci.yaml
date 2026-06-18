@@ -1,0 +1,36 @@
+---
+name: 'Run CI jobs'
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * 5'  # 18:00 on Friday Asia/Tokyo
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: 'atsphinx/.github/actions/setup-aqua@main'
+      - name: 'Configure dependencies'
+        run: |
+          bun install
+      - name: 'Run linters'
+        run: |
+          bun lefthook run pre-commit --all-files
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: 'atsphinx/.github/actions/setup-aqua@main'
+      - name: 'Try building as package'
+        run: |
+          bun install
+          bun run --cwd=packages/themes build
+          bun run --cwd=apps/website build

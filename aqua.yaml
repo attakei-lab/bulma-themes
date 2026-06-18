@@ -12,3 +12,5 @@ registries:
   ref: v4.524.0 # renovate: depName=aquaproj/aqua-registry
 packages:
 - name: oven-sh/bun@bun-v1.3.14
+- name: rhysd/actionlint@v1.7.12
+- name: wasilibs/go-yamllint@v1.38.0
