@@ -5,3 +5,7 @@ pre-commit:
       run: 'bun run biome check {staged_files}'
       glob: '*.{js,ts,jsx,tsx}'
       stage_fixed: true
+    - name: 'Stylelint'
+      run: 'bun run stylelint --fix {staged_files}'
+      glob: '*.{css,scss,sass}'
+      stage_fixed: true
