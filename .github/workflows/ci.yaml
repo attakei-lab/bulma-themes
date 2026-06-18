@@ -27,7 +27,7 @@ jobs:
           uv sync --all-extras --frozen
       - name: 'Run linters'
         run: |
-          lefthook run pre-commit --all-files
+          bun lefthook run pre-commit --all-files
   build-test:
     runs-on: ubuntu-latest
     steps:
