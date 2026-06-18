@@ -1,0 +1,25 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    // Monitor aqua configuration.
+    "github>aquaproj/aqua-renovate-config#2.13.0",
+  ],
+  timezone: "Asia/Tokyo",
+  schedule: [
+    // Run check at daytime on every weekend
+    "* 9-12 * * 0,6",
+  ],
+  automerge: true,
+  // Wait 3 days after a release before considering it; lets the broader
+  // ecosystem catch hotfixes before our auto-merge picks the update up.
+  minimumReleaseAge: "3 days",
+  packageRules: [
+    // Require human review for major bumps so runtime-shape changes in
+    // Bulma / Eleventy / Sass / Bun aren't merged unattended.
+    {
+      matchUpdateTypes: ["major"],
+      automerge: false,
+    },
+  ],
+}
