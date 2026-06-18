@@ -6,3 +6,6 @@
 
 # Temporary checkouts created by `Agent` calls with isolation: "worktree".
 worktrees/
+
+# Local-only memos / deferred-decision logs that should not be shared.
+notes/
