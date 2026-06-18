@@ -16,3 +16,7 @@ pre-commit:
     - name: 'actionlint'
       run: 'actionlint {staged_files}'
       glob: '.github/workflows/*.{yml,yaml}'
+    - name: 'Oxfmt'
+      run: 'oxfmt {staged_files}'
+      glob: '*.{json,jsonc,json5}'
+      stage_fixed: true

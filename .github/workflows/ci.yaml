@@ -24,6 +24,7 @@ jobs:
       - name: 'Run linters'
         run: |
           bun lefthook run pre-commit --all-files
+      - uses: 'suzuki-shunsuke/github-action-renovate-config-validator@v1.0.1'
   build-test:
     runs-on: ubuntu-latest
     steps:
