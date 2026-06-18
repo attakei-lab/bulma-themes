@@ -6,3 +6,10 @@ ignore:
   - 'aqua.yaml'
   # This path does not have user files.
   - '**/node_modules/**/*'
+
+rules:
+  # GitHub Actions requires the unquoted `on:` key; allow it without
+  # tripping the YAML 1.1 boolean-alias warning.
+  truthy:
+    allowed-values: ['true', 'false', 'on']
+    check-keys: true
