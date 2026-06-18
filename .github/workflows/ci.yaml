@@ -23,7 +23,7 @@ jobs:
           bun install
       - name: 'Run linters'
         run: |
-          bun lefthook run pre-commit --all-files
+          lefthook run pre-commit --all-files
       # yamllint disable-line rule:line-length
       - uses: 'suzuki-shunsuke/github-action-renovate-config-validator@dcbd036807dcbefbc9201a1d581d0848d869c4e1'  # v2.1.0
   build-test:
