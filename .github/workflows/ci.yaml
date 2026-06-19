@@ -12,9 +12,13 @@ on:
   schedule:
     - cron: '0 9 * * 5'  # 18:00 on Friday Asia/Tokyo
 
+permissions: {}
+
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
       - uses: 'atsphinx/.github/actions/setup-aqua@main'
@@ -28,6 +32,8 @@ jobs:
       - uses: 'suzuki-shunsuke/github-action-renovate-config-validator@dcbd036807dcbefbc9201a1d581d0848d869c4e1'  # v2.1.0
   build-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
       - uses: 'atsphinx/.github/actions/setup-aqua@main'
