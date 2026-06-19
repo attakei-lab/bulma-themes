@@ -93,18 +93,96 @@ Versioned CLIs (`bun`, `lefthook`, `actionlint`, `yamllint`, `oxfmt`) are pinned
 
 CI (`.github/workflows/ci.yaml`) has two jobs: `lint` runs the lefthook stack plus a renovate-config-validator (pinned by commit SHA), and `build-test` builds both the theme package and the website.
 
-## Renovate
+## Cloud services
 
-`renovate.json5` configuration is opinionated:
+The repository interacts with the cloud services below. Each entry lists the service's role, where its configuration lives, and what Claude should keep in mind when acting in this repo.
 
-- Extends `config:recommended` + `aquaproj/aqua-renovate-config`.
-- Asia/Tokyo timezone; weekend daytime schedule (`* 9-12 * * 0,6`). The leading `*` for minutes is required by Renovate's docs — keep it as is.
-- `automerge: true` by default with a `matchUpdateTypes: ["major"]` override that turns off automerge, so Bulma / Eleventy / Sass / Bun majors always require human review.
-- `minimumReleaseAge: "3 days"` waits out hotfixes before pulling updates in.
+### GitHub
+
+- Role: repository hosting, Issues, Pull Requests, Actions (CI), Pages (website deploy).
+- Config: `.github/workflows/ci.yaml` (CI), `apps/website/eleventy.publish.config.ts` (Pages base URL).
+- Claude considerations:
+  - Issue numbers feed `Refs: #N` commit footers (see Commit conventions) and `Related to #N` PR-body lines (see Pull requests).
+  - The CI jobs `lint` and `build-test` must both be green before a PR can be merged.
+  - Pages is the only public deploy target; the publish config layers `url` / `base_path` over the defaults in `src/_data/site.ts`.
+
+### Renovate
+
+- Role: automated dependency updates (npm packages and aqua refs).
+- Config: `renovate.json5`.
+- Claude considerations:
+  - Extends `config:recommended` + `aquaproj/aqua-renovate-config`.
+  - Asia/Tokyo timezone; weekend daytime schedule (`* 9-12 * * 0,6`). The leading `*` for minutes is required by Renovate's docs — keep it as is.
+  - `automerge: true` by default with a `matchUpdateTypes: ["major"]` override that turns off automerge, so Bulma / Eleventy / Sass / Bun majors always require human review.
+  - `minimumReleaseAge: "3 days"` waits out hotfixes before pulling updates in.
+  - Bot-generated branches (`renovate/**`) are exempt from branch-naming rules.
+
+### CodeRabbit
+
+- Role: automated PR review (comments and approval).
+- Config: external — there is no in-repo configuration file.
+- Claude considerations: how CodeRabbit's review is surfaced, and how its Approve interacts with the auto-merge conditions, is defined by the `/ship-pr` skill. Do not invent ad-hoc behaviour.
+
+## Cloud Claude Code (claude.ai/code) startup
+
+These rules apply when Claude Code is running on **claude.ai/code (Web)**. Other forms (CLI, Desktop, GitHub Actions-triggered) are out of scope here and will be added if and when they come into use.
+
+### Required setup (every session)
+
+Run these unconditionally at the start of every session, in order:
+
+1. Install aqua itself — cloud images do not guarantee aqua on `PATH`.
+2. `aqua install --only-link` — link the aqua-pinned CLIs without forcing eager downloads. Tool binaries are fetched lazily on first use.
+3. `lefthook install` — wire git hooks so any commit goes through the same checks as local and CI.
+
+### Conditional setup
+
+Run only when about to do work that needs it:
+
+- `bun install` (repo root) — required before touching JS/TS, running the theme build, or working on the website. Docs-only edits do not need it.
+- `bun run build` in `packages/themes/` — required when the website needs to reflect updated theme CSS.
+
+### Pre-work agreement with the user
+
+Before taking any action that modifies files, confirm with the user:
+
+1. Originating Issue / task number (if any) — drives the `Refs: #N` commit footer.
+2. Working branch name and prefix (`feature/` / `fix/` / `update/`) — must match the push allow-list in `branch-strategy.md`.
+3. Scope and definition of done — what to deliver, and what is explicitly out of scope.
+4. Whether Claude is authorized to push to `origin` and to create PRs in this session.
+
+### Operating mode
+
+Default pattern: **plan → user approval → execute**. Describe the intended change in prose before calling write tools, and wait for the user to confirm. For larger changes, prefer engaging Plan mode (`ExitPlanMode`-gated) over a prose plan.
 
 ## Commit conventions
 
 `feat(<scope>): ...` / `chore(<scope>): ...` / `fix(<scope>): ...` style, where `<scope>` is the workspace member (`themes`, `website`) or a top-level concern. Match commit contents to the stated goal of the change — do not bundle "next-step" edits that share a feature area but a separate intent. Use HEREDOCs when authoring commit messages to preserve formatting.
+
+### Issue references
+
+When the work originates from a specific Issue — the branch name matches `*/issue-N`, or the user has explicitly confirmed the originating Issue — every commit on that branch must carry a `Refs: #N` trailer as the last line of the message:
+
+```
+fix(themes): rebuild dist on theme source change
+
+Refs: #3
+```
+
+Multiple Issues: comma-separate — `Refs: #3, #7`.
+
+GitHub auto-close keywords (`Closes`, `Fixes`, `Resolves`, and their variants) are **forbidden** in commit messages. A merged PR is not proof that an Issue is fully resolved; closing the Issue is a separate human decision.
+
+The `Refs: #N` trailer may be omitted in these limited cases even on an Issue-driven branch:
+
+- Merge commits (default git-generated message).
+- `git revert`-generated commits (the reverted commit already carries the reference).
+- Commits whose only content is a tool auto-fix (Biome / Stylelint / oxfmt).
+- Stray fixes incidentally bundled with the branch (typo, comment polish) that are unrelated to the branch's stated topic.
+
+## Pull requests
+
+Pull request creation and post-creation handling — CI watch, CodeRabbit review surfacing, and the conditional auto-merge — are encapsulated in the `/ship-pr` skill at `.claude/skills/ship-pr/SKILL.md`. Use that skill whenever opening or following up on a PR; do not reimplement its workflow inline.
 
 ## Branch strategy
 
