@@ -105,3 +105,7 @@ CI (`.github/workflows/ci.yaml`) has two jobs: `lint` runs the lefthook stack pl
 ## Commit conventions
 
 `feat(<scope>): ...` / `chore(<scope>): ...` / `fix(<scope>): ...` style, where `<scope>` is the workspace member (`themes`, `website`) or a top-level concern. Match commit contents to the stated goal of the change — do not bundle "next-step" edits that share a feature area but a separate intent. Use HEREDOCs when authoring commit messages to preserve formatting.
+
+## Branch strategy
+
+@./branch-strategy.md
