@@ -1,6 +1,7 @@
 {
   "name": "bulma-themes",
   "private": true,
+  "license": "MIT",
   "workspaces": [
     "apps/*",
     "packages/*"
