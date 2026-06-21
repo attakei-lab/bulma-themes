@@ -1,0 +1,79 @@
+/*
+ * Default theme variables.
+ *
+ * Light-only prototype. Inherits Bulma defaults for radius / shadow /
+ * spacing; only colors (primary / link / admonitions / scheme tint) are
+ * customized.
+ *
+ * This file is compiled by `build.ts` into three CSS variants per theme
+ * (the directory name is used as the theme name):
+ *   - dist/<theme>/theme.min.css       (variables applied on :root)
+ *   - dist/<theme>/theme.data.min.css  (variables applied on [data-theme=<theme>])
+ *   - dist/<theme>/theme.full.min.css  (Bulma bundle + variables on :root)
+ *
+ * Downstream consumers can also `@use` this file with `with (...)` to
+ * override individual values and run their own build.
+ */
+
+// --- scheme / text (align to primary hue at low saturation) ---
+$scheme-h: 200 !default;
+$scheme-s: 14% !default;
+$text-h: 200 !default;
+$text-s: 14% !default;
+
+// --- primary / link ---
+$primary-h: 200 !default;
+$primary-s: 70% !default;
+$primary-l: 30% !default;
+$primary-invert-l: 100% !default;
+$link-h: 168 !default;
+$link-s: 76% !default;
+$link-l: 30% !default;
+$link-invert-l: 100% !default;
+$link-on-scheme-l: $link-l !default;
+
+// --- admonition palette ---
+$info-h: 218 !default;
+$info-s: 70% !default;
+$info-l: 45% !default;
+$success-h: 145 !default;
+$success-s: 70% !default;
+$success-l: 36% !default;
+$warning-h: 40 !default;
+$warning-s: 80% !default;
+$warning-l: 50% !default;
+$danger-h: 6 !default;
+$danger-s: 70% !default;
+$danger-l: 45% !default;
+
+@mixin variables {
+  --bulma-scheme-h: #{$scheme-h};
+  --bulma-scheme-s: #{$scheme-s};
+  --bulma-text-h: #{$text-h};
+  --bulma-text-s: #{$text-s};
+  --bulma-primary-h: #{$primary-h};
+  --bulma-primary-s: #{$primary-s};
+  --bulma-primary-l: #{$primary-l};
+  --bulma-primary-invert-l: #{$primary-invert-l};
+  --bulma-link-h: #{$link-h};
+  --bulma-link-s: #{$link-s};
+  --bulma-link-l: #{$link-l};
+  --bulma-link-invert-l: #{$link-invert-l};
+  --bulma-link-on-scheme-l: #{$link-on-scheme-l};
+  --bulma-info-h: #{$info-h};
+  --bulma-info-s: #{$info-s};
+  --bulma-info-l: #{$info-l};
+  --bulma-success-h: #{$success-h};
+  --bulma-success-s: #{$success-s};
+  --bulma-success-l: #{$success-l};
+  --bulma-warning-h: #{$warning-h};
+  --bulma-warning-s: #{$warning-s};
+  --bulma-warning-l: #{$warning-l};
+  --bulma-danger-h: #{$danger-h};
+  --bulma-danger-s: #{$danger-s};
+  --bulma-danger-l: #{$danger-l};
+
+  .navbar.is-primary {
+    --bulma-navbar-burger-color: var(--bulma-primary-invert);
+  }
+}
