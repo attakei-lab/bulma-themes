@@ -12,7 +12,7 @@ Bulma 1.x defines its colors on three axes — `--bulma-<token>-h`,
 `--bulma-<token>-s`, `--bulma-<token>-l` — and assembles derived colors
 on `:root`:
 
-```
+```css
 --bulma-primary: hsla(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l), 1);
 ```
 
