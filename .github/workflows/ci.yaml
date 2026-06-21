@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: 'atsphinx/.github/actions/setup-aqua@main'
       - name: 'Configure dependencies'
         run: |
@@ -35,7 +35,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: 'atsphinx/.github/actions/setup-aqua@main'
       - name: 'Try building as package'
         run: |
