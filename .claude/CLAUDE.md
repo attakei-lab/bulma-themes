@@ -187,3 +187,7 @@ Pull request creation and post-creation handling — CI watch, CodeRabbit review
 ## Branch strategy
 
 @./branch-strategy.md
+
+## Themes authoring
+
+@./themes-authoring.md
