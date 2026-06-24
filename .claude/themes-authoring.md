@@ -187,6 +187,326 @@ because the theme's static L overrides Bulma's media-query-driven L.
 For an H/S-only tint, emit only `--bulma-scheme-h`, `--bulma-scheme-s`,
 `--bulma-text-h`, `--bulma-text-s` and let Bulma handle the L axis.
 
+## Pitfall 6: the bare `.button` loses padding and border-radius
+
+Bulma 1.x's base `.button {}` rule pulls two values through a `var()`
+chain that originates on `:root`:
+
+- `--bulma-button-border-width: var(--bulma-control-border-width)` —
+  consumed inside the `padding` calc().
+- `border-radius: var(--bulma-control-radius)` (inherited from the
+  shared `.button, .input, ...` rule) — `--bulma-control-radius` is
+  itself `var(--bulma-radius)` on `:root`.
+
+For reasons not yet diagnosed in this project's bundle, both var()
+chains fail to resolve on the **bare `.button`** (no `.is-*` modifier
+of any kind). The `padding` calc collapses to 0 and `border-radius` is
+discarded — the button renders ≈10px shorter than `.button.is-primary`
+beside it, with text flush against the border and square corners.
+
+Why only the bare button: every `.is-*` modifier (color modifiers like
+`.is-primary` set `--bulma-button-border-width: 0px`; size modifiers
+like `.is-small` / `.is-normal` / `.is-medium` / `.is-large` set
+`--bulma-control-radius: var(--bulma-radius-*)`) re-declares the
+relevant variable on a `(0, 2, 0)`-specificity selector. Re-declaring
+with a fresh `var()` substitution apparently sidesteps the failure.
+The unmodified `.button` (specificity `(0, 1, 0)`) never gets a
+re-declaration, so it stays stuck with the broken chain.
+
+Both Pulse and the default theme exhibit this — the bug is
+template-wide, not theme-specific. Root cause is open.
+
+The same chain failure affects every other bare control element — `.input`,
+`.textarea`, `.select select`, `.pagination-link` / `-next` / `-previous` /
+`-ellipsis`, and the `.file-cta` / `.file-name` pair. They share Bulma's
+control rule (`.button, .file-cta, ..., .textarea { ... }`) and read the
+same `--bulma-control-*` family. Padding collapses, border-radius
+disappears, and on `.pagination-link` `border-width` falls back to the CSS
+initial value `medium` (≈3px), making the link appear with a thick frame.
+
+Icons positioned by `.control.has-icons-left .icon { width: var(--bulma-
+input-height) }` are affected too, because `--bulma-input-height` chains
+to `--bulma-control-height`; when the chain fails, icons collapse to
+their intrinsic glyph size instead of filling the input's vertical
+extent.
+
+### Mitigation
+
+Pin every `--bulma-control-*` token literally on Bulma's shared control
+selector group **and** on the `.control`, `.pagination`, and `.select`
+wrappers — child elements that read `--bulma-input-*` /
+`--bulma-pagination-item-*` (which themselves chain to `--bulma-control-*`)
+then resolve correctly via inheritance. `--bulma-control-radius` is
+interpolated from `$radius` so the theme's chosen base radius applies:
+
+```scss
+@mixin variables {
+  // ... custom property emissions ...
+
+  .button,
+  .control,
+  .file-cta,
+  .file-name,
+  .input,
+  .pagination,
+  .pagination-ellipsis,
+  .pagination-link,
+  .pagination-next,
+  .pagination-previous,
+  .select,
+  .select select,
+  .textarea {
+    --bulma-control-border-width: 1px;
+    --bulma-control-height: 2.5em;
+    --bulma-control-padding-vertical: calc(0.5em - 1px);
+    --bulma-control-padding-horizontal: calc(0.75em - 1px);
+    --bulma-control-radius: #{$radius};
+  }
+}
+```
+
+`.is-*` modifiers retain their own higher-specificity declarations, so
+size variants still pick up `--bulma-radius-small` / `-medium` /
+`-large`, and color variants still render with `border-width: 0px`.
+
+This is a template-wide workaround; new themes should emit it by
+default until the root cause in the var chain is understood and fixed.
+
+## Pitfall 8: `--bulma-link-text` can fail to resolve on `<a>`
+
+Bulma's `:root` block sets
+
+```css
+--bulma-link-text: hsl(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-on-scheme-l));
+```
+
+then `a { color: var(--bulma-link-text) }` reads it. The same class of
+`var()` chain failure described in Pitfall 6 also affects this token at
+the `<a>` element: under the right conditions, body links render in the
+user-agent default link colour instead of the theme's link colour, even
+though every individual component (`--bulma-link-h`, `--bulma-link-s`,
+`--bulma-link-on-scheme-l`) is set on `:root`.
+
+### Mitigation
+
+Re-declare `--bulma-link-text` on the `a` selector itself with a literal
+hsl() built from the theme's `$link-*` variables:
+
+```scss
+@mixin variables {
+  // ...
+
+  a {
+    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+  }
+}
+```
+
+Higher-specificity rules (`.navbar-item`, `.menu-list a`, `.button.is-link`,
+etc.) still override `color:` directly, so this only takes effect where
+the chain failure would otherwise show.
+
+This is theme-dependent — apply when the body link colour visibly
+diverges from the intended `$link-*` values during Phase C review.
+
+## Pitfall 7: `:root`-level `--bulma-title-color` / `--bulma-content-heading-color` are shadowed
+
+Headings are colored through two Bulma tokens:
+
+- `.title` (and `.subtitle`) reads `--bulma-title-color`.
+- `.content h1`–`h6` read `--bulma-content-heading-color`.
+
+Bulma's bundle **re-declares both tokens on `.subtitle, .title { ... }`
+and `.content { ... }` selectors** (specificity `(0, 1, 0)`), pointing
+them at `--bulma-text-strong`. A theme that only overrides the tokens
+on `:root` is silently shadowed at every element where the headings
+actually render — the inherited `:root` value is overruled by the
+element-level declaration.
+
+### Mitigation
+
+Emit the overrides at the same selector level as Bulma's bundle (or
+higher) so source order makes them win:
+
+```scss
+@mixin variables {
+  // ... :root-level custom property emissions ...
+
+  .title {
+    --bulma-title-color: var(--bulma-primary);
+  }
+  .content {
+    --bulma-content-heading-color: var(--bulma-primary);
+  }
+}
+```
+
+Apply this only when the theme actually wants headings tinted; many
+themes are happy with Bulma's `text-strong`-derived default. It is not
+a default emission — drive it from the theme's intent during Phase C.
+
+## Pitfall 9: `.panel-icon` collapses when the child SVG has no viewBox
+
+Bulma's `.panel-icon` sizes its container to `1em × 1em` and assumes the
+child icon is a font glyph (an `<i class="fa-...">` element) that renders
+inside that footprint. The `@11ty/font-awesome` plugin emits SVG-sprite
+markup instead:
+
+```html
+<span class="panel-icon">
+  <svg class="svg-inline--fa" aria-hidden="true">
+    <use href="#fas-fa-book" xlink:href="#fas-fa-book"></use>
+  </svg>
+</span>
+```
+
+The outer `<svg>` is dimensionless and carries no `viewBox`. The
+referenced `<symbol>` does have a viewBox (e.g. `0 0 448 512`), but
+without a viewBox on the outer element the use's instance renders at the
+symbol's native user-coordinate units. The visible glyph then floats
+hundreds of pixels to the right of where the panel-icon slot sits — in
+the demo, the book icon lands *after* the panel-block's text label
+instead of before it.
+
+Other Bulma icon containers (notably `.icon`) escape this because they
+are `display: inline-flex` with explicit `width` / `height`, which gives
+the SVG a sized flex parent and clips the misrender into something close
+to the intended location. `.panel-icon` doesn't centre its child via
+flex, so the misalignment is plainly visible there.
+
+### Mitigation
+
+Pin the outer SVG and the inner `<use>` to `1em × 1em` so the symbol
+scales back into the icon slot. Apply inside `@mixin variables` so the
+fix travels with the theme bundle:
+
+```scss
+@mixin variables {
+  // ... custom property emissions and other Pitfall fixes ...
+
+  .panel-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+  .panel-icon svg use {
+    width: 100%;
+    height: 100%;
+  }
+}
+```
+
+This affects only `.panel-icon` descendants, so non-panel icons (buttons,
+navbar, breadcrumbs, etc.) keep whatever sizing they already had.
+
+This is a template-wide workaround for the @11ty/font-awesome SVG output;
+new themes should emit it by default. If a downstream consumer swaps to
+a different icon implementation that produces correctly-sized SVGs, the
+rule is a no-op.
+
+## Pitfall 10: `.box` / `.card` / `.panel` lose their shadow when --bulma-shadow uses a var() chain
+
+Bulma defines `--bulma-shadow` on `:root` as a two-stop value whose hsla
+components themselves use `var()`:
+
+```css
+--bulma-shadow:
+  0 0.5em 1em -0.125em hsla(var(--bulma-shadow-h), var(--bulma-shadow-s), var(--bulma-shadow-l), 0.1),
+  0 0 0 1px hsla(var(--bulma-shadow-h), var(--bulma-shadow-s), var(--bulma-shadow-l), 0.02);
+```
+
+`.box`, `.card`, and `.panel` all consume this through their own
+`--bulma-*-shadow: var(--bulma-shadow)` indirection. When the nested
+`var(--bulma-shadow-h)` / `-s` / `-l` substitutions fail to resolve at
+the rendered element, the whole `box-shadow` declaration is discarded
+and the container renders flat — no drop shadow, no inner 1px ring.
+
+Themes that emit their own `--bulma-shadow` literal at `:root` (e.g.
+Pulse's hairline ring `0 0 0 1px hsla(0, 0%, 0%, 0.125)`) escape this
+because the inherited value has no inner `var()` left to resolve. Themes
+that rely on Bulma's default chain (e.g. the project's `default` theme)
+trip on it.
+
+### Mitigation
+
+Either pin `--bulma-shadow` on `:root` with a fully-resolved literal
+(mirrors Bulma's two-stop shadow but with concrete hsl arguments), or —
+preferred for themes that should keep Bulma's `:root` value untouched —
+pin it at the consumer selectors:
+
+```scss
+@mixin variables {
+  // ... custom property emissions ...
+
+  .box,
+  .card,
+  .panel {
+    --bulma-shadow:
+      0 0.5em 1em -0.125em hsla(221deg, 14%, 4%, 0.1),
+      0 0 0 1px hsla(221deg, 14%, 4%, 0.02);
+  }
+}
+```
+
+The literal `221deg, 14%, 4%` matches Bulma's light-mode default
+`--bulma-shadow-h/s/l`. A theme that already overrides `--bulma-shadow`
+at `:root` with a fully literal value does not need this element-level
+pin.
+
+This pin is element-scoped, so the dark-mode `prefers-color-scheme`
+media query that flips Bulma's `--bulma-shadow-l` on `:root` no longer
+reaches `.box` / `.card` / `.panel`. Acceptable for a light-only theme;
+revisit when a dark variant is authored.
+
+## Pitfall 11: separators between `.card-*` and `.panel-*` sub-components disappear
+
+Bulma renders separator rules between `.card-header` / `.card-content`
+/ `.card-footer` and between `.panel-block` / `.panel-tabs` siblings
+through two tokens:
+
+- `--bulma-card-footer-border-top: 1px solid var(--bulma-border-weak)`
+  on `.card`.
+- `--bulma-panel-item-border: 1px solid var(--bulma-border-weak)` on
+  `.panel` (consumed by `.panel-block:not(:last-child)` and
+  `.panel-tabs:not(:last-child)`).
+- `--bulma-card-header-shadow: 0 0.125em 0.25em hsla(var(--bulma-scheme-h),
+  var(--bulma-scheme-s), var(--bulma-scheme-invert-l), 0.1)` on `.card`
+  (consumed by `.card-header`'s `box-shadow`).
+
+The first two chain through `--bulma-border-weak`, which itself is an
+`hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-border-weak-l))`
+on `:root`. The third has its own three-`var()` chain. Both classes of
+chain fail to resolve at the rendered sub-elements, so the separators
+disappear and the components blur into a single flat block.
+
+### Mitigation
+
+Pin literal values for `--bulma-border-weak` (covers both footer-border
+and panel-item-border) and `--bulma-card-header-shadow` on the parent
+containers:
+
+```scss
+@mixin variables {
+  // ... custom property emissions ...
+
+  .card,
+  .panel {
+    --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 93%);
+  }
+
+  .card {
+    --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 0.1);
+  }
+}
+```
+
+`93%` matches Bulma's light-mode `--bulma-border-weak-l`; `4%` matches
+its light-mode `--bulma-scheme-invert-l`. Themes without an explicit
+scheme tint (e.g. cerulean with a pure-white body) substitute `0, 0%`
+for the hue/saturation.
+
+Like Pitfall 10, this pin is light-mode-only; dark-mode auto-switching
+on these tokens stops at the parent container.
+
 ## Minimum viable theme: variable checklist
 
 For a color-only theme that inherits Bulma defaults for radius / shadow
