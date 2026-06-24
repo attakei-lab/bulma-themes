@@ -128,7 +128,7 @@ during Phase C — not a default:
 
 ```scss
 a {
-  --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-l});
+  --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
 }
 ```
 

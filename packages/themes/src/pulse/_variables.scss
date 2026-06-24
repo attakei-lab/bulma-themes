@@ -135,7 +135,7 @@ $radius-large: 0 !default;
   // Pitfall 8: `--bulma-link-text` is set on :root via an hsl(var(...))
   // chain that can fall back to UA-default on `<a>`; pin literally.
   a {
-    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-l});
+    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
   }
 
   // Bootswatch Pulse underlines body links; scope to .content so navbar /

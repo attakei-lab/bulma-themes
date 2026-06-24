@@ -297,7 +297,7 @@ hsl() built from the theme's `$link-*` variables:
   // ...
 
   a {
-    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-l});
+    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
   }
 }
 ```
