@@ -3,6 +3,8 @@
 /*
  * Pulse theme variables.
  *
+ * Derived from Bootswatch Pulse (https://bootswatch.com/pulse/).
+ *
  * This file is compiled by `build.ts` into three CSS variants
  * per theme (the directory name is used as the theme name):
  *   - dist/<theme>/theme.min.css       (variables applied on :root)
@@ -20,17 +22,11 @@
  *   :root { @include pulse.variables; }
  */
 
-// --- scheme / background ---
+// --- scheme / text (hue tint only — Pitfall 5: do not emit L) ---
 $scheme-h: 260 !default;
 $scheme-s: 33% !default;
-$scheme-main-l: 100% !default;
-$background-l: 98% !default;
-
-// --- text ---
 $text-h: 256 !default;
 $text-s: 22% !default;
-$text-l: 15% !default;
-$text-strong-l: 10% !default;
 
 // --- primary / link ---
 $primary-h: 266 !default;
@@ -44,22 +40,30 @@ $primary-invert-l: 100% !default;
 $link-h: 266 !default;
 $link-s: 51% !default;
 $link-l: 39% !default;
+$link-invert-l: 100% !default;
+$link-on-scheme-l: $link-l !default;
 
-// --- admonition palette ---
+// --- admonition palette (Pitfall 3: Bootswatch Pulse uses #fff text on
+// every .btn-* color variant; force -invert-l to 100% to match) ---
 $info-h: 199 !default;
 $info-s: 100% !default;
 $info-l: 43% !default;
+$info-invert-l: 100% !default;
 $success-h: 143 !default;
 $success-s: 81% !default;
 $success-l: 40% !default;
+$success-invert-l: 100% !default;
 $warning-h: 38 !default;
 $warning-s: 87% !default;
 $warning-l: 53% !default;
+$warning-invert-l: 100% !default;
 $danger-h: 0 !default;
 $danger-s: 97% !default;
 $danger-l: 61% !default;
+$danger-invert-l: 100% !default;
 
-// --- radius ---
+// --- radius (flat by design; Bootswatch Pulse uses 0.375rem but Pulse
+// intentionally zeroes out radius to keep the silhouette square) ---
 $radius-small: 0 !default;
 $radius: 0 !default;
 
@@ -71,12 +75,8 @@ $radius-large: 0 !default;
 @mixin variables {
   --bulma-scheme-h: #{$scheme-h};
   --bulma-scheme-s: #{$scheme-s};
-  --bulma-scheme-main-l: #{$scheme-main-l};
-  --bulma-background-l: #{$background-l};
   --bulma-text-h: #{$text-h};
   --bulma-text-s: #{$text-s};
-  --bulma-text-l: #{$text-l};
-  --bulma-text-strong-l: #{$text-strong-l};
   --bulma-primary-h: #{$primary-h};
   --bulma-primary-s: #{$primary-s};
   --bulma-primary-l: #{$primary-l};
@@ -84,22 +84,113 @@ $radius-large: 0 !default;
   --bulma-link-h: #{$link-h};
   --bulma-link-s: #{$link-s};
   --bulma-link-l: #{$link-l};
+  --bulma-link-invert-l: #{$link-invert-l};
+  --bulma-link-on-scheme-l: #{$link-on-scheme-l};
   --bulma-info-h: #{$info-h};
   --bulma-info-s: #{$info-s};
   --bulma-info-l: #{$info-l};
+  --bulma-info-invert-l: #{$info-invert-l};
   --bulma-success-h: #{$success-h};
   --bulma-success-s: #{$success-s};
   --bulma-success-l: #{$success-l};
+  --bulma-success-invert-l: #{$success-invert-l};
   --bulma-warning-h: #{$warning-h};
   --bulma-warning-s: #{$warning-s};
   --bulma-warning-l: #{$warning-l};
+  --bulma-warning-invert-l: #{$warning-invert-l};
   --bulma-danger-h: #{$danger-h};
   --bulma-danger-s: #{$danger-s};
   --bulma-danger-l: #{$danger-l};
+  --bulma-danger-invert-l: #{$danger-invert-l};
   --bulma-radius-small: #{$radius-small};
   --bulma-radius: #{$radius};
   --bulma-radius-medium: #{$radius-medium};
   --bulma-radius-large: #{$radius-large};
+
+  // Pitfall 6: pin every --bulma-control-* on the shared control selector
+  // group so bare `.button` / `.input` / `.textarea` / `.select select` /
+  // `.pagination-*` and their icons resolve padding, border, height, and
+  // radius correctly. `.is-*` modifiers re-declare with higher
+  // specificity, so per-modifier behaviour is preserved.
+  .button,
+  .control,
+  .file-cta,
+  .file-name,
+  .input,
+  .pagination,
+  .pagination-ellipsis,
+  .pagination-link,
+  .pagination-next,
+  .pagination-previous,
+  .select,
+  .select select,
+  .textarea {
+    --bulma-control-border-width: 1px;
+    --bulma-control-height: 2.5em;
+    --bulma-control-padding-vertical: calc(0.5em - 1px);
+    --bulma-control-padding-horizontal: calc(0.75em - 1px);
+    --bulma-control-radius: #{$radius};
+  }
+
+  // Pitfall 8: `--bulma-link-text` is set on :root via an hsl(var(...))
+  // chain that can fall back to UA-default on `<a>`; pin literally.
+  a {
+    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-l});
+  }
+
+  // Bootswatch Pulse underlines body links; scope to .content so navbar /
+  // menu / buttons stay clean.
+  .content a {
+    text-decoration: underline;
+  }
+
+  // Pitfall 4: burger icon on .navbar.is-primary follows primary-invert.
+  .navbar.is-primary {
+    --bulma-navbar-burger-color: var(--bulma-primary-invert);
+  }
+
+  // Bulma's `.panel-icon` is sized 1em x 1em assuming a font-glyph child;
+  // when the child is a `<use href="#symbol">`-pattern SVG without a
+  // viewBox on the outer element (the shape the @11ty/font-awesome
+  // plugin emits), the symbol instance renders at its native viewBox
+  // coordinates and floats far to the right of the panel item. Pin both
+  // the outer SVG and its `<use>` instance to 1em so the symbol scales
+  // back into the icon slot.
+  .panel-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .panel-icon svg use {
+    width: 100%;
+    height: 100%;
+  }
+
+  // Pitfall 10: --bulma-shadow's hsl(var(--bulma-shadow-h), ...) chain
+  // on :root fails to resolve at .box / .card / .panel. Pin a literal
+  // two-stop shadow on those selectors (mirrors Bulma's light-mode
+  // default but with concrete hsla arguments).
+  .box,
+  .card,
+  .panel {
+    --bulma-shadow:
+      0 0.5em 1em -0.125em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%),
+      0 0 0 1px hsla(#{$scheme-h}, #{$scheme-s}, 4%, 2%);
+  }
+
+  // Pitfall 11: separator borders on `.card-footer` / `.panel-block` /
+  // `.panel-tabs` chain through --bulma-border-weak, and `.card-header`'s
+  // bottom rule chains through --bulma-scheme-h/s/invert-l. Both chains
+  // fail to resolve at the sub-elements. Pin literal hsl() at the .card
+  // / .panel level so children inherit a resolved value.
+  .card,
+  .panel {
+    --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 93%);
+  }
+
+  .card {
+    --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%);
+  }
 
   // Match Pulse's text-style link button: white background with link-colored
   // text and border, equivalent to the default .is-inverted appearance.
