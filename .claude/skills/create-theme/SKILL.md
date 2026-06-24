@@ -159,17 +159,23 @@ theme: <slug>
 
 ### B.3 — Start (or reuse) the dev server
 
-Per-worktree state lives in `.claude/dev-server.json` (gitignored). It records `{ "port": <n>, "owned": <bool> }`.
+Per-worktree state lives in `.claude/dev-server.json` (gitignored). It records `{ "port": <n>, "pid": <n>, "owned": <bool> }`. Tracking the PID alongside the port prevents accidental attachment to (or kill of) an unrelated process that happens to be listening on the recorded port.
 
-1. If `.claude/dev-server.json` exists and `lsof -ti :<recorded-port>` returns a listener, **reuse** the running server. Leave the file as-is (the `owned` flag from the previous run dictates cleanup behaviour).
-2. Otherwise, pick the first free port in `8080, 8081, 8082, ...` by probing `lsof -ti :<p>` and choosing one with no listener.
+1. If `.claude/dev-server.json` exists:
+   1. Read the recorded `pid` and verify the process is alive (`kill -0 <pid>` returns 0).
+   2. Confirm the recorded `pid` is still the listener on the recorded `port` (`lsof -ti :<port>` returns `<pid>`, or `ss -tlnp` shows the same pid).
+   3. Both checks pass → **reuse** the running server. Leave the file as-is.
+   4. Either check fails → treat the state as stale: ignore the file (it will be overwritten in step 4 below) and continue.
+2. Pick the first free port in `8080, 8081, 8082, ...` by probing `lsof -ti :<p>` and choosing one with no listener.
 3. Start the server in background from `apps/website/`:
    ```
    bun run dev -- --port=<port>
    ```
-   Use the Bash tool's `run_in_background` mode.
-4. Write `.claude/dev-server.json` with the chosen `port` and `owned: true`.
+   Use the Bash tool's `run_in_background` mode and capture the launched process PID (Bash tool's background-task id refers to the shell wrapper; resolve the actual listener with `lsof -ti :<port>` once the server is up).
+4. Write `.claude/dev-server.json` with `port`, the resolved listener `pid`, and `owned: true`.
 5. Announce the preview URL: `http://localhost:<port>/theme/<slug>/`.
+
+Cleanup (Phase F.2 and the user-abort fallback) must also verify `pid` before killing — `kill <pid>` is preferred over `kill $(lsof -ti :<port>)` so a third-party process that grabbed the port mid-session is not affected.
 
 ### B.4 — Initial build
 
@@ -272,7 +278,9 @@ EOF
 
 1. Invoke `/ship-pr`. Branch reconciliation, PR creation, CI wait, CodeRabbit handling, and conditional auto-merge are entirely owned by that skill — do not reimplement any part of it here.
 2. After `/ship-pr` returns control, read `.claude/dev-server.json`. If `owned: true`:
-   - Kill the listener on the recorded port: `kill $(lsof -ti :<port>)`.
+   - Verify the recorded `pid` is still alive and still owns the recorded `port` (same checks as Phase B.3 step 1).
+   - If both checks pass, kill that process: `kill <pid>` (do **not** fall back to `kill $(lsof -ti :<port>)` — the port could now belong to an unrelated process).
+   - If either check fails, leave the listener alone and just remove the file.
    - Remove `.claude/dev-server.json`.
 3. Report the merged PR URL (or current PR status if not auto-merged) to the user.
 
