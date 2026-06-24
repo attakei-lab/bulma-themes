@@ -168,7 +168,7 @@ Per-worktree state lives in `.claude/dev-server.json` (gitignored). It records `
    4. Either check fails → treat the state as stale: ignore the file (it will be overwritten in step 4 below) and continue.
 2. Pick the first free port in `8080, 8081, 8082, ...` by probing `lsof -ti :<p>` and choosing one with no listener.
 3. Start the server in background from `apps/website/`:
-   ```
+   ```shell
    bun run dev -- --port=<port>
    ```
    Use the Bash tool's `run_in_background` mode and capture the launched process PID (Bash tool's background-task id refers to the shell wrapper; resolve the actual listener with `lsof -ti :<port>` once the server is up).
