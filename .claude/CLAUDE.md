@@ -100,10 +100,11 @@ The repository interacts with the cloud services below. Each entry lists the ser
 ### GitHub
 
 - Role: repository hosting, Issues, Pull Requests, Actions (CI), Pages (website deploy).
-- Config: `.github/workflows/ci.yaml` (CI), `apps/website/eleventy.publish.config.ts` (Pages base URL).
+- Config: `.github/workflows/ci.yaml` (CI), `.github/workflows/website.yaml` (Pages deploy), `apps/website/eleventy.publish.config.ts` (Pages base URL).
 - Claude considerations:
   - Issue numbers feed `Refs: #N` commit footers (see Commit conventions) and `Related to #N` PR-body lines (see Pull requests).
   - The CI jobs `lint` and `build-test` must both be green before a PR can be merged.
+  - `website.yaml` deploys the built website to GitHub Pages on push to `dev`. It runs independently of `ci.yaml` — a build failure blocks deploy, but a lint failure does not. Pages source is set to "GitHub Actions" (`build_type: workflow`) at the repository level.
   - Pages is the only public deploy target; the publish config layers `url` / `base_path` over the defaults in `src/_data/site.ts`.
 
 ### Renovate
