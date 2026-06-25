@@ -21,6 +21,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: 'atsphinx/.github/actions/setup-aqua@main'
       - name: 'Configure dependencies'
         run: |
