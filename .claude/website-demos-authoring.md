@@ -122,17 +122,43 @@ Demo section.
 Blocks (composed with `.columns` so multiple sit at the same
 vertical position):
 
-| # | Block                | Surfaces                                                            |
-| - | -------------------- | ------------------------------------------------------------------- |
-| 1 | navbar               | Primary color, burger color (Pitfall 4), navbar-item link hue       |
-| 2 | card with image      | Radius, shadow tint (Pitfall 10), separator (Pitfall 11)            |
-| 3 | title hierarchy      | Heading family, heading color (Pitfall 7), title/subtitle pairing   |
-| 4 | prose with links     | Link hue (Pitfall 8), `.content a` decoration, heading-in-content   |
-| 5 | form group           | Bare `.input` chain (Pitfall 6), radius, `.button.is-link` specialty |
-| 6 | message              | Saturated brand color contrast, `delete` button on colored header   |
-| 7 | tabs                 | Tab modifier styling, brand-color underline                         |
-| 8 | breadcrumb + pagination | Bare `.pagination-link` chain (Pitfall 6), separator characters  |
-| 9 | color palette        | Primary + admonition palette spread (`.tags` row + `.buttons` row)  |
+Layout (`.columns` rows; left | right):
+
+| Row | Left half                  | Right half                                |
+| --- | -------------------------- | ----------------------------------------- |
+| 1   | card with image            | title hierarchy + prose with links (stacked) |
+| 2   | `.panel.is-primary`        | form group (label + input + textarea + buttons) |
+| 3   | message                    | tabs                                      |
+| 4   | breadcrumb (full width)                                                |
+| 5   | pagination (full width)                                                |
+| 6   | tags + buttons palette strip (full width)                              |
+
+Surfaces, by block:
+
+| Block                | Surfaces                                                            |
+| -------------------- | ------------------------------------------------------------------- |
+| card with image      | Radius, shadow tint (Pitfall 10), separator (Pitfall 11)            |
+| title hierarchy      | Heading family, heading color (Pitfall 7), title/subtitle pairing   |
+| prose with links     | Link hue (Pitfall 8), `.content a` decoration, heading-in-content   |
+| `.panel.is-primary`  | Brand color on a panel-heading, panel-icon (Pitfall 9), panel-block input chain |
+| form group           | Bare `.input` chain (Pitfall 6), radius, `.button.is-link` specialty |
+| message              | Saturated brand color contrast, `delete` button on colored header   |
+| tabs                 | Tab modifier styling, brand-color underline                         |
+| breadcrumb + pagination | Bare `.pagination-link` chain (Pitfall 6), separator characters  |
+| color palette        | Primary + admonition palette spread (`.tags` row + `.buttons` row)  |
+
+Title hierarchy is paired with prose **in the same column** so that
+the column height matches the visually heavy card on the opposite
+side. When tuning the title hierarchy length, keep prose stacked
+underneath rather than shifting it back to its own row — the
+`.columns` row collapses to single-column on narrow viewports, so
+the per-row content does not have to assume a fixed split.
+
+A navbar is intentionally **not** part of the Showcase: the page-level
+`_includes/nav.html` already sits above with `.navbar.is-primary`, so
+a second navbar inside the Showcase container reads as duplication and
+appears cropped at both ends (the `.section > .container` wrap clips
+the otherwise full-bleed navbar).
 
 When a new theme is added, no per-component changes to the
 preview snippets are required. The Showcase block list is shared
