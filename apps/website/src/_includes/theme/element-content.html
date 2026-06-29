@@ -1,13 +1,73 @@
 <div class="container mb-5">
   <h3 id="demo-element-content" class="subtitle">Content</h3>
   <div class="content">
-    <h2>An h2 heading</h2>
-    <p>This is a paragraph with <a>links</a>, <strong>strong</strong>, and <em>emphasis</em>.</p>
+    <h1>Heading h1</h1>
+    <h2>Heading h2</h2>
+    <h3>Heading h3</h3>
+    <h4>Heading h4</h4>
+    <h5>Heading h5</h5>
+    <h6>Heading h6</h6>
+
+    <p>
+      A paragraph with <a>a link</a>, <strong>strong</strong>,
+      <em>emphasis</em>, <code>inline code</code>, and
+      <del>strikethrough</del> text. Inline anchors surface the
+      theme's link hue (Pitfall 8) separately from the heading
+      color above.
+    </p>
+
+    <p>Ordered list:</p>
+    <ol>
+      <li>First ordered item</li>
+      <li>Second ordered item with <a>a link</a></li>
+      <li>Third ordered item</li>
+    </ol>
+
+    <p>Unordered list:</p>
     <ul>
-      <li>First item</li>
-      <li>Second item</li>
-      <li>Third item</li>
+      <li>First bullet</li>
+      <li>
+        Second bullet with nested children
+        <ul>
+          <li>Nested bullet</li>
+          <li>Another nested bullet</li>
+        </ul>
+      </li>
+      <li>Third bullet</li>
     </ul>
-    <blockquote>A blockquote.</blockquote>
+
+    <p>Definition list:</p>
+    <dl>
+      <dt>Term</dt>
+      <dd>Definition of the term.</dd>
+      <dt>Another term</dt>
+      <dd>Another definition with <a>a link</a>.</dd>
+    </dl>
+
+    <blockquote>
+      A blockquote containing body text and <a>a link inside</a>.
+      Block quotes inherit text color but the inner link should
+      still pick up the theme link hue.
+    </blockquote>
+
+    <p>Code block:</p>
+    <pre>function hello() {
+  return "world";
+}</pre>
+
+    <p>Table inside content:</p>
+    <table>
+      <thead>
+        <tr><th>Column</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>A</td><td>1</td></tr>
+        <tr><td>B</td><td>2</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <p>Text with <sub>subscript</sub> and <sup>superscript</sup>.</p>
   </div>
 </div>

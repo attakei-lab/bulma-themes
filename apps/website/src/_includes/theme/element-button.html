@@ -1,5 +1,7 @@
 <div class="container mb-5">
   <h3 id="demo-element-button" class="subtitle">Button</h3>
+
+  <p class="title is-6">Colors</p>
   <div class="buttons">
     <button class="button">Default</button>
     <button class="button is-primary">Primary</button>
@@ -8,11 +10,16 @@
     <button class="button is-success">Success</button>
     <button class="button is-warning">Warning</button>
     <button class="button is-danger">Danger</button>
+    <button class="button is-dark">Dark</button>
+    <button class="button is-light">Light</button>
   </div>
   <div class="buttons">
     <button class="button is-primary is-light">Primary light</button>
-    <button class="button is-primary" disabled>Disabled</button>
-    <button class="button is-primary is-loading">Loading</button>
+    <button class="button is-link is-light">Link light</button>
+    <button class="button is-info is-light">Info light</button>
+    <button class="button is-success is-light">Success light</button>
+    <button class="button is-warning is-light">Warning light</button>
+    <button class="button is-danger is-light">Danger light</button>
   </div>
 
   <p class="title is-6">Sizes</p>
@@ -23,50 +30,88 @@
     <button class="button is-large">Large</button>
   </div>
 
-  <p class="title is-6">Outlined</p>
-  <div class="buttons">
-    <button class="button is-primary is-outlined">Primary</button>
-    <button class="button is-link is-outlined">Link</button>
-    <button class="button is-info is-outlined">Info</button>
-    <button class="button is-success is-outlined">Success</button>
-    <button class="button is-warning is-outlined">Warning</button>
-    <button class="button is-danger is-outlined">Danger</button>
-  </div>
-
-  <p class="title is-6">Inverted</p>
-  <div class="buttons">
-    <button class="button is-primary is-inverted">Primary</button>
-    <button class="button is-link is-inverted">Link</button>
-    <button class="button is-info is-inverted">Info</button>
-    <button class="button is-success is-inverted">Success</button>
-    <button class="button is-warning is-inverted">Warning</button>
-    <button class="button is-danger is-inverted">Danger</button>
-  </div>
-
   <p class="title is-6">States</p>
   <div class="buttons">
+    <button class="button is-primary">Normal</button>
     <button class="button is-primary is-hovered">Hover</button>
     <button class="button is-primary is-focused">Focus</button>
     <button class="button is-primary is-active">Active</button>
+    <button class="button is-primary" disabled>Disabled</button>
+    <button class="button is-primary is-loading">Loading</button>
   </div>
 
-  <p class="title is-6">With icon</p>
+  <p class="title is-6">Modifiers</p>
   <div class="buttons">
-    <button class="button is-primary">
-      <span class="icon"><i class="fas fa-check"></i></span>
-      <span>Save</span>
-    </button>
-    <button class="button is-danger">
-      <span class="icon"><i class="fas fa-xmark"></i></span>
-      <span>Delete</span>
-    </button>
+    <button class="button is-primary is-outlined">Primary outlined</button>
+    <button class="button is-link is-outlined">Link outlined</button>
+    <button class="button is-info is-outlined">Info outlined</button>
+    <button class="button is-success is-outlined">Success outlined</button>
+    <button class="button is-warning is-outlined">Warning outlined</button>
+    <button class="button is-danger is-outlined">Danger outlined</button>
+  </div>
+  <div class="buttons">
+    <button class="button is-primary is-inverted">Primary inverted</button>
+    <button class="button is-link is-inverted">Link inverted</button>
+    <button class="button is-info is-inverted">Info inverted</button>
+    <button class="button is-success is-inverted">Success inverted</button>
+    <button class="button is-warning is-inverted">Warning inverted</button>
+    <button class="button is-danger is-inverted">Danger inverted</button>
+  </div>
+  <div class="buttons">
+    <button class="button is-rounded">Rounded</button>
+    <button class="button is-primary is-rounded">Primary rounded</button>
+    <button class="button is-link is-rounded is-outlined">Outlined rounded</button>
+  </div>
+  <div class="buttons">
     <button class="button">
-      <span>Search</span>
-      <span class="icon"><i class="fas fa-magnifying-glass"></i></span>
+      <span class="icon"><i class="fas fa-check"></i></span>
+      <span>With icon</span>
+    </button>
+    <button class="button is-primary">
+      <span>Trailing icon</span>
+      <span class="icon"><i class="fas fa-arrow-right"></i></span>
     </button>
     <button class="button is-link is-outlined">
       <span class="icon"><i class="fas fa-upload"></i></span>
       <span>Upload</span>
     </button>
   </div>
+  <p>
+    <button class="button is-static">Static (read-only)</button>
+  </p>
+
+  <p class="title is-6">In context</p>
+  <div class="field has-addons mb-3">
+    <p class="control">
+      <button class="button">
+        <span class="icon"><i class="fas fa-align-left"></i></span>
+      </button>
+    </p>
+    <p class="control">
+      <button class="button">
+        <span class="icon"><i class="fas fa-align-center"></i></span>
+      </button>
+    </p>
+    <p class="control">
+      <button class="button">
+        <span class="icon"><i class="fas fa-align-right"></i></span>
+      </button>
+    </p>
+  </div>
+  <div class="field has-addons mb-3">
+    <p class="control">
+      <input class="input" type="text" placeholder="Find a repo">
+    </p>
+    <p class="control">
+      <button class="button is-primary">Search</button>
+    </p>
+  </div>
+  <div class="buttons has-addons mb-3">
+    <button class="button is-primary is-selected">Day</button>
+    <button class="button">Week</button>
+    <button class="button">Month</button>
+  </div>
+  <p>
+    <button class="button is-fullwidth is-primary">Full-width button</button>
+  </p>
 </div>
