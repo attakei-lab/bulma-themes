@@ -19,6 +19,11 @@
     #demo-component-dropdown ~ .dropdown.is-active {
       margin-bottom: 10rem;
     }
+    /* Side menu spans overview / showcase / demo via sticky positioning */
+    .theme-side-menu {
+      position: sticky;
+      top: 1rem;
+    }
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -73,48 +78,50 @@
       <p class="subtitle">{{ description }}</p>
     </div>
   </section>
-  <section class="section" id="overview">
-    <div class="container">
-      <h2 class="title pl-4">Overview</h2>
-      <div class="content">
-        {{ content | safe }}
-      </div>
-    </div>
-  </section>
-  <section class="section" id="showcase">
-    {% include "theme/_showcase.html" %}
-  </section>
-  <section class="section" id="demo">
+  <section class="section">
     <div class="container">
       <div class="columns">
         <div class="column is-2">
-          {% include "theme/_menu.html" %}
+          <div class="theme-side-menu">
+            {% include "theme/_menu.html" %}
+          </div>
         </div>
         <div class="column">
-          <h2 class="title pl-4">Demo</h2>
-          {% include "theme/element-box.html" %}
-          {% include "theme/element-button.html" %}
-          {% include "theme/element-content.html" %}
-          {% include "theme/element-icon.html" %}
-          {% include "theme/element-notification.html" %}
-          {% include "theme/element-progress.html" %}
-          {% include "theme/element-table.html" %}
-          {% include "theme/element-tag.html" %}
-          {% include "theme/element-title.html" %}
-          {% include "theme/component-breadcrumb.html" %}
-          {% include "theme/component-card.html" %}
-          {% include "theme/component-dropdown.html" %}
-          {% include "theme/component-message.html" %}
-          {% include "theme/component-modal.html" %}
-          {% include "theme/component-pagination.html" %}
-          {% include "theme/component-panel.html" %}
-          {% include "theme/component-tabs.html" %}
-          {% include "theme/form-general.html" %}
-          {% include "theme/form-input.html" %}
-          {% include "theme/form-select.html" %}
-          {% include "theme/form-checkbox.html" %}
-          {% include "theme/form-radio.html" %}
-          {% include "theme/form-file.html" %}
+          <div id="overview" class="mb-6">
+            <h2 class="title pl-4">Overview</h2>
+            <div class="content">
+              {{ content | safe }}
+            </div>
+          </div>
+          <div id="showcase" class="mb-6">
+            {% include "theme/_showcase.html" %}
+          </div>
+          <div id="demo">
+            <h2 class="title pl-4">Demo</h2>
+            {% include "theme/element-box.html" %}
+            {% include "theme/element-button.html" %}
+            {% include "theme/element-content.html" %}
+            {% include "theme/element-icon.html" %}
+            {% include "theme/element-notification.html" %}
+            {% include "theme/element-progress.html" %}
+            {% include "theme/element-table.html" %}
+            {% include "theme/element-tag.html" %}
+            {% include "theme/element-title.html" %}
+            {% include "theme/component-breadcrumb.html" %}
+            {% include "theme/component-card.html" %}
+            {% include "theme/component-dropdown.html" %}
+            {% include "theme/component-message.html" %}
+            {% include "theme/component-modal.html" %}
+            {% include "theme/component-pagination.html" %}
+            {% include "theme/component-panel.html" %}
+            {% include "theme/component-tabs.html" %}
+            {% include "theme/form-general.html" %}
+            {% include "theme/form-input.html" %}
+            {% include "theme/form-select.html" %}
+            {% include "theme/form-checkbox.html" %}
+            {% include "theme/form-radio.html" %}
+            {% include "theme/form-file.html" %}
+          </div>
         </div>
       </div>
     </div>
