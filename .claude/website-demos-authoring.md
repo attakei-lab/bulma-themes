@@ -77,10 +77,30 @@ A per-component `Showcase` subsection is **not** part of the
 dictionary. Theme-characteristic surfacing is concentrated in the
 integrated top Showcase section (see below).
 
-A subsection's heading is rendered as `<p class="title is-6">Label</p>`
-inside the existing `<div class="container mb-5">`. The component
-title at the top of the file remains `<h3 class="subtitle">` so it
-keeps anchoring the sidebar links.
+Class hierarchy inside a preview snippet:
+
+- **Component title** (top of the file): `<h3 id="demo-…" class="subtitle is-4">…</h3>`.
+  Bulma's `.subtitle.is-4` (1.5rem, lighter weight) reads as a
+  "secondary heading" beneath the page-level `<h2 class="title">Demo</h2>`
+  while sitting clearly above the `.heading` subsections below it.
+  Size (1.5rem) is intentionally kept the same as `.title.is-4` so
+  the component title remains skim-able when 23 components stack;
+  weight is lighter so the long Demo column does not feel visually
+  heavy. The default `.subtitle` size (`.subtitle.is-5`, 1.25rem) was
+  rejected because the size difference vs the uppercase-caps
+  `.heading` below was too subtle to read as a parent heading.
+- **Subsection heading**: `<p class="heading">Label</p>` — Bulma's
+  small-caps caption style. Picked deliberately so it doesn't collide
+  with the `.title is-N` / `.subtitle is-N` classes the previews
+  themselves use (e.g., `element-title.html`'s body content also
+  renders `.title is-6`; the subsection heading must read as
+  something other than a preview row).
+  Spacing for these subsection headings is widened via a scoped
+  rule in `_layouts/theme.html` (`#demo .heading { margin-top: 1.5rem;
+  margin-bottom: 0.75rem; }`) so labels do not sit flush against
+  surrounding content. Bulma's `.heading` default leaves only 5px
+  margin-bottom and no margin-top, which reads as cramped inside a
+  long demo block.
 
 ## Default-first cell rule
 
