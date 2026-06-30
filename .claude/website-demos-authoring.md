@@ -101,6 +101,14 @@ Class hierarchy inside a preview snippet:
   surrounding content. Bulma's `.heading` default leaves only 5px
   margin-bottom and no margin-top, which reads as cramped inside a
   long demo block.
+- **Per-variant label** (Modifiers / In context, when multiple
+  distinct variants are stacked in one subsection):
+  `<p><code>.is-striped.is-hoverable</code></p>` — a paragraph with
+  inline `<code>` listing the Bulma classes (or other identifying
+  description) of the variant immediately below it. Sizes / Colors /
+  States don't need per-variant labels because each cell already
+  carries its own inline text label (`Small`, `Primary`, `Hover`,
+  etc.).
 
 ## Default-first cell rule
 
