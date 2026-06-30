@@ -1,17 +1,112 @@
 <div class="container mb-5">
   <h3 id="demo-component-card" class="subtitle is-4">Card</h3>
+
+  <p class="heading">Default</p>
   <div class="card">
     <div class="card-content">
-      <p class="title is-4">Card title</p>
-      <p class="subtitle is-6">Subtitle</p>
+      <p class="title is-4">Default card</p>
+      <p class="subtitle is-6">No header, no image, no footer</p>
       <div class="content">
-        Some card body text.
+        Minimal card with content only. Surfaces the card's body
+        padding, radius, and shadow without other chrome.
       </div>
     </div>
-    <footer class="card-footer">
-      <a href="#" class="card-footer-item">Save</a>
-      <a href="#" class="card-footer-item">Edit</a>
-      <a href="#" class="card-footer-item">Delete</a>
-    </footer>
+  </div>
+
+  <p class="heading">Modifiers</p>
+  <div class="columns is-multiline">
+    <div class="column is-half">
+      <p><code>.card-header</code> only</p>
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">With header</p>
+          <button class="card-header-icon" aria-label="more options">
+            <span class="icon"><i class="fas fa-ellipsis-vertical"></i></span>
+          </button>
+        </header>
+        <div class="card-content">
+          <p>Card with a header bar including a header icon.</p>
+        </div>
+      </div>
+    </div>
+    <div class="column is-half">
+      <p><code>.card-footer</code> only</p>
+      <div class="card">
+        <div class="card-content">
+          <p class="title is-5">With footer</p>
+          <p class="subtitle is-6">Action items below the body</p>
+          <div class="content">Card body text.</div>
+        </div>
+        <footer class="card-footer">
+          <a class="card-footer-item">Save</a>
+          <a class="card-footer-item">Edit</a>
+          <a class="card-footer-item">Delete</a>
+        </footer>
+      </div>
+    </div>
+    <div class="column is-half">
+      <p><code>.card-image</code> only</p>
+      <div class="card">
+        <div class="card-image">
+          <figure class="image is-4by3" style="background: linear-gradient(135deg, var(--bulma-primary), var(--bulma-link));"></figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5">With card-image</p>
+          <p class="subtitle is-6">Image strip above the body</p>
+        </div>
+      </div>
+    </div>
+    <div class="column is-half">
+      <p><code>.card-image + .card-header + .card-content + .card-footer</code> (full)</p>
+      <div class="card">
+        <div class="card-image">
+          <figure class="image is-4by3" style="background: linear-gradient(135deg, var(--bulma-primary), var(--bulma-link));"></figure>
+        </div>
+        <header class="card-header">
+          <p class="card-header-title">Full card</p>
+          <button class="card-header-icon" aria-label="more options">
+            <span class="icon"><i class="fas fa-ellipsis-vertical"></i></span>
+          </button>
+        </header>
+        <div class="card-content">
+          <p class="title is-5">Card title</p>
+          <p class="subtitle is-6">Image + header + content + footer</p>
+          <div class="content">All sub-components combined.</div>
+        </div>
+        <footer class="card-footer">
+          <a class="card-footer-item">Save</a>
+          <a class="card-footer-item">Share</a>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <p class="heading">In context</p>
+  <p><code>.columns.is-one-third</code> (3-column grid)</p>
+  <div class="columns">
+    <div class="column is-one-third">
+      <div class="card">
+        <div class="card-content">
+          <p class="title is-5">Card A</p>
+          <p class="subtitle is-6">Inside .columns is-one-third</p>
+        </div>
+      </div>
+    </div>
+    <div class="column is-one-third">
+      <div class="card">
+        <div class="card-content">
+          <p class="title is-5">Card B</p>
+          <p class="subtitle is-6">Beside its siblings</p>
+        </div>
+      </div>
+    </div>
+    <div class="column is-one-third">
+      <div class="card">
+        <div class="card-content">
+          <p class="title is-5">Card C</p>
+          <p class="subtitle is-6">Third card in the row</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
