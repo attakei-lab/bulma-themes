@@ -1,5 +1,7 @@
 <div class="container mb-5">
   <h3 id="demo-form-input" class="subtitle is-4">Input</h3>
+
+  <p class="heading">Colors</p>
   <div class="field">
     <div class="control">
       <input class="input" type="text" placeholder="Default">
@@ -12,40 +14,119 @@
   </div>
   <div class="field">
     <div class="control">
+      <input class="input is-info" type="text" placeholder="Info">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input class="input is-success" type="text" placeholder="Success">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input class="input is-warning" type="text" placeholder="Warning">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
       <input class="input is-danger" type="text" placeholder="Danger">
     </div>
   </div>
+
+  <p class="heading">Sizes</p>
+  <div class="field">
+    <div class="control">
+      <input class="input is-small" type="text" placeholder="Small">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input class="input" type="text" placeholder="Normal">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input class="input is-medium" type="text" placeholder="Medium">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input class="input is-large" type="text" placeholder="Large">
+    </div>
+  </div>
+
+  <p class="heading">States</p>
+  <div class="field">
+    <div class="control">
+      <input class="input" type="text" placeholder="Normal">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input class="input is-hovered" type="text" placeholder="Hovered">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input class="input is-focused" type="text" placeholder="Focused">
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input class="input" type="text" placeholder="Disabled" disabled>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input class="input" type="text" value="Read-only" readonly>
+    </div>
+  </div>
+
+  <p class="heading">Modifiers</p>
+  <p><code>.is-rounded</code></p>
+  <div class="field">
+    <div class="control">
+      <input class="input is-rounded" type="text" placeholder="Rounded">
+    </div>
+  </div>
+  <p><code>textarea</code></p>
   <div class="field">
     <div class="control">
       <textarea class="textarea" placeholder="Textarea"></textarea>
     </div>
   </div>
 
-  <p class="heading">With help text</p>
+  <p class="heading">In context</p>
+  <p><code>.field</code> with label + .control.has-icons + .help (success)</p>
   <div class="field">
     <label class="label">Email</label>
     <div class="control has-icons-left has-icons-right">
       <input class="input is-success" type="text" value="hello@example.com" style="color: var(--bulma-success);">
-      <span class="icon is-small is-left">
-        <i class="fas fa-envelope"></i>
-      </span>
-      <span class="icon is-small is-right">
-        <i class="fas fa-check"></i>
-      </span>
+      <span class="icon is-small is-left"><i class="fas fa-envelope"></i></span>
+      <span class="icon is-small is-right"><i class="fas fa-check"></i></span>
     </div>
     <p class="help is-success">This email is available</p>
   </div>
+  <p><code>.field</code> with label + .control.has-icons + .help (danger)</p>
   <div class="field">
     <label class="label">Username</label>
     <div class="control has-icons-left has-icons-right">
       <input class="input is-danger" type="text" value="user@me!" style="color: var(--bulma-danger);">
-      <span class="icon is-small is-left">
-        <i class="fas fa-user"></i>
-      </span>
-      <span class="icon is-small is-right">
-        <i class="fas fa-triangle-exclamation"></i>
-      </span>
+      <span class="icon is-small is-left"><i class="fas fa-user"></i></span>
+      <span class="icon is-small is-right"><i class="fas fa-triangle-exclamation"></i></span>
     </div>
     <p class="help is-danger">Invalid characters in the username</p>
+  </div>
+  <p><code>.field.has-addons</code> (select + input + button)</p>
+  <div class="field has-addons">
+    <p class="control">
+      <span class="select"><select><option>https://</option><option>http://</option></select></span>
+    </p>
+    <p class="control is-expanded">
+      <input class="input" type="text" placeholder="example.com">
+    </p>
+    <p class="control">
+      <button class="button is-info">Save</button>
+    </p>
   </div>
 </div>
