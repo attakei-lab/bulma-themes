@@ -21,7 +21,7 @@ Bulma component through a small set of matrix subsections.
 
 ## Directory layout
 
-```
+```text
 apps/website/src/_includes/theme/
 ├── _menu.html          ← side nav (structural)
 ├── _showcase.html      ← integrated top Showcase (structural)
@@ -33,7 +33,7 @@ apps/website/src/_includes/theme/
 Eleventy renders these via `apps/website/src/_layouts/theme.html`,
 which composes the page as:
 
-```
+```text
 hero (theme title)
 └── overview (markdown content from the theme page itself)
 └── showcase (include "theme/_showcase.html")
@@ -155,9 +155,9 @@ vertical position:
 | 1   | card with image            | title hierarchy + prose with links (stacked) |
 | 2   | `.panel.is-primary`        | form group (label + input + textarea + buttons) |
 | 3   | message                    | tabs                                      |
-| 4   | breadcrumb (full width)                                                |
-| 5   | pagination (full width)                                                |
-| 6   | tags + buttons palette strip (full width)                              |
+| 4   | breadcrumb (full width)                                                |||
+| 5   | pagination (full width)                                                |||
+| 6   | tags + buttons palette strip (full width)                              |||
 
 Surfaces, by block:
 
