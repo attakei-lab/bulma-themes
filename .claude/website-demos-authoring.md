@@ -147,10 +147,8 @@ landing on `/theme/<slug>/` sees the theme's overall look
 immediately, without having to scroll through the matrix-style
 Demo section.
 
-Blocks (composed with `.columns` so multiple sit at the same
-vertical position):
-
-Layout (`.columns` rows; left | right):
+Blocks are composed with `.columns` so multiple sit at the same
+vertical position:
 
 | Row | Left half                  | Right half                                |
 | --- | -------------------------- | ----------------------------------------- |
@@ -198,7 +196,7 @@ theme's CSS.
 1. Create `_includes/theme/<prefix>-<bulma-name>.html` (no
    underscore prefix — it's a preview).
 2. Open with `<div class="container mb-5">` and an anchor
-   `<h3 id="demo-<prefix>-<bulma-name>" class="subtitle">…</h3>`.
+   `<h3 id="demo-<prefix>-<bulma-name>" class="subtitle is-4">…</h3>`.
 3. Emit the matrix subsections that apply, in the dictionary order
    (`Colors` → `Sizes` → `States` → `Modifiers` → `In context`).
 4. Add an `{% include %}` line in `_layouts/theme.html` next to
