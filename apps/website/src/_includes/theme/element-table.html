@@ -1,5 +1,24 @@
 <div class="container mb-5">
-  <h3 id="demo-element-table" class="subtitle">Table</h3>
+  <h3 id="demo-element-table" class="subtitle is-4">Table</h3>
+
+  <p class="heading">Default</p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Alice</td><td>Designer</td></tr>
+      <tr><td>2</td><td>Bob</td><td>Developer</td></tr>
+      <tr><td>3</td><td>Carol</td><td>Product</td></tr>
+    </tbody>
+  </table>
+
+  <p class="heading">Modifiers</p>
+  <p><code>.is-striped.is-hoverable.is-fullwidth</code> + <code>tfoot</code></p>
   <table class="table is-striped is-hoverable is-fullwidth">
     <thead>
       <tr>
@@ -9,25 +28,35 @@
       </tr>
     </thead>
     <tbody>
+      <tr><td>1</td><td>Alice</td><td>Designer</td></tr>
+      <tr><td>2</td><td>Bob</td><td>Developer</td></tr>
+      <tr><td>3</td><td>Carol</td><td>Product</td></tr>
+    </tbody>
+    <tfoot>
       <tr>
-        <td>1</td>
-        <td>Alice</td>
-        <td>Designer</td>
+        <th>#</th>
+        <th>Name</th>
+        <th>Role</th>
       </tr>
+    </tfoot>
+  </table>
+  <p><code>.is-bordered.is-narrow.is-fullwidth</code></p>
+  <table class="table is-bordered is-narrow is-fullwidth">
+    <thead>
       <tr>
-        <td>2</td>
-        <td>Bob</td>
-        <td>Developer</td>
+        <th>#</th>
+        <th>Name</th>
+        <th>Role</th>
       </tr>
-      <tr>
-        <td>3</td>
-        <td>Carol</td>
-        <td>Product</td>
-      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Alice</td><td>Designer</td></tr>
+      <tr><td>2</td><td>Bob</td><td>Developer</td></tr>
     </tbody>
   </table>
 
-  <p class="title is-6">With row selection</p>
+  <p class="heading">States</p>
+  <p><code>tr.is-selected</code> (selected row)</p>
   <table class="table is-striped is-hoverable is-fullwidth">
     <thead>
       <tr>
@@ -37,25 +66,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>1</td>
-        <td>Alice</td>
-        <td>Designer</td>
-      </tr>
-      <tr class="is-selected">
-        <td>2</td>
-        <td>Bob</td>
-        <td>Developer</td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td>Carol</td>
-        <td>Product</td>
-      </tr>
+      <tr><td>1</td><td>Alice</td><td>Designer</td></tr>
+      <tr class="is-selected"><td>2</td><td>Bob</td><td>Developer</td></tr>
+      <tr><td>3</td><td>Carol</td><td>Product</td></tr>
     </tbody>
   </table>
 
-  <p class="title is-6">Colors</p>
+  <p class="heading">Colors</p>
   <table class="table is-fullwidth">
     <thead>
       <tr>
@@ -64,33 +81,47 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="is-primary">
-        <th>Primary</th>
-        <td>is-primary</td>
+      <tr><th>Default</th><td>(no row modifier)</td></tr>
+      <tr class="is-primary"><th>Primary</th><td>is-primary</td></tr>
+      <tr class="is-info"><th>Info</th><td>is-info</td></tr>
+      <tr class="is-success"><th>Success</th><td>is-success</td></tr>
+      <tr class="is-warning"><th>Warning</th><td>is-warning</td></tr>
+      <tr class="is-danger"><th>Danger</th><td>is-danger</td></tr>
+      <tr class="is-light"><th>Light</th><td>is-light</td></tr>
+      <tr class="is-dark"><th>Dark</th><td>is-dark</td></tr>
+    </tbody>
+  </table>
+
+  <p class="heading">In context</p>
+  <p><code>.input</code> + <code>.button</code> inside <code>td</code></p>
+  <table class="table is-fullwidth">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Action</th>
       </tr>
-      <tr class="is-info">
-        <th>Info</th>
-        <td>is-info</td>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><input class="input is-small" type="text" value="Alice"></td>
+        <td>
+          <div class="buttons are-small">
+            <button class="button is-primary">Save</button>
+            <button class="button">Cancel</button>
+          </div>
+        </td>
       </tr>
-      <tr class="is-success">
-        <th>Success</th>
-        <td>is-success</td>
-      </tr>
-      <tr class="is-warning">
-        <th>Warning</th>
-        <td>is-warning</td>
-      </tr>
-      <tr class="is-danger">
-        <th>Danger</th>
-        <td>is-danger</td>
-      </tr>
-      <tr class="is-light">
-        <th>Light</th>
-        <td>is-light</td>
-      </tr>
-      <tr class="is-dark">
-        <th>Dark</th>
-        <td>is-dark</td>
+      <tr>
+        <td>2</td>
+        <td><input class="input is-small" type="text" value="Bob"></td>
+        <td>
+          <div class="buttons are-small">
+            <button class="button is-primary">Save</button>
+            <button class="button">Cancel</button>
+          </div>
+        </td>
       </tr>
     </tbody>
   </table>

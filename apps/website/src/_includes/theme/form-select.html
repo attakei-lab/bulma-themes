@@ -1,11 +1,13 @@
 <div class="container mb-5">
-  <h3 id="demo-form-select" class="subtitle">Select</h3>
+  <h3 id="demo-form-select" class="subtitle is-4">Select</h3>
+
+  <p class="heading">Colors</p>
   <div class="field">
     <div class="control">
       <div class="select">
         <select>
           <option>Default</option>
-          <option>With options</option>
+          <option>Option two</option>
         </select>
       </div>
     </div>
@@ -13,10 +15,138 @@
   <div class="field">
     <div class="control">
       <div class="select is-primary">
-        <select>
-          <option>Primary</option>
+        <select><option>Primary</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <div class="select is-info">
+        <select><option>Info</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <div class="select is-success">
+        <select><option>Success</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <div class="select is-warning">
+        <select><option>Warning</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <div class="select is-danger">
+        <select><option>Danger</option></select>
+      </div>
+    </div>
+  </div>
+
+  <p class="heading">Sizes</p>
+  <div class="field">
+    <div class="control">
+      <div class="select is-small">
+        <select><option>Small</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <div class="select">
+        <select><option>Normal</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <div class="select is-medium">
+        <select><option>Medium</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <div class="select is-large">
+        <select><option>Large</option></select>
+      </div>
+    </div>
+  </div>
+
+  <p class="heading">States</p>
+  <div class="field">
+    <div class="control">
+      <div class="select is-hovered">
+        <select><option>Hovered</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <div class="select is-focused">
+        <select><option>Focused</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <div class="select">
+        <select disabled><option>Disabled</option></select>
+      </div>
+    </div>
+  </div>
+
+  <p class="heading">Modifiers</p>
+  <p><code>.is-rounded</code></p>
+  <div class="field">
+    <div class="control">
+      <div class="select is-rounded">
+        <select><option>Rounded</option></select>
+      </div>
+    </div>
+  </div>
+  <p><code>.is-multiple</code></p>
+  <div class="field">
+    <div class="control">
+      <div class="select is-multiple">
+        <select multiple size="4">
+          <option>Item 1</option>
+          <option>Item 2</option>
+          <option>Item 3</option>
+          <option>Item 4</option>
         </select>
       </div>
+    </div>
+  </div>
+
+  <p class="heading">In context</p>
+  <p><code>.field</code> with label + .control.has-icons-left</p>
+  <div class="field">
+    <label class="label">Country</label>
+    <div class="control has-icons-left">
+      <div class="select">
+        <select>
+          <option>Select dropdown</option>
+          <option>With options</option>
+        </select>
+      </div>
+      <span class="icon is-small is-left"><i class="fas fa-globe"></i></span>
+    </div>
+  </div>
+  <p><code>.field.has-addons</code> (select + input)</p>
+  <div class="field has-addons">
+    <div class="control">
+      <div class="select">
+        <select><option>USD</option><option>EUR</option></select>
+      </div>
+    </div>
+    <div class="control">
+      <input class="input" type="text" placeholder="Amount">
     </div>
   </div>
 </div>

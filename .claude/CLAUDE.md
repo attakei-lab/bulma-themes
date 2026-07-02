@@ -192,3 +192,7 @@ Pull request creation and post-creation handling — CI watch, CodeRabbit review
 ## Themes authoring
 
 @./themes-authoring.md
+
+## Website demos authoring
+
+@./website-demos-authoring.md

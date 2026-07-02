@@ -1,0 +1,182 @@
+<div class="container">
+  <div class="columns">
+    <div class="column is-half">
+      <div class="card">
+        <div class="card-image">
+          <figure class="image is-16by9" style="background: linear-gradient(135deg, var(--bulma-primary), var(--bulma-link));"></figure>
+        </div>
+        <header class="card-header">
+          <p class="card-header-title">Featured card</p>
+          <button class="card-header-icon" aria-label="more options">
+            <span class="icon"><i class="fas fa-ellipsis-vertical"></i></span>
+          </button>
+        </header>
+        <div class="card-content">
+          <p class="title is-5">Card title</p>
+          <p class="subtitle is-6">Sub-title in a card</p>
+          <div class="content">
+            Card body text with <a>an inline link</a>. The card surfaces
+            the theme's radius, shadow, and inner separator treatments.
+          </div>
+        </div>
+        <footer class="card-footer">
+          <a class="card-footer-item">Save</a>
+          <a class="card-footer-item">Share</a>
+          <a class="card-footer-item">Delete</a>
+        </footer>
+      </div>
+    </div>
+    <div class="column is-half">
+      <p class="title is-1 is-spaced">Title 1</p>
+      <p class="subtitle is-3">Subtitle 3</p>
+      <p class="title is-3 is-spaced">Title 3</p>
+      <p class="subtitle is-5">Subtitle 5</p>
+      <p class="title is-5 is-spaced">Title 5</p>
+      <p class="subtitle is-6">Subtitle 6</p>
+      <div class="content">
+        <h3>Section heading</h3>
+        <p>
+          Body paragraph with <a>configured link hue</a>, which may or
+          may not match the <a>primary brand color</a>. Following the
+          <a href="#">third link</a> shows whether link, hover, and
+          visited states share a tone.
+        </p>
+        <ul>
+          <li>List item including <a>another link</a></li>
+          <li>Plain list item</li>
+        </ul>
+        <blockquote>
+          Block quotes inherit text color; <a>links inside</a> still
+          follow the theme.
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column is-half">
+      <nav class="panel is-primary">
+        <p class="panel-heading">Repositories</p>
+        <div class="panel-block">
+          <p class="control has-icons-left">
+            <input class="input" type="text" placeholder="Search">
+            <span class="icon is-small is-left"><i class="fas fa-search"></i></span>
+          </p>
+        </div>
+        <p class="panel-tabs">
+          <a class="is-active">All</a>
+          <a>Public</a>
+          <a>Private</a>
+        </p>
+        <a class="panel-block is-active">
+          <span class="panel-icon"><i class="fas fa-book"></i></span>
+          bulma
+        </a>
+        <a class="panel-block">
+          <span class="panel-icon"><i class="fas fa-book"></i></span>
+          eleventy
+        </a>
+        <a class="panel-block">
+          <span class="panel-icon"><i class="fas fa-code-branch"></i></span>
+          sass
+        </a>
+      </nav>
+    </div>
+    <div class="column is-half">
+      <div class="field">
+        <label class="label">Email</label>
+        <div class="control has-icons-left">
+          <input class="input" type="email" placeholder="you@example.com">
+          <span class="icon is-small is-left"><i class="fas fa-envelope"></i></span>
+        </div>
+        <p class="help">We never share your address.</p>
+      </div>
+      <div class="field">
+        <label class="label">Message</label>
+        <div class="control">
+          <textarea class="textarea" placeholder="Say hi…" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-primary">Submit</button>
+        </div>
+        <div class="control">
+          <button class="button is-link">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column is-half">
+      <article class="message is-primary">
+        <div class="message-header">
+          <p>Theme message</p>
+          <button class="delete" aria-label="delete"></button>
+        </div>
+        <div class="message-body">
+          A saturated header with text-on-primary contrast and a
+          plain-toned body. Surfaces how the theme handles "color on
+          color" type.
+        </div>
+      </article>
+    </div>
+    <div class="column is-half">
+      <div class="tabs is-boxed">
+        <ul>
+          <li class="is-active"><a>Overview</a></li>
+          <li><a>Specifications</a></li>
+          <li><a>Reviews</a></li>
+          <li><a>Support</a></li>
+        </ul>
+      </div>
+      <div class="content">
+        Tabs surface the active-tab brand color and the boxed
+        modifier's radius/border treatment.
+      </div>
+    </div>
+  </div>
+
+  <nav class="breadcrumb" aria-label="breadcrumbs">
+    <ul>
+      <li><a>Home</a></li>
+      <li><a>Library</a></li>
+      <li><a>Showcase</a></li>
+      <li class="is-active"><a aria-current="page">Current page</a></li>
+    </ul>
+  </nav>
+
+  <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+    <a class="pagination-previous">Previous</a>
+    <a class="pagination-next">Next</a>
+    <ul class="pagination-list">
+      <li><a class="pagination-link">1</a></li>
+      <li><span class="pagination-ellipsis">&hellip;</span></li>
+      <li><a class="pagination-link">3</a></li>
+      <li><a class="pagination-link is-current" aria-current="page">4</a></li>
+      <li><a class="pagination-link">5</a></li>
+      <li><span class="pagination-ellipsis">&hellip;</span></li>
+      <li><a class="pagination-link">9</a></li>
+    </ul>
+  </nav>
+
+  <div class="tags mt-5">
+    <span class="tag">Default</span>
+    <span class="tag is-primary">Primary</span>
+    <span class="tag is-link">Link</span>
+    <span class="tag is-info">Info</span>
+    <span class="tag is-success">Success</span>
+    <span class="tag is-warning">Warning</span>
+    <span class="tag is-danger">Danger</span>
+  </div>
+  <div class="buttons">
+    <button class="button">Default</button>
+    <button class="button is-primary">Primary</button>
+    <button class="button is-link">Link</button>
+    <button class="button is-info">Info</button>
+    <button class="button is-success">Success</button>
+    <button class="button is-warning">Warning</button>
+    <button class="button is-danger">Danger</button>
+  </div>
+</div>
