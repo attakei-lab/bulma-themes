@@ -169,9 +169,15 @@ $radius-large: 0 !default;
   // Pitfall 10: --bulma-shadow's hsl(var(--bulma-shadow-h), ...) chain
   // on :root fails to resolve at .box / .card / .panel. Pin a literal
   // two-stop shadow on those selectors (mirrors Bulma's light-mode
-  // default but with concrete hsla arguments).
+  // default but with concrete hsla arguments). `.dropdown` uses a
+  // two-level indirection (parent registers `--bulma-dropdown-content-
+  // shadow: var(--bulma-shadow)`, child `.dropdown-content` reads it), so
+  // per Pitfall 1's eager-substitution behaviour, the pin must go on the
+  // parent `.dropdown` selector — pinning on `.dropdown-content` is too
+  // late.
   .box,
   .card,
+  .dropdown,
   .panel {
     --bulma-shadow:
       0 0.5em 1em -0.125em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%),
@@ -179,11 +185,13 @@ $radius-large: 0 !default;
   }
 
   // Pitfall 11: separator borders on `.card-footer` / `.panel-block` /
-  // `.panel-tabs` chain through --bulma-border-weak, and `.card-header`'s
-  // bottom rule chains through --bulma-scheme-h/s/invert-l. Both chains
-  // fail to resolve at the sub-elements. Pin literal hsl() at the .card
-  // / .panel level so children inherit a resolved value.
+  // `.panel-tabs` / `.dropdown-divider` chain through --bulma-border-weak,
+  // and `.card-header`'s bottom rule chains through
+  // --bulma-scheme-h/s/invert-l. Both chains fail to resolve at the
+  // sub-elements. Pin literal hsl() at the .card / .dropdown / .panel
+  // level so children inherit a resolved value.
   .card,
+  .dropdown,
   .panel {
     --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 93%);
   }
