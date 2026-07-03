@@ -178,6 +178,7 @@ $radius-large: 0 !default;
   .box,
   .card,
   .dropdown,
+  .modal-card-head,
   .panel {
     --bulma-shadow:
       0 0.5em 1em -0.125em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%),
@@ -198,6 +199,23 @@ $radius-large: 0 !default;
 
   .card {
     --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%);
+  }
+
+  // Same class of chain failure as Pitfall 11: `.modal` registers
+  // `--bulma-modal-card-{head,body,foot}-background-color:
+  // var(--bulma-scheme-{main,main-bis})`, which on :root is
+  // `hsl(var(--bulma-scheme-h), var(--bulma-scheme-s),
+  // var(--bulma-scheme-main{-bis}-l))`. The compound `hsl(var(), var(),
+  // var())` fails at the descendant `.modal-card-{head,body,foot}` and
+  // leaves the backgrounds transparent — the dark overlay bleeds
+  // through and the modal becomes unreadable. Pin literal hsl on the
+  // parent `.modal` per Pitfall 1's eager-substitution behaviour.
+  // 100% / 98% match Bulma's light-mode `--bulma-scheme-main-l` and
+  // `--bulma-scheme-main-bis-l`.
+  .modal {
+    --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 98%);
   }
 
   // Match Pulse's text-style link button: white background with link-colored
