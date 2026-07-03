@@ -589,7 +589,7 @@ list as well when applying this fix.
 ## Pitfall 13: `.card` radius is decoupled from `$radius`, and `.card-image` only rounds `<img>`
 
 Two related gaps in Bulma 1.x's card treatment surface together on any
-theme that customises `$radius`:
+theme that customizes `$radius`:
 
 1. Bulma's `card.scss` hardcodes `$card-radius: 0.75rem !default` at the
    SCSS layer and register-vars it directly on `.card`, so
