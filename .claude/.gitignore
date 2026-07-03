@@ -9,3 +9,6 @@ worktrees/
 
 # Local-only memos / deferred-decision logs that should not be shared.
 notes/
+
+# Runtime lock for Claude Code scheduled tasks (session/pid/timestamps).
+scheduled_tasks.lock
