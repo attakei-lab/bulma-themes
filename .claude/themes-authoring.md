@@ -439,6 +439,7 @@ pin it at the consumer selectors:
 
   .box,
   .card,
+  .dropdown,
   .panel {
     --bulma-shadow:
       0 0.5em 1em -0.125em hsla(221deg, 14%, 4%, 0.1),
@@ -452,43 +453,59 @@ The literal `221deg, 14%, 4%` matches Bulma's light-mode default
 at `:root` with a fully literal value does not need this element-level
 pin.
 
+`.dropdown` is pinned on the parent selector, not on `.dropdown-content`
+where the `box-shadow` is actually read. Bulma registers
+`--bulma-dropdown-content-shadow: var(--bulma-shadow)` on `.dropdown`
+(parent) and reads `box-shadow: var(--bulma-dropdown-content-shadow)` on
+`.dropdown-content` (child). Per Pitfall 1's eager-substitution
+behaviour, the inner `var(--bulma-shadow)` inside
+`--bulma-dropdown-content-shadow` is substituted at `.dropdown` (using
+the still-broken `:root` shadow chain), so pinning `--bulma-shadow` at
+`.dropdown-content` is too late — the substitution has already happened
+one level up. For `.box` / `.card` / `.panel` the register and the read
+happen on the same element, so pinning on the element itself works;
+`.dropdown`'s two-level indirection is the exception.
+
 This pin is element-scoped, so the dark-mode `prefers-color-scheme`
 media query that flips Bulma's `--bulma-shadow-l` on `:root` no longer
-reaches `.box` / `.card` / `.panel`. Acceptable for a light-only theme;
-revisit when a dark variant is authored.
+reaches `.box` / `.card` / `.dropdown` / `.panel`. Acceptable for a
+light-only theme; revisit when a dark variant is authored.
 
-## Pitfall 11: separators between `.card-*` and `.panel-*` sub-components disappear
+## Pitfall 11: separators between `.card-*`, `.panel-*`, and `.dropdown-*` sub-components disappear
 
 Bulma renders separator rules between `.card-header` / `.card-content`
-/ `.card-footer` and between `.panel-block` / `.panel-tabs` siblings
-through two tokens:
+/ `.card-footer`, between `.panel-block` / `.panel-tabs` siblings, and
+between `.dropdown-item`s (via `.dropdown-divider`) through the tokens:
 
 - `--bulma-card-footer-border-top: 1px solid var(--bulma-border-weak)`
   on `.card`.
 - `--bulma-panel-item-border: 1px solid var(--bulma-border-weak)` on
   `.panel` (consumed by `.panel-block:not(:last-child)` and
   `.panel-tabs:not(:last-child)`).
+- `--bulma-dropdown-divider-background-color: var(--bulma-border-weak)`
+  on `.dropdown` (consumed by `.dropdown-divider`'s `background-color`).
 - `--bulma-card-header-shadow: 0 0.125em 0.25em hsla(var(--bulma-scheme-h),
   var(--bulma-scheme-s), var(--bulma-scheme-invert-l), 0.1)` on `.card`
   (consumed by `.card-header`'s `box-shadow`).
 
-The first two chain through `--bulma-border-weak`, which itself is an
+The first three chain through `--bulma-border-weak`, which itself is an
 `hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-border-weak-l))`
-on `:root`. The third has its own three-`var()` chain. Both classes of
+on `:root`. The last has its own three-`var()` chain. Both classes of
 chain fail to resolve at the rendered sub-elements, so the separators
 disappear and the components blur into a single flat block.
 
 ### Mitigation
 
-Pin literal values for `--bulma-border-weak` (covers both footer-border
-and panel-item-border) and `--bulma-card-header-shadow` on the parent
-containers:
+Pin literal values for `--bulma-border-weak` (covers footer-border,
+panel-item-border, and dropdown-divider) and `--bulma-card-header-shadow`
+on the parent containers:
 
 ```scss
 @mixin variables {
   // ... custom property emissions ...
 
   .card,
+  .dropdown,
   .panel {
     --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 93%);
   }
@@ -503,6 +520,12 @@ containers:
 its light-mode `--bulma-scheme-invert-l`. Themes without an explicit
 scheme tint (e.g. cerulean with a pure-white body) substitute `0, 0%`
 for the hue/saturation.
+
+`.dropdown` is pinned on the parent for the same reason as Pitfall 10's
+`.dropdown` pin: Bulma registers `--bulma-dropdown-divider-background-color`
+on the parent `.dropdown` and reads it on child `.dropdown-divider`, and
+the inner `var(--bulma-border-weak)` gets substituted at `.dropdown`
+under Pitfall 1's eager behaviour.
 
 Like Pitfall 10, this pin is light-mode-only; dark-mode auto-switching
 on these tokens stops at the parent container.
