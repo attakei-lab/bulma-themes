@@ -440,6 +440,7 @@ pin it at the consumer selectors:
   .box,
   .card,
   .dropdown,
+  .modal-card-head,
   .panel {
     --bulma-shadow:
       0 0.5em 1em -0.125em hsla(221deg, 14%, 4%, 0.1),
@@ -462,14 +463,17 @@ behaviour, the inner `var(--bulma-shadow)` inside
 `--bulma-dropdown-content-shadow` is substituted at `.dropdown` (using
 the still-broken `:root` shadow chain), so pinning `--bulma-shadow` at
 `.dropdown-content` is too late — the substitution has already happened
-one level up. For `.box` / `.card` / `.panel` the register and the read
-happen on the same element, so pinning on the element itself works;
+one level up. For `.box` / `.card` / `.modal-card-head` / `.panel` the
+register and the read happen on the same element (they read
+`box-shadow: var(--bulma-shadow)` directly, with no intermediate
+`--bulma-*-shadow` variable), so pinning on the element itself works;
 `.dropdown`'s two-level indirection is the exception.
 
 This pin is element-scoped, so the dark-mode `prefers-color-scheme`
 media query that flips Bulma's `--bulma-shadow-l` on `:root` no longer
-reaches `.box` / `.card` / `.dropdown` / `.panel`. Acceptable for a
-light-only theme; revisit when a dark variant is authored.
+reaches `.box` / `.card` / `.dropdown` / `.modal-card-head` / `.panel`.
+Acceptable for a light-only theme; revisit when a dark variant is
+authored.
 
 ## Pitfall 11: separators between `.card-*`, `.panel-*`, and `.dropdown-*` sub-components disappear
 
@@ -529,6 +533,58 @@ under Pitfall 1's eager behaviour.
 
 Like Pitfall 10, this pin is light-mode-only; dark-mode auto-switching
 on these tokens stops at the parent container.
+
+## Pitfall 12: `.modal-card-*` backgrounds fall through when `--bulma-scheme-main` chain fails
+
+Bulma's `.modal` registers three background tokens:
+
+```css
+--bulma-modal-card-head-background-color: var(--bulma-scheme-main);
+--bulma-modal-card-body-background-color: var(--bulma-scheme-main);
+--bulma-modal-card-foot-background-color: var(--bulma-scheme-main-bis);
+```
+
+`.modal-card-head` / `.modal-card-body` / `.modal-card-foot` (children)
+then read `background-color: var(--bulma-modal-card-<part>-background-color)`.
+On `:root`, `--bulma-scheme-main` / `-bis` are themselves
+`hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main{-bis}-l))`
+— the same `hsl(var(), var(), var())` chain as Pitfall 11's
+`--bulma-border-weak`, so it also fails to resolve at the descendant. The
+symptom is dramatic: when `.modal.is-active` is toggled, the modal card's
+head / body / foot render with a transparent background, letting the
+dark `--bulma-modal-background-background-color` overlay bleed through
+and making the content unreadable.
+
+Same shape as Pitfall 11's `.dropdown` case: the register happens on the
+parent `.modal`, and Pitfall 1's eager substitution bakes in the broken
+`:root` chain at `.modal`. Pin literal values at the parent `.modal`.
+
+### Mitigation
+
+```scss
+@mixin variables {
+  // ... custom property emissions ...
+
+  .modal {
+    --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 98%);
+  }
+}
+```
+
+`100%` matches Bulma's light-mode `--bulma-scheme-main-l`; `98%` matches
+`--bulma-scheme-main-bis-l` (Bulma uses a slightly darker tone for the
+footer to hint at a sub-region). Themes without an explicit scheme tint
+substitute `0, 0%` for the hue/saturation.
+
+Like Pitfall 10/11, this pin is light-mode-only; dark-mode auto-switching
+on `--bulma-scheme-main-l` stops at `.modal` and does not reach the
+pinned children.
+
+`.modal-card-head` also carries a `box-shadow: var(--bulma-shadow)` that
+falls under Pitfall 10 — add `.modal-card-head` to that pin's selector
+list as well when applying this fix.
 
 ## Minimum viable theme: variable checklist
 
