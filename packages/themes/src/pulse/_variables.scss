@@ -199,6 +199,15 @@ $radius-large: 0 !default;
 
   .card {
     --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%);
+
+    // Pitfall 13: `--bulma-card-radius` is Bulma's SCSS-default 0.75rem,
+    // hardcoded in card.scss and NOT tied to any --bulma-radius token,
+    // and Bulma re-declares it directly on `.card` in its register-vars
+    // block. Emitting `--bulma-card-radius` on `:root` alone is shadowed
+    // by that direct `.card` declaration, so the pin must be scoped to
+    // `.card` too — inside the mixin, `.card { ... }` compiles to
+    // `:root .card { ... }` and wins on specificity (0,2,0 vs 0,1,0).
+    --bulma-card-radius: #{$radius};
   }
 
   // Same class of chain failure as Pitfall 11: `.modal` registers
@@ -216,6 +225,25 @@ $radius-large: 0 !default;
     --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
     --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
     --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 98%);
+  }
+
+  // Pitfall 13 (continued): Bulma's `.card-image:first-child img` /
+  // `:last-child img` rule only rounds `<img>` children. A
+  // background-styled `<figure>` (e.g. the gradient placeholders used in
+  // the Showcase and card demo) has no img target and its top/bottom
+  // corners would visibly poke past the card silhouette on non-zero
+  // radii. Emit the mirror rule for figures for consistency; on Pulse
+  // the resolved value is 0 so this is a no-op, but keeps the theme
+  // shape parallel with default and protects against downstream $radius
+  // overrides.
+  .card-image:first-child > figure {
+    border-start-start-radius: var(--bulma-card-radius);
+    border-start-end-radius: var(--bulma-card-radius);
+  }
+
+  .card-image:last-child > figure {
+    border-end-start-radius: var(--bulma-card-radius);
+    border-end-end-radius: var(--bulma-card-radius);
   }
 
   // Match Pulse's text-style link button: white background with link-colored

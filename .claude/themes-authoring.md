@@ -586,6 +586,66 @@ pinned children.
 falls under Pitfall 10 — add `.modal-card-head` to that pin's selector
 list as well when applying this fix.
 
+## Pitfall 13: `.card` radius is decoupled from `$radius`, and `.card-image` only rounds `<img>`
+
+Two related gaps in Bulma 1.x's card treatment surface together on any
+theme that customizes `$radius`:
+
+1. Bulma's `card.scss` hardcodes `$card-radius: 0.75rem !default` at the
+   SCSS layer and register-vars it directly on `.card`, so
+   `--bulma-card-radius` lands as `0.75rem` on every `.card` regardless
+   of the theme's `--bulma-radius`. A theme that sets `$radius: 0`
+   (Pulse's flat design) or `$radius: 0.375rem` (default) still gets a
+   0.75rem card silhouette until it explicitly overrides.
+2. Bulma rounds `.card-image` children using `.card-image:first-child img`
+   / `:last-child img` selectors, targeting `<img>` only. A card whose
+   image slot is a background-styled `<figure>` (the pattern used by the
+   Showcase and card demo gradient placeholders) has no img target — the
+   figure renders with square corners, and its top/bottom edges visibly
+   poke past the card's rounded silhouette.
+
+### Mitigation
+
+Both gaps are addressed inside `@mixin variables`. The `--bulma-card-radius`
+override must be scoped to `.card` (not `:root`) because Bulma's own
+register-vars on `.card` (specificity 0,1,0) shadows anything inherited
+from `:root`; a nested `.card { ... }` block inside the mixin compiles
+to `:root .card { ... }` at specificity 0,2,0 and wins.
+
+```scss
+@mixin variables {
+  // ... custom property emissions ...
+
+  .card {
+    --bulma-card-radius: #{$radius};
+    // (existing --bulma-card-header-shadow pin from Pitfall 11 lives here too)
+  }
+
+  .card-image:first-child > figure {
+    border-start-start-radius: var(--bulma-card-radius);
+    border-start-end-radius: var(--bulma-card-radius);
+  }
+
+  .card-image:last-child > figure {
+    border-end-start-radius: var(--bulma-card-radius);
+    border-end-end-radius: var(--bulma-card-radius);
+  }
+}
+```
+
+For a flat theme (`$radius: 0`) the figure pin resolves to
+`border-radius: 0` — a no-op visually but kept for parallelism with
+non-flat themes and to future-proof against downstream `$radius`
+overrides via `@use ... with (...)`.
+
+The `.card-image > *` selector list intentionally targets `figure`
+(rather than `> *` or the img selector Bulma already covers) so the
+theme rule and Bulma's rule cooperate: `<img>` is still rounded by
+Bulma's built-in rule, and `<figure>` gets the same treatment from the
+theme rule. Cards that put an `<img>` inside a `<figure>` see both
+elements rounded, but only the outer figure is visible so the doubled
+rule is harmless.
+
 ## Minimum viable theme: variable checklist
 
 For a color-only theme that inherits Bulma defaults for radius / shadow

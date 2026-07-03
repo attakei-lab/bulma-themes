@@ -170,6 +170,15 @@ $radius: 0.375rem !default;
 
   .card {
     --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%);
+
+    // Pitfall 13: `--bulma-card-radius` is Bulma's SCSS-default 0.75rem,
+    // hardcoded in card.scss and NOT tied to any --bulma-radius token,
+    // and Bulma re-declares it directly on `.card` in its register-vars
+    // block. Emitting `--bulma-card-radius` on `:root` alone is shadowed
+    // by that direct `.card` declaration, so the pin must be scoped to
+    // `.card` too — inside the mixin, `.card { ... }` compiles to
+    // `:root .card { ... }` and wins on specificity (0,2,0 vs 0,1,0).
+    --bulma-card-radius: #{$radius};
   }
 
   // Same class of chain failure as Pitfall 11: `.modal` registers
@@ -187,5 +196,22 @@ $radius: 0.375rem !default;
     --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
     --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
     --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 98%);
+  }
+
+  // Pitfall 13 (continued): Bulma's `.card-image:first-child img` /
+  // `:last-child img` rule only rounds `<img>` children. A
+  // background-styled `<figure>` (e.g. the gradient placeholders used in
+  // the Showcase and card demo) has no img target and its top/bottom
+  // corners visibly poke past the card's rounded silhouette. Mirror
+  // Bulma's rule for figure children so gradient placeholders and other
+  // non-img card-image content stay clipped to the card radius.
+  .card-image:first-child > figure {
+    border-start-start-radius: var(--bulma-card-radius);
+    border-start-end-radius: var(--bulma-card-radius);
+  }
+
+  .card-image:last-child > figure {
+    border-end-start-radius: var(--bulma-card-radius);
+    border-end-end-radius: var(--bulma-card-radius);
   }
 }
