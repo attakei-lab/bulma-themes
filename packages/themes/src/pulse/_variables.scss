@@ -188,13 +188,28 @@ $radius-large: 0 !default;
   // Pitfall 11: separator borders on `.card-footer` / `.panel-block` /
   // `.panel-tabs` / `.dropdown-divider` chain through --bulma-border-weak,
   // and `.card-header`'s bottom rule chains through
-  // --bulma-scheme-h/s/invert-l. Both chains fail to resolve at the
-  // sub-elements. Pin literal hsl() at the .card / .dropdown / .panel
-  // level so children inherit a resolved value.
+  // --bulma-scheme-h/s/invert-l. Also `.tabs a` / `.tabs ul` chain through
+  // --bulma-border with the same shape. All fail to resolve at the
+  // sub-elements. Pin literal hsl() at the .card / .dropdown / .panel /
+  // .tabs level so children inherit a resolved value.
   .card,
   .dropdown,
   .panel {
     --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 93%);
+  }
+
+  .tabs {
+    --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 86%);
+
+    // Same Pitfall 12 shape: Bulma registers
+    // `--bulma-tabs-boxed-link-active-background-color: var(--bulma-scheme-main)`
+    // on `.tabs`, and the inner hsl(var(), var(), var()) chain fails at
+    // the descendant `.tabs.is-boxed li.is-active a`, leaving its
+    // background transparent — the ul's continuous bottom border bleeds
+    // through and reads as an unwanted underline on the active is-boxed
+    // tab. Pin literal hsl matching Bulma's light-mode
+    // `--bulma-scheme-main-l` (100%).
+    --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
   }
 
   .card {
@@ -252,5 +267,20 @@ $radius-large: 0 !default;
     --bulma-button-background-l: var(--bulma-link-invert-l);
     --bulma-button-color-l: var(--bulma-link-l);
     --bulma-button-border-l: var(--bulma-link-l);
+  }
+
+  // Widen the active tab's underline from Bulma's 1px to 3px so it
+  // reads as a clear accent under plain `.tabs`. Under `.tabs.is-boxed`,
+  // Bulma sets `border-bottom-color: transparent !important` on the
+  // active tab, so this width change stays invisible there — the pin
+  // surfaces in the non-boxed variant where a stronger active marker is
+  // wanted. link-h/s/l already match Pulse's primary (266°/51%/39%), so
+  // the accent color follows the theme's primary hue without a further
+  // override. Exclude `.is-toggle` because its active tab has an
+  // all-four border and a 3px bottom would leave the active toggle 2px
+  // taller than the neighbouring hover state.
+  .tabs:not(.is-toggle) li.is-active a {
+    border-bottom-width: 3px;
+    margin-bottom: -3px;
   }
 }

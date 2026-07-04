@@ -475,11 +475,12 @@ reaches `.box` / `.card` / `.dropdown` / `.modal-card-head` / `.panel`.
 Acceptable for a light-only theme; revisit when a dark variant is
 authored.
 
-## Pitfall 11: separators between `.card-*`, `.panel-*`, and `.dropdown-*` sub-components disappear
+## Pitfall 11: separators / underlines between `.card-*`, `.panel-*`, `.dropdown-*`, and `.tabs` sub-components disappear
 
 Bulma renders separator rules between `.card-header` / `.card-content`
-/ `.card-footer`, between `.panel-block` / `.panel-tabs` siblings, and
-between `.dropdown-item`s (via `.dropdown-divider`) through the tokens:
+/ `.card-footer`, between `.panel-block` / `.panel-tabs` siblings,
+between `.dropdown-item`s (via `.dropdown-divider`), and along the
+bottom of the `.tabs` row through the tokens:
 
 - `--bulma-card-footer-border-top: 1px solid var(--bulma-border-weak)`
   on `.card`.
@@ -488,21 +489,27 @@ between `.dropdown-item`s (via `.dropdown-divider`) through the tokens:
   `.panel-tabs:not(:last-child)`).
 - `--bulma-dropdown-divider-background-color: var(--bulma-border-weak)`
   on `.dropdown` (consumed by `.dropdown-divider`'s `background-color`).
+- `--bulma-tabs-border-bottom-color: var(--bulma-border)` on `.tabs`
+  (consumed by `.tabs a` and `.tabs ul` as `border-bottom-color` — the
+  continuous underline that runs beneath all tabs).
 - `--bulma-card-header-shadow: 0 0.125em 0.25em hsla(var(--bulma-scheme-h),
   var(--bulma-scheme-s), var(--bulma-scheme-invert-l), 0.1)` on `.card`
   (consumed by `.card-header`'s `box-shadow`).
 
-The first three chain through `--bulma-border-weak`, which itself is an
-`hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-border-weak-l))`
-on `:root`. The last has its own three-`var()` chain. Both classes of
-chain fail to resolve at the rendered sub-elements, so the separators
-disappear and the components blur into a single flat block.
+The first three chain through `--bulma-border-weak`, the tabs one
+through `--bulma-border`; both are `hsl(var(--bulma-scheme-h),
+var(--bulma-scheme-s), var(--bulma-border{-weak}-l))` on `:root`. The
+last has its own three-`var()` chain. All fail to resolve at the
+rendered sub-elements, so separators disappear and the components blur
+into a single flat block — tabs in particular look "floating" once the
+bottom underline drops out.
 
 ### Mitigation
 
 Pin literal values for `--bulma-border-weak` (covers footer-border,
-panel-item-border, and dropdown-divider) and `--bulma-card-header-shadow`
-on the parent containers:
+panel-item-border, and dropdown-divider), `--bulma-border` on `.tabs`
+(covers the tab-row underline), and `--bulma-card-header-shadow` on
+the parent containers:
 
 ```scss
 @mixin variables {
@@ -517,47 +524,62 @@ on the parent containers:
   .card {
     --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 0.1);
   }
+
+  .tabs {
+    --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 86%);
+  }
 }
 ```
 
-`93%` matches Bulma's light-mode `--bulma-border-weak-l`; `4%` matches
-its light-mode `--bulma-scheme-invert-l`. Themes without an explicit
-scheme tint (e.g. cerulean with a pure-white body) substitute `0, 0%`
-for the hue/saturation.
+`93%` matches Bulma's light-mode `--bulma-border-weak-l`; `86%` matches
+`--bulma-border-l`; `4%` matches `--bulma-scheme-invert-l`. Themes
+without an explicit scheme tint (e.g. cerulean with a pure-white body)
+substitute `0, 0%` for the hue/saturation.
 
-`.dropdown` is pinned on the parent for the same reason as Pitfall 10's
-`.dropdown` pin: Bulma registers `--bulma-dropdown-divider-background-color`
-on the parent `.dropdown` and reads it on child `.dropdown-divider`, and
-the inner `var(--bulma-border-weak)` gets substituted at `.dropdown`
-under Pitfall 1's eager behaviour.
+`.dropdown` and `.tabs` are pinned on the parent for the same reason as
+Pitfall 10's `.dropdown` pin: Bulma registers the sub-component's
+background/border token on the parent selector and reads it on the
+child, and the inner `var(--bulma-border{-weak})` gets substituted at
+the parent under Pitfall 1's eager behaviour.
 
 Like Pitfall 10, this pin is light-mode-only; dark-mode auto-switching
 on these tokens stops at the parent container.
 
-## Pitfall 12: `.modal-card-*` backgrounds fall through when `--bulma-scheme-main` chain fails
+## Pitfall 12: `.modal-card-*` and `.tabs.is-boxed` active backgrounds fall through when `--bulma-scheme-main` chain fails
 
-Bulma's `.modal` registers three background tokens:
+Bulma registers several `scheme-main`-derived background tokens on
+parent selectors:
 
 ```css
+/* on .modal */
 --bulma-modal-card-head-background-color: var(--bulma-scheme-main);
 --bulma-modal-card-body-background-color: var(--bulma-scheme-main);
 --bulma-modal-card-foot-background-color: var(--bulma-scheme-main-bis);
+
+/* on .tabs */
+--bulma-tabs-boxed-link-active-background-color: var(--bulma-scheme-main);
 ```
 
-`.modal-card-head` / `.modal-card-body` / `.modal-card-foot` (children)
-then read `background-color: var(--bulma-modal-card-<part>-background-color)`.
-On `:root`, `--bulma-scheme-main` / `-bis` are themselves
+The children then read those tokens as `background-color`:
+`.modal-card-head` / `-body` / `-foot`, and `.tabs.is-boxed li.is-active
+a`. On `:root`, `--bulma-scheme-main` / `-bis` are themselves
 `hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main{-bis}-l))`
 — the same `hsl(var(), var(), var())` chain as Pitfall 11's
-`--bulma-border-weak`, so it also fails to resolve at the descendant. The
-symptom is dramatic: when `.modal.is-active` is toggled, the modal card's
-head / body / foot render with a transparent background, letting the
-dark `--bulma-modal-background-background-color` overlay bleed through
-and making the content unreadable.
+`--bulma-border-weak`, so it fails to resolve at the descendants.
 
-Same shape as Pitfall 11's `.dropdown` case: the register happens on the
-parent `.modal`, and Pitfall 1's eager substitution bakes in the broken
-`:root` chain at `.modal`. Pin literal values at the parent `.modal`.
+The symptoms differ by consumer but share a cause. For the modal card,
+`.modal-card-head` / `-body` / `-foot` render transparent, letting the
+dark `--bulma-modal-background-background-color` overlay bleed through
+and making the content unreadable. For the boxed tabs, the active tab's
+`background-color` fails so the `.tabs ul` continuous bottom-border
+shows through underneath the active tab as an unwanted underline —
+exactly the visual behaviour `.is-boxed` is supposed to suppress (its
+active tab is meant to sit atop and cut the underline).
+
+Same shape as Pitfall 11's `.dropdown` case: the register happens on
+the parent (`.modal` or `.tabs`), and Pitfall 1's eager substitution
+bakes in the broken `:root` chain at that parent. Pin literal values on
+the same parent.
 
 ### Mitigation
 
@@ -570,17 +592,21 @@ parent `.modal`, and Pitfall 1's eager substitution bakes in the broken
     --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
     --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 98%);
   }
+
+  .tabs {
+    --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+  }
 }
 ```
 
 `100%` matches Bulma's light-mode `--bulma-scheme-main-l`; `98%` matches
 `--bulma-scheme-main-bis-l` (Bulma uses a slightly darker tone for the
-footer to hint at a sub-region). Themes without an explicit scheme tint
-substitute `0, 0%` for the hue/saturation.
+modal footer to hint at a sub-region). Themes without an explicit
+scheme tint substitute `0, 0%` for the hue/saturation.
 
 Like Pitfall 10/11, this pin is light-mode-only; dark-mode auto-switching
-on `--bulma-scheme-main-l` stops at `.modal` and does not reach the
-pinned children.
+on `--bulma-scheme-main-l` stops at `.modal` / `.tabs` and does not
+reach the pinned children.
 
 `.modal-card-head` also carries a `box-shadow: var(--bulma-shadow)` that
 falls under Pitfall 10 — add `.modal-card-head` to that pin's selector

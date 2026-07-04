@@ -157,15 +157,34 @@ $radius: 0.375rem !default;
 
   // Pitfall 11: separator borders on `.card-footer` / `.panel-block` /
   // `.panel-tabs` / `.dropdown-divider` chain through --bulma-border-weak,
-  // which fails to resolve at the sub-element. Pin --bulma-border-weak on
-  // the parents with a literal hsl(). Also pin --bulma-card-header-shadow
-  // on .card, since its hsla(var(--bulma-scheme-h), ...) chain (for the
-  // visual separator under `.card-header`) is affected by the same
-  // failure.
+  // and `.tabs a` / `.tabs ul` chain through --bulma-border. Both share
+  // the same `hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(...-l))`
+  // shape on :root and fail to resolve at the descendants — separator /
+  // tab underlines disappear and the components look flat/floating. Pin
+  // literal hsl on the parents (register happens on `.card` / `.dropdown`
+  // / `.panel` / `.tabs`; children inherit the resolved value). Also pin
+  // --bulma-card-header-shadow on .card, since its hsla(var(--bulma-
+  // scheme-h), ...) chain (for the visual separator under `.card-header`)
+  // is affected by the same failure.
   .card,
   .dropdown,
   .panel {
     --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 93%);
+  }
+
+  .tabs {
+    --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 86%);
+
+    // Same Pitfall 12 shape: Bulma registers
+    // `--bulma-tabs-boxed-link-active-background-color: var(--bulma-scheme-main)`
+    // on `.tabs`, and `.scheme-main` on :root is
+    // `hsl(var(...-h), var(...-s), var(...-main-l))`. The inner
+    // hsl(var(), var(), var()) chain fails at the descendant
+    // `.tabs.is-boxed li.is-active a`, leaving its background transparent
+    // — the ul's continuous bottom border then bleeds through and reads
+    // as an unwanted underline on the active is-boxed tab. Pin literal
+    // hsl matching Bulma's light-mode `--bulma-scheme-main-l` (100%).
+    --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
   }
 
   .card {
@@ -213,5 +232,19 @@ $radius: 0.375rem !default;
   .card-image:last-child > figure {
     border-end-start-radius: var(--bulma-card-radius);
     border-end-end-radius: var(--bulma-card-radius);
+  }
+
+  // Widen the active tab's underline from Bulma's 1px to 3px so it
+  // reads as a clear accent under plain `.tabs`. Under `.tabs.is-boxed`,
+  // Bulma sets `border-bottom-color: transparent !important` on the
+  // active tab, so this width change stays invisible there — the pin
+  // surfaces in the non-boxed variant where a stronger active marker is
+  // wanted. Cancel the compensating margin so the tab row does not
+  // shift. Exclude `.is-toggle` because its active tab has an all-four
+  // border and a 3px bottom would leave the active toggle 2px taller
+  // than the neighbouring hover state.
+  .tabs:not(.is-toggle) li.is-active a {
+    border-bottom-width: 3px;
+    margin-bottom: -3px;
   }
 }
