@@ -66,6 +66,36 @@ The on-disk branch at skill invocation may not match the push allow-list — typ
    - The count and headlines of any file/line-level review comments.
 3. Do **not** apply changes automatically. The user decides whether each suggestion is adopted, parked, or rejected.
 
+### If CodeRabbit is rate-limited
+
+CodeRabbit enforces a per-developer PR-review rate limit. When several PRs
+are shipped in quick succession it may decline to *start* the review,
+posting a comment containing `Review limit reached` and
+`Next review available in: N minutes` instead of a verdict. A rate-limited
+PR has **no** CodeRabbit review — the green `CodeRabbit` status check in
+this state is not an approval, so it does **not** satisfy Step 4's
+"CodeRabbit has Approved" condition.
+
+The default is to **wait and re-review**, not to merge without a review:
+
+1. Detect the rate limit: the review verdict is absent **and** CodeRabbit's
+   latest comment contains `Review limit reached`.
+2. Read `Next review available in: N minutes`, wait that long (a background
+   sleep so the user can keep talking), then re-trigger the review by
+   commenting `@coderabbitai review` on the PR (CodeRabbit does not retry on
+   its own).
+3. Re-poll for the verdict and resume Step 4 once a real
+   Approve / Request-changes / Comment lands.
+
+Handle this automatically — do not require the user to intervene for each
+limit — with two exceptions:
+
+- If the stated wait is unreasonably long (roughly over 60 minutes) or no
+  reset time is given, stop and let the user decide rather than waiting
+  indefinitely.
+- Merging *without* a CodeRabbit review is allowed only when the user
+  explicitly instructs it.
+
 ## Step 4 — Conditional auto-merge
 
 Claude may merge the PR autonomously **only when all three** of the following hold simultaneously:
