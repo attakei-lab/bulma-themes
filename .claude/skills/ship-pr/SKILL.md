@@ -114,6 +114,17 @@ gh pr merge <pr> --merge
 
 If any one of the three fails to hold, stop and wait for the user's explicit go-ahead before merging.
 
+> **Environment note (auto-mode classifier).** Where Claude runs under the
+> auto-mode classifier (this repo's setup), the classifier independently
+> blocks an agent from merging its own PR on only a bot (CodeRabbit)
+> review — it holds the two-party-human-review line **regardless of the
+> three conditions above**, and an `autoMode.allow` settings rule does
+> **not** override it (verified on PR #31). So in practice `gh pr merge`
+> still requires the user's explicit go-ahead even when all three
+> conditions hold: confirm the green gate, report it, and merge on their
+> GO. Deleting the merged working branch afterwards, by contrast, **is**
+> permitted autonomously via `autoMode.allow`.
+
 After a successful merge, report the result and remind the user that any related Issue must be closed by hand — GitHub auto-close keywords are forbidden by repo policy.
 
 ## Out of scope
