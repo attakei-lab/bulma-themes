@@ -13,10 +13,15 @@
     #demo-component-dropdown ~ .dropdown.is-active {
       margin-bottom: 10rem;
     }
-    /* Side menu spans overview / showcase / demo via sticky positioning */
+    /* Side menu spans overview / showcase / demo via sticky positioning.
+       max-height + overflow-y give it its own scroll region so a menu
+       taller than the viewport scrolls independently of the main content
+       (and its lower links stay reachable while it is pinned). */
     .theme-side-menu {
       position: sticky;
       top: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
     }
     /* Bulma's .heading defaults to no margin-top and 5px margin-bottom,
        which leaves demo subsection labels (Colors / Sizes / Modifiers /
