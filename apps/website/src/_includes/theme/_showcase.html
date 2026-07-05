@@ -37,12 +37,17 @@
         <h3>Section heading</h3>
         <p>
           Body paragraph with <a>configured link hue</a>, which may or
-          may not match the <a>primary brand color</a>. Following the
+          may not match the <a>primary brand color</a>. Inline code such
+          as <code>.button.is-primary</code> or the
+          <code>--bulma-primary</code> custom property sits within the
+          running text, so its chip color and padding read against real
+          multi-line prose rather than in isolation. Following the
           <a href="#">third link</a> shows whether link, hover, and
           visited states share a tone.
         </p>
         <ul>
           <li>List item including <a>another link</a></li>
+          <li>Apply a token with <code>@use ".../variables" as t</code></li>
           <li>Plain list item</li>
         </ul>
         <blockquote>
