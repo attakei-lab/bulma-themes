@@ -103,12 +103,18 @@ Class hierarchy inside a preview snippet:
   long demo block.
 - **Per-variant label** (Modifiers / In context, when multiple
   distinct variants are stacked in one subsection):
-  `<p><code>.is-striped.is-hoverable</code></p>` — a paragraph with
-  inline `<code>` listing the Bulma classes (or other identifying
-  description) of the variant immediately below it. Sizes / Colors /
-  States don't need per-variant labels because each cell already
+  `<p class="demo-variant"><code>.is-striped.is-hoverable</code></p>` — a
+  paragraph with inline `<code>` listing the Bulma classes (or other
+  identifying description) of the variant immediately below it. Sizes /
+  Colors / States don't need per-variant labels because each cell already
   carries its own inline text label (`Small`, `Primary`, `Hover`,
   etc.).
+  The `demo-variant` class is required: a bare `<p>` is zeroed to
+  `margin: 0` by Bulma's minireset, leaving the label at zero distance
+  from the component directly below (its border/chip visibly touching).
+  A scoped rule in `_layouts/theme.html` (`#demo .demo-variant { margin-top:
+  1rem; margin-bottom: 0.5rem; }`) restores the spacing, so every new
+  variant label must carry the class rather than relying on a bare `<p>`.
 
 ## Default-first cell rule
 

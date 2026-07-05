@@ -31,6 +31,17 @@
       margin-top: 1.5rem;
       margin-bottom: 0.75rem;
     }
+    /* Per-variant labels (<p class="demo-variant"><code>.is-…</code></p>)
+       are plain <p>, which Bulma's minireset zeroes to margin: 0. That
+       leaves the label at zero distance from the component directly below
+       it (its border/chip visibly touching — most obvious on
+       .table.is-bordered). Give the label breathing room: more above (to
+       separate from the previous variant's component) than below (it still
+       belongs to the component it labels). */
+    #demo .demo-variant {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
