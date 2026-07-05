@@ -298,4 +298,18 @@ $radius-large: 0 !default;
     border-bottom-width: 3px;
     margin-bottom: -3px;
   }
+
+  // Bulma registers `--bulma-code` on :root as the danger/red colour
+  // (hsl(danger-h, danger-s, danger-on-scheme-l)), so inline <code> reads
+  // as an error state and clashes with the theme tone. Repoint both text and
+  // background into the brand primary hue: a deep, dark primary tone for the
+  // text (L=25%, below primary-l so it stays legible on the tint) over a
+  // pale primary-hued chip (L=94%), so <code> reads as part of the palette
+  // rather than Bulma's red-on-neutral default. Scope to the `code` selector
+  // (0,1,1) so both win over Bulma's own :root registration regardless of
+  // load order.
+  code {
+    --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 25%);
+    --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 94%);
+  }
 }
