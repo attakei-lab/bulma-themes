@@ -49,3 +49,31 @@ Only the following ref patterns are eligible to be pushed to `origin`:
 Branches that do not match the patterns above (for example, `worktree-*` branches created by Claude Code, or throwaway local-only branches) are out of scope of these naming rules and must not be pushed. They are "exempt", not "non-compliant".
 
 This policy is documentation-level. Mechanical enforcement is out of scope of this document.
+
+## Worktrees
+
+Claude Code may isolate a task in a git worktree, created under
+`.claude/worktrees/`. The worktree's branch is renamed to a conforming
+`feature/**` / `fix/**` / `update/**` name before any push — the raw
+`worktree-*` name is push-exempt (see Push policy).
+
+Base and sync rules, applied **before** creating the worktree:
+
+- **Base on the default branch.** A new worktree branches from the default
+  branch (currently `dev`), taken from `origin` so the base is the published
+  tip.
+- **Sync the local default branch first.** Compare the local default branch
+  against `origin`; if they differ, fast-forward the local default to follow
+  `origin` before creating the worktree.
+- **Uncommitted work on the default branch → propose, don't disrupt.** If the
+  main worktree currently has the default branch checked out and carries
+  uncommitted changes, do not silently sync over them. Surface the situation
+  and propose handling options (e.g. stash, commit onto a work branch, or
+  defer) and let the user choose.
+- **Conflict on sync → attempt a merge.** If following `origin` cannot
+  fast-forward because the local default branch has diverged, attempt to merge
+  `origin`'s default into the local default. If the merge itself conflicts,
+  stop and surface the conflict to the user rather than force-resolving.
+
+This policy is documentation-level, mirroring the Push policy above; mechanical
+enforcement is out of scope.
