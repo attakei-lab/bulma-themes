@@ -672,6 +672,102 @@ theme rule. Cards that put an `<img>` inside a `<figure>` see both
 elements rounded, but only the outer figure is visible so the doubled
 rule is harmless.
 
+## Pitfall 14: `.breadcrumb a` link colour falls through when `--bulma-breadcrumb-item-color` chain fails
+
+Bulma registers the breadcrumb link colour on the parent `.breadcrumb`:
+
+```css
+/* on .breadcrumb */
+--bulma-breadcrumb-item-color: var(--bulma-link-text);
+--bulma-breadcrumb-item-hover-color: var(--bulma-link-text-hover);
+```
+
+and `.breadcrumb a` (the child) reads it as
+`color: var(--bulma-breadcrumb-item-color)`. `--bulma-link-text` on
+`:root` is itself
+`hsl(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-on-scheme-l))`
+— the same `hsl(var(), var(), var())` chain that Pitfall 8 hits on `<a>`.
+Here it fails one level up: per Pitfall 1's eager substitution, the inner
+`var(--bulma-link-text)` is resolved at `.breadcrumb` (parent) using the
+broken `:root` chain, so every `.breadcrumb a` loses the brand link colour
+and renders in the user-agent default instead.
+
+This is the same shape as Pitfall 11/12 (a `scheme`/`link`-derived token
+registered on a parent and read on a child), applied to the breadcrumb's
+link colour. Pinning `--bulma-link-text` on `<a>` (Pitfall 8) does **not**
+help, because `.breadcrumb a` reads `--bulma-breadcrumb-item-color`, not
+`--bulma-link-text` directly.
+
+### Mitigation
+
+Pin `--bulma-breadcrumb-item-color` literally on the parent `.breadcrumb`
+(register on the parent, child inherits the resolved value — Pitfall 1):
+
+```scss
+@mixin variables {
+  // ... custom property emissions ...
+
+  .breadcrumb {
+    --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+  }
+}
+```
+
+Emit this **by default** — the failure is the generic var-chain
+mechanism (like Pitfall 6/10/11), not theme-specific.
+
+Pin only the base `--bulma-breadcrumb-item-color`, not
+`--bulma-breadcrumb-item-hover-color`. A hover lightness cannot be
+hard-coded generically: a value that darkens a light link (e.g. `40%` for
+`$link-l: 52%`) would *lighten* a dark-link theme (`$link-l: 30%`). And a
+base-only pin does not regress hover — when the hover token's chain fails,
+`color: var(<invalid>)` falls back to the already-pinned base colour
+rather than the UA default, so the link simply keeps its colour on hover.
+A theme that wants a hover darken adds `--bulma-breadcrumb-item-hover-color`
+itself during Phase C, tuned to its own `$link-*` values.
+
+Whether the current-page item (`.is-active`) reads as a link or as plain
+body text is a separate per-theme decision, not covered here — Bulma's
+default (a muted active link colour) is fine for most themes.
+
+## Pitfall 15: `hsl()` in a real CSS property needs bare Sass vars, not `#{}` interpolation
+
+Unlike every pitfall above — which are Bulma custom-property *render-time*
+`var()`-chain failures — this one is a **build-time Sass syntax** trap. It
+bites at `sass.compileString` time, not in the browser.
+
+`hsl()` must be written two different ways depending on where it appears:
+
+- **In a real CSS property** (`color: hsl(...)`, `background-color: hsl(...)`,
+  `border-color: hsl(...)`): pass **bare Sass variables** —
+  `hsl($link-h, $link-s, $link-l)`. Sass evaluates the built-in `hsl()`
+  function at compile time, so `#{}`-interpolated arguments arrive as
+  unquoted **strings** and the build errors with `$hue: 212 is not a number`.
+- **In a custom-property value** (`--bulma-link-text: hsl(#{$link-h}, ...)`,
+  and every Pitfall pin above): keep the **`#{}` interpolation**. Custom
+  property values are parsed as a raw token stream, not evaluated as a Sass
+  function, so interpolation is correct there — and bare `$name` would emit
+  the literal text `$name` instead of its value.
+
+```scss
+@mixin variables {
+  // custom-property value → interpolate:
+  a {
+    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+  }
+
+  // real CSS property → bare vars:
+  .button.is-link {
+    color: hsl($link-h, $link-s, $link-l);
+  }
+}
+```
+
+Reach for a real-property `hsl()` whenever a nested rule sets an actual
+colour (e.g. a `.button.is-link` restyle) rather than registering a
+`--bulma-*` token. That is exactly where the interpolation habit from the
+pin blocks above misfires.
+
 ## Minimum viable theme: variable checklist
 
 For a color-only theme that inherits Bulma defaults for radius / shadow
@@ -723,3 +819,8 @@ success / warning / danger as body text, also emit the corresponding
   (Bulma's default) rather than at L=39%. Whether this is intentional
   for Pulse's look or an oversight is unconfirmed. Treat any
   retroactive fix as a separate task with its own design decision.
+- `default` and `pulse` predate **Pitfall 14** and do not emit the
+  `.breadcrumb` link-colour pin, so their breadcrumb links may fall
+  through to the UA default (unverified per theme). The `cosmo` theme
+  carries the pin. Retrofitting `default` / `pulse` needs a per-theme
+  breadcrumb preview check and is treated as a separate task.

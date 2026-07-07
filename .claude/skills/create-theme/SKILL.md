@@ -32,7 +32,7 @@ Run a hybrid extraction:
 
 1. `WebFetch` the URL; parse out `<link rel="stylesheet">` hrefs.
 2. `WebFetch` each linked stylesheet (limit to same-origin / CDN matches that look like the site's own CSS — skip analytics / fonts).
-3. Parse `:root { --... }` custom properties first (Bootstrap-style sites). Fall back to rule-body scanning for `.btn-primary`, `a`, `body`, etc. when no useful custom properties exist.
+3. Parse `:root { --... }` custom properties first — the common case for any site that exposes its palette as CSS variables (Bootstrap / Bootswatch are one such family, but the skill is not limited to them). Fall back to rule-body scanning (the primary-button rule, `a`, `body`, etc.) when no useful custom properties exist. Treat framework-specific names like `--bs-*` / `.btn-primary` as examples of one source family, not a requirement — extract from whatever the reference site actually uses.
 4. Convert any hex / rgb values to HSL (deterministic; compute inline).
 5. If after extraction you have fewer than 4 of the following 6 tokens — primary, link, scheme bg, text fg, one admonition, radius — declare low confidence and ask the user for a screenshot of the reference site, then read colors from the image instead.
 
@@ -44,10 +44,16 @@ Map extracted values to Bulma tokens using this target shape (matches `packages/
 - always emit (Pitfall 9): pin `.panel-icon svg` and its `<use>` to `1em` inside the mixin so `<use href="#symbol">`-pattern SVGs (the shape `@11ty/font-awesome` emits) sit inside the panel-icon slot instead of drifting to the right of the label
 - always emit (Pitfall 10): pin `--bulma-shadow` on `.box, .card, .panel` with a literal two-stop value so the drop shadow + inner 1px ring render. Skip when the theme already overrides `--bulma-shadow` at `:root` with a fully literal value (e.g. a hairline ring) — that route resolves without further chains
 - always emit (Pitfall 11): pin `--bulma-border-weak` on `.card, .panel` and `--bulma-card-header-shadow` on `.card` so the sub-component separators render
+- always emit (Pitfall 14): pin `--bulma-breadcrumb-item-color` on `.breadcrumb` to the body-link literal so breadcrumb links keep the brand colour (base colour only — do not pin the hover token; see Phase B.1 template)
 - conditional: `*-on-scheme-l` only if the reference site uses the token as body text (Pitfall 2)
-- conditional: `radius-small`, `$radius`, `radius-medium`, `radius-large` only if the source has a clearly different radius from Bulma's defaults
+- conditional: `radius-small`, `$radius`, `radius-medium`, `radius-large` only if the source's corner radius clearly differs from Bulma's defaults. Judge this from the **rendered look**, not just a declared value — a source may declare a non-zero radius token yet read as flat/square (e.g. a Metro-style theme). Confirm the radius against the visual, and with the user in Phase C, rather than adopting the declared number verbatim
 - conditional: shadow tokens only if the source shows a distinct, simple `box-shadow` on box-like elements
 - **never** emit `scheme-main-l`, `background-l`, `text-l`, `text-strong-l` unless the user explicitly requests it (Pitfall 5: pinning these breaks dark-mode auto-switching)
+
+Also note two **theme-intent signals** while extracting — they do not map to a token, but drive the conditional restyle blocks in Phase B.1:
+
+- **Body-link decoration.** Does the source underline body links (a common default for Bootstrap-derived and many content-first sites)? If so, plan the underline + navigation-chrome-reset block (Phase B.1). Bulma's base `a` is `text-decoration: none`, so this is opt-in.
+- **Link-vs-primary collision.** Are the source's link and primary colours the same (or near-identical) hue? If they are, Bulma's solid-fill `.button.is-link` becomes visually indistinguishable from `.button.is-primary`. Check how the source renders its own link-style button — if it is a borderless, transparent-background text link, plan the `.button.is-link` restyle block (Phase B.1).
 
 For any token in the "missing" set, leave it unemitted and report it as "left to Bulma default" at the end of Phase B.
 
@@ -120,6 +126,15 @@ Use the structure of `packages/themes/src/default/_variables.scss` as the templa
 .card {
   --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 0.1);
 }
+
+// Pitfall 14: pin --bulma-breadcrumb-item-color on .breadcrumb so
+// breadcrumb links keep the brand colour (Bulma's chain
+// var(--bulma-link-text) fails at .breadcrumb a). Base colour only — do
+// NOT pin the hover token: a hover lightness can't be hard-coded across
+// light- and dark-link themes, and a base-only pin does not regress hover.
+.breadcrumb {
+  --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+}
 ```
 
 For themes where body link color visibly diverges from `$link-*` (Pitfall
@@ -141,6 +156,64 @@ emit these inside the mixin (also driven from theme intent, not default):
 }
 .content {
   --bulma-content-heading-color: var(--bulma-primary);
+}
+```
+
+For themes whose source **underlines body links** (the body-link-decoration
+signal from Phase A.2), underline `<a>` and reset the underline back off
+navigation / control chrome — Bulma's base `a` is `text-decoration: none`,
+and the chrome components do not re-declare it, so a bare `a` underline
+would leak into navbar / tabs / pagination / buttons. Drive from theme
+intent, not a default:
+
+```scss
+a {
+  text-decoration: underline;
+}
+
+// Same specificity (:root a → 0,2,0) as the rule above but declared
+// later, so it wins the source-order tie. Keep genuine prose links
+// (body, .content, .breadcrumb a) underlined; strip chrome. Adjust the
+// list to the theme's surfaces.
+.navbar-item,
+.navbar-link,
+.menu-list a,
+.pagination-previous,
+.pagination-next,
+.pagination-link,
+.pagination-ellipsis,
+.tabs a,
+.dropdown-item,
+.panel-block,
+.panel-tabs a,
+.card-footer-item,
+.button,
+.tag {
+  text-decoration: none;
+}
+```
+
+For themes where **link and primary share a hue** so the solid-fill
+`.button.is-link` is indistinguishable from `.button.is-primary` (the
+link-vs-primary-collision signal), and the source renders its link button
+as a borderless text link, restyle `.button.is-link` to match. Note the
+`hsl()` uses **bare Sass vars** in the real `color` property (Pitfall 15),
+not `#{}` interpolation. Drive from theme intent, not a default:
+
+```scss
+.button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: hsl($link-h, $link-s, $link-l);
+  text-decoration: underline;
+
+  &:hover,
+  &.is-hovered {
+    background-color: transparent;
+    color: hsl($link-h, $link-s, 40%);
+    text-decoration: underline;
+  }
 }
 ```
 
@@ -209,8 +282,14 @@ Tell the user:
 Send the user a single checklist covering the token axes:
 
 ```
-scheme bg / text fg / primary / link / info / success / warning / danger / radius / shadow / navbar burger
+scheme bg / text fg / primary / link / info / success / warning / danger / radius / shadow / navbar burger / link decoration (underline) / breadcrumb / link button
 ```
+
+The last three axes surface the link-related work: `link decoration` checks
+whether body links match the source's underline style (Phase B.1 underline
+block); `breadcrumb` checks breadcrumb links carry the brand colour
+(Pitfall 14); `link button` checks `.button.is-link` against the source's
+link-style button (Phase B.1 restyle block).
 
 Ask the user to open `http://localhost:<port>/theme/<slug>/`, walk through the checklist, and reply with all items that do not match the reference site (as a list).
 
