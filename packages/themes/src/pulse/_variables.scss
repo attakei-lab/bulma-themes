@@ -144,6 +144,23 @@ $radius-large: 0 !default;
     text-decoration: underline;
   }
 
+  // Pitfall 14: `.breadcrumb a` reads `--bulma-breadcrumb-item-color`
+  // (= var(--bulma-link-text)), whose hsl(var(), var(), var()) chain fails
+  // at the child and drops the brand colour to the UA default. Pin the
+  // literal link colour on the parent `.breadcrumb` (base colour only — a
+  // hover lightness cannot be hard-coded generically and a base-only pin
+  // does not regress hover).
+  .breadcrumb {
+    --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+  }
+
+  // Bootswatch Pulse underlines links; underline breadcrumb link items too.
+  // The current-page `.is-active` item is not a navigable link, so leave it
+  // un-underlined.
+  .breadcrumb li:not(.is-active) a {
+    text-decoration: underline;
+  }
+
   // Pitfall 4: burger icon on .navbar.is-primary follows primary-invert.
   .navbar.is-primary {
     --bulma-navbar-burger-color: var(--bulma-primary-invert);
@@ -261,27 +278,26 @@ $radius-large: 0 !default;
     border-end-end-radius: var(--bulma-card-radius);
   }
 
-  // Match Pulse's text-style link button: white background with link-colored
-  // text, mid-tone border, equivalent to a lightweight .is-inverted look.
-  // Bulma's `.button.is-<color>` register-vars pins
-  // `--bulma-button-border-width: 0px` on the assumption of a filled fill
-  // (the fill is the shape). Pulse's is-link uses an inverted fill where
-  // the border IS the visual edge, so restore the width to 1px. Bulma
-  // subtracts border-width from padding via
-  // `calc(button-padding-vertical - button-border-width)` in its base
-  // rule, so the button's outer size stays consistent with other color
-  // variants.
-  // The border L (67%) is the midpoint between $link-l (39%, the text
-  // colour) and the hover background L (link-invert-l 100% +
-  // hover-background-l-delta -5% = 95%). This lands the border as a soft
-  // mid-purple that reads between the two surfaces at rest, then darkens
-  // toward primary via Bulma's hover/active border-l deltas — the border
-  // "collapses" into the link colour on interaction.
-  .button.is-link {
-    --bulma-button-background-l: var(--bulma-link-invert-l);
-    --bulma-button-color-l: var(--bulma-link-l);
-    --bulma-button-border-l: 67%;
-    --bulma-button-border-width: 1px;
+  // Match Bootswatch Pulse's `.btn-link`: a borderless, transparent
+  // text-link button — purple link text with a persistent underline, no
+  // border and no fill. Scope to the plain `.is-link` and leave the
+  // `.is-outlined` / `.is-inverted` / `.is-light` / `.is-dark` / `.is-soft`
+  // / `.is-bold` combinations to Bulma's own modifier styling. `hsl()` uses
+  // bare Sass vars in the real `color` property (Pitfall 15), not `#{}`
+  // interpolation.
+  .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    color: hsl($link-h, $link-s, $link-l);
+    text-decoration: underline;
+
+    &:hover,
+    &.is-hovered {
+      background-color: transparent;
+      color: hsl($link-h, $link-s, 30%);
+      text-decoration: underline;
+    }
   }
 
   // Widen the active tab's underline from Bulma's 1px to 3px so it
