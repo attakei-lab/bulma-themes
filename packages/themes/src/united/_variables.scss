@@ -1,0 +1,326 @@
+/*
+ * United theme variables.
+ *
+ * Extracted from Bootswatch United (https://bootswatch.com/united/) — the
+ * Ubuntu look: a warm orange primary on a clean, untinted white canvas
+ * with neutral gray text.
+ *
+ * Light-only prototype. Inherits Bulma defaults for radius / shadow /
+ * spacing; only colors (primary / link / admonitions) are customized.
+ *
+ * This file is compiled by `build.ts` into three CSS variants per theme
+ * (the directory name is used as the theme name):
+ *   - dist/<theme>/theme.min.css       (variables applied on :root)
+ *   - dist/<theme>/theme.data.min.css  (variables applied on [data-theme=<theme>])
+ *   - dist/<theme>/theme.full.min.css  (Bulma bundle + variables on :root)
+ *
+ * Downstream consumers can also `@use` this file with `with (...)` to
+ * override individual values and run their own build.
+ */
+
+// --- scheme / text (United's canvas is pure white and its body text is a
+// neutral gray #333; emit both at zero saturation so chrome stays neutral) ---
+$scheme-h: 0 !default;
+$scheme-s: 0% !default;
+$text-h: 0 !default;
+$text-s: 0% !default;
+
+// --- primary / link (both Ubuntu orange #e95420; body links share the
+// button colour, so link-on-scheme-l tracks link-l) ---
+$primary-h: 16 !default;
+$primary-s: 82% !default;
+$primary-l: 52% !default;
+$primary-invert-l: 100% !default;
+$link-h: 16 !default;
+$link-s: 82% !default;
+$link-l: 52% !default;
+$link-invert-l: 100% !default;
+$link-on-scheme-l: $link-l !default;
+
+// --- admonition palette (Pitfall 3: United draws #fff text on every
+// saturated button fill, so pin invert-l to 100% instead of relying on the
+// SCSS palette generator's default choice) ---
+$info-h: 188 !default;
+$info-s: 78% !default;
+$info-l: 41% !default;
+$info-invert-l: 100% !default;
+$success-h: 129 !default;
+$success-s: 53% !default;
+$success-l: 46% !default;
+$success-invert-l: 100% !default;
+$warning-h: 41 !default;
+$warning-s: 85% !default;
+$warning-l: 59% !default;
+$warning-invert-l: 100% !default;
+$danger-h: 4 !default;
+$danger-s: 74% !default;
+$danger-l: 52% !default;
+$danger-invert-l: 100% !default;
+
+// --- dark (Ubuntu aubergine #772953; overrides Bulma's near-black default
+// dark. L=31% is deep, so white text reads on the is-dark fill — pin
+// dark-invert-l to 100%) ---
+$dark-h: 328 !default;
+$dark-s: 49% !default;
+$dark-l: 31% !default;
+$dark-invert-l: 100% !default;
+
+// --- radius (matches Bulma's --bulma-radius default; United's 0.375rem is
+// the same, so only declared for the Pitfall 6 control-radius pin) ---
+$radius: 0.375rem !default;
+
+@mixin variables {
+  --bulma-scheme-h: #{$scheme-h};
+  --bulma-scheme-s: #{$scheme-s};
+  --bulma-text-h: #{$text-h};
+  --bulma-text-s: #{$text-s};
+  --bulma-primary-h: #{$primary-h};
+  --bulma-primary-s: #{$primary-s};
+  --bulma-primary-l: #{$primary-l};
+  --bulma-primary-invert-l: #{$primary-invert-l};
+  --bulma-link-h: #{$link-h};
+  --bulma-link-s: #{$link-s};
+  --bulma-link-l: #{$link-l};
+  --bulma-link-invert-l: #{$link-invert-l};
+  --bulma-link-on-scheme-l: #{$link-on-scheme-l};
+  --bulma-info-h: #{$info-h};
+  --bulma-info-s: #{$info-s};
+  --bulma-info-l: #{$info-l};
+  --bulma-info-invert-l: #{$info-invert-l};
+  --bulma-success-h: #{$success-h};
+  --bulma-success-s: #{$success-s};
+  --bulma-success-l: #{$success-l};
+  --bulma-success-invert-l: #{$success-invert-l};
+  --bulma-warning-h: #{$warning-h};
+  --bulma-warning-s: #{$warning-s};
+  --bulma-warning-l: #{$warning-l};
+  --bulma-warning-invert-l: #{$warning-invert-l};
+  --bulma-danger-h: #{$danger-h};
+  --bulma-danger-s: #{$danger-s};
+  --bulma-danger-l: #{$danger-l};
+  --bulma-danger-invert-l: #{$danger-invert-l};
+  --bulma-dark-h: #{$dark-h};
+  --bulma-dark-s: #{$dark-s};
+  --bulma-dark-l: #{$dark-l};
+  --bulma-dark-invert-l: #{$dark-invert-l};
+
+  // Pitfall 6: pin every --bulma-control-* on the shared control selector
+  // group so bare `.button` / `.input` / `.textarea` / `.select select` /
+  // `.pagination-*` and their icons resolve padding, border, height, and
+  // radius correctly. `.is-*` modifiers re-declare with higher
+  // specificity, so per-modifier behaviour is preserved.
+  .button,
+  .control,
+  .file-cta,
+  .file-name,
+  .input,
+  .pagination,
+  .pagination-ellipsis,
+  .pagination-link,
+  .pagination-next,
+  .pagination-previous,
+  .select,
+  .select select,
+  .textarea {
+    --bulma-control-border-width: 1px;
+    --bulma-control-height: 2.5em;
+    --bulma-control-padding-vertical: calc(0.5em - 1px);
+    --bulma-control-padding-horizontal: calc(0.75em - 1px);
+    --bulma-control-radius: #{$radius};
+  }
+
+  // Pitfall 8: `--bulma-link-text` is set on :root via an hsl(var(...))
+  // chain that can fall back to UA-default on `<a>`; pin literally.
+  // United also underlines body link text (Bootstrap/Bootswatch convention;
+  // Bulma's base `a` is `text-decoration: none`). The chrome reset below
+  // strips the underline back off navigation / control components so only
+  // genuine prose links are underlined.
+  a {
+    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+
+    text-decoration: underline;
+  }
+
+  // Strip the body-link underline off navigation / control components whose
+  // `<a>` children are chrome, not prose links. Same specificity (0,3,0 with
+  // the `:root` prefix) as the `a` rule above but declared later, so it wins
+  // the source-order tie. `.breadcrumb a` is intentionally NOT reset — its
+  // links stay underlined. `.button.is-link` re-adds its own underline at
+  // higher specificity below.
+  .navbar-item,
+  .navbar-link,
+  .menu-list a,
+  .pagination-previous,
+  .pagination-next,
+  .pagination-link,
+  .pagination-ellipsis,
+  .tabs a,
+  .dropdown-item,
+  .panel-block,
+  .panel-tabs a,
+  .card-footer-item,
+  .button,
+  .tag {
+    text-decoration: none;
+  }
+
+  // Pitfall 14: `.breadcrumb a` reads `--bulma-breadcrumb-item-color`
+  // (= var(--bulma-link-text)), whose hsl(var(), var(), var()) chain fails
+  // at the child and drops the brand colour to the UA default. Pin the
+  // literal link colour on the parent `.breadcrumb` (base colour only — a
+  // hover lightness cannot be hard-coded generically and a base-only pin
+  // does not regress hover).
+  .breadcrumb {
+    --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+  }
+
+  // The current-page item (`.breadcrumb .is-active a`) is not a navigable
+  // link, so strip the prose-link underline back off it — it reads as plain
+  // text. Genuine ancestor links in the trail keep their underline.
+  .breadcrumb .is-active a {
+    text-decoration: none;
+  }
+
+  // Pitfall 4: burger icon on .navbar.is-primary follows primary-invert.
+  .navbar.is-primary {
+    --bulma-navbar-burger-color: var(--bulma-primary-invert);
+  }
+
+  // United mirrors Bootswatch's `.btn-link`: the link-colored button is a
+  // borderless, transparent-background text button whose label carries the
+  // link/primary hue with an underline — not Bulma's default solid fill.
+  // Because United's link and primary share the same orange, the default
+  // `.is-link` fill would be visually indistinguishable from
+  // `.button.is-primary`; this restyle keeps them distinct. Scope to the
+  // plain `.is-link` button and leave the `.is-outlined` / `.is-inverted` /
+  // `.is-light` / `.is-dark` / `.is-soft` / `.is-bold` combinations to
+  // Bulma's own modifier styling. `hsl()` uses bare Sass vars in the real
+  // `color` property (Pitfall 15), not `#{}` interpolation.
+  .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    color: hsl($link-h, $link-s, $link-l);
+    text-decoration: underline;
+
+    &:hover,
+    &.is-hovered {
+      background-color: transparent;
+      color: hsl($link-h, $link-s, 40%);
+      text-decoration: underline;
+    }
+  }
+
+  // Pitfall 9: pin <use>-pattern SVG icons inside .panel-icon to 1em so
+  // they sit in the icon slot instead of overflowing rightward.
+  .panel-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .panel-icon svg use {
+    width: 100%;
+    height: 100%;
+  }
+
+  // Pitfall 10: --bulma-shadow's hsl(var(--bulma-shadow-h), ...) chain
+  // on :root fails to resolve at the shadowed containers (.box / .card /
+  // .panel); they end up with neither the drop shadow nor the inner 1px
+  // ring. Pin a fully resolved two-stop shadow on those selectors. United's
+  // neutral scheme (s=0) makes this a pure-gray shadow. `.dropdown` uses a
+  // two-level indirection (parent registers `--bulma-dropdown-content-
+  // shadow: var(--bulma-shadow)`, child `.dropdown-content` reads it), so
+  // per Pitfall 1's eager-substitution behaviour, the pin must go on the
+  // parent `.dropdown` selector.
+  .box,
+  .card,
+  .dropdown,
+  .modal-card-head,
+  .panel {
+    --bulma-shadow:
+      0 0.5em 1em -0.125em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%),
+      0 0 0 1px hsla(#{$scheme-h}, #{$scheme-s}, 4%, 2%);
+  }
+
+  // Pitfall 11: separator borders on `.card-footer` / `.panel-block` /
+  // `.panel-tabs` / `.dropdown-divider` chain through --bulma-border-weak,
+  // and `.tabs a` / `.tabs ul` chain through --bulma-border. Both share the
+  // same `hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(...-l))`
+  // shape on :root and fail to resolve at the descendants. Pin literal hsl
+  // on the parents; also pin --bulma-card-header-shadow on .card.
+  .card,
+  .dropdown,
+  .panel {
+    --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 93%);
+  }
+
+  .tabs {
+    --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 86%);
+
+    // Same Pitfall 12 shape: Bulma registers
+    // `--bulma-tabs-boxed-link-active-background-color: var(--bulma-scheme-main)`
+    // on `.tabs`; the inner hsl(var(), var(), var()) chain fails at the
+    // descendant `.tabs.is-boxed li.is-active a`, leaving its background
+    // transparent so the ul's bottom border bleeds through. Pin literal hsl
+    // matching Bulma's light-mode `--bulma-scheme-main-l` (100%).
+    --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+  }
+
+  .card {
+    --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%);
+
+    // Pitfall 13: `--bulma-card-radius` is Bulma's SCSS-default 0.75rem,
+    // hardcoded in card.scss and NOT tied to any --bulma-radius token, and
+    // re-declared directly on `.card`. Scope the override to `.card` so it
+    // wins on specificity (0,2,0 vs 0,1,0).
+    --bulma-card-radius: #{$radius};
+  }
+
+  // Same class of chain failure as Pitfall 11/12: `.modal` registers
+  // `--bulma-modal-card-{head,body,foot}-background-color:
+  // var(--bulma-scheme-{main,main-bis})`, whose compound hsl(var(), var(),
+  // var()) fails at the descendant `.modal-card-{head,body,foot}` and leaves
+  // the backgrounds transparent. Pin literal hsl on the parent `.modal`.
+  // 100% / 98% match Bulma's light-mode `--bulma-scheme-main-l` and
+  // `--bulma-scheme-main-bis-l`.
+  .modal {
+    --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 98%);
+  }
+
+  // Pitfall 13 (continued): Bulma's `.card-image:first-child img` /
+  // `:last-child img` rule only rounds `<img>` children. Mirror it for
+  // background-styled `<figure>` children so gradient placeholders stay
+  // clipped to the card radius.
+  .card-image:first-child > figure {
+    border-start-start-radius: var(--bulma-card-radius);
+    border-start-end-radius: var(--bulma-card-radius);
+  }
+
+  .card-image:last-child > figure {
+    border-end-start-radius: var(--bulma-card-radius);
+    border-end-end-radius: var(--bulma-card-radius);
+  }
+
+  // Widen the active tab's underline from Bulma's 1px to 3px so it reads as
+  // a clear accent under plain `.tabs`. Under `.tabs.is-boxed`, Bulma sets
+  // `border-bottom-color: transparent !important` on the active tab, so this
+  // stays invisible there. Cancel the compensating margin so the row does
+  // not shift. Exclude `.is-toggle` (its active tab has an all-four border).
+  .tabs:not(.is-toggle) li.is-active a {
+    border-bottom-width: 3px;
+    margin-bottom: -3px;
+  }
+
+  // Bulma registers `--bulma-code` on :root as the danger/red colour, so
+  // inline <code> reads as an error state and clashes with the theme tone.
+  // Repoint text and background into the brand primary hue: a deep primary
+  // tone for the text (L=25%) over a pale primary-hued chip (L=94%). Scope
+  // to the `code` selector (0,1,1) so both win over Bulma's :root
+  // registration regardless of load order.
+  code {
+    --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 25%);
+    --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 94%);
+  }
+}
