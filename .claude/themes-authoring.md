@@ -813,14 +813,13 @@ success / warning / danger as body text, also emit the corresponding
 
 ## Status of existing themes against these pitfalls
 
-- `packages/themes/src/pulse/_variables.scss` currently **trips
-  Pitfall 2**: it overrides `$link-l: 39%` but does not override
-  `link-on-scheme-l`, so body `<a>` text renders at L=58%
-  (Bulma's default) rather than at L=39%. Whether this is intentional
-  for Pulse's look or an oversight is unconfirmed. Treat any
-  retroactive fix as a separate task with its own design decision.
-- `default` and `pulse` predate **Pitfall 14** and do not emit the
-  `.breadcrumb` link-colour pin, so their breadcrumb links may fall
-  through to the UA default (unverified per theme). The `cosmo` theme
-  carries the pin. Retrofitting `default` / `pulse` needs a per-theme
-  breadcrumb preview check and is treated as a separate task.
+`default`, `pulse`, and `cosmo` all carry the template-wide pitfall
+pins above, including the **Pitfall 14** `.breadcrumb` link-colour pin
+(`cosmo` shipped with it; `default` / `pulse` gained it in the breadcrumb
+retrofit). No existing theme has a known outstanding gap against the
+pitfalls above.
+
+An earlier revision of this section flagged `pulse` as tripping
+**Pitfall 2**. That was inaccurate: `pulse` does set
+`$link-on-scheme-l: $link-l` and emit `--bulma-link-on-scheme-l`, so its
+body links already render at the intended L — there was never a gap.
