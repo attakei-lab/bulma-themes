@@ -11,6 +11,19 @@ The flow has six phases (A–F). Do not reorder or skip; the file-layout, commit
 
 Invocation: `/create-theme <url>`.
 
+## Model requirement — run on Opus
+
+Theme authoring spans the Bulma custom-property `var()`-chain pitfalls catalogued in
+`.claude/themes-authoring.md`; applying them correctly in one pass is exactly where a
+lighter model regresses. This repo pins a lighter default model (Sonnet) for cost, so
+`/create-theme` may start on the wrong model.
+
+**Guard, before Phase A:** if the current session is **not** running on Opus, stop
+immediately. Tell the user to switch with `/model opus` (or relaunch with
+`claude --model opus`) and then re-invoke `/create-theme <url>`. Do not proceed with a
+lighter model. (A skill cannot change the session model itself — this is a prompt-to-switch,
+so it must be enforced here at every invocation.)
+
 ## Phase A — Pre-work agreement & extraction
 
 ### A.1 — Lock the inputs (single batched ask)
