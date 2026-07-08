@@ -16,9 +16,19 @@
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">Themes</a>
         <div class="navbar-dropdown nav-themes">
+          <!-- Default is the project baseline: full-width above the theme grid, outside it. -->
           {% for theme in collections.theme %}
-            <a class="navbar-item" href="{{ site.base_path }}{{ theme.url }}">{{ theme.data.title }}</a>
+            {% if theme.data.theme == "default" %}
+              <a class="navbar-item" href="{{ site.base_path }}{{ theme.url }}">{{ theme.data.title }}</a>
+            {% endif %}
           {% endfor %}
+          <div class="nav-theme-grid">
+            {% for theme in collections.theme %}
+              {% if theme.data.theme != "default" %}
+                <a class="navbar-item" href="{{ site.base_path }}{{ theme.url }}">{{ theme.data.title }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
       </div>
       <a class="navbar-item" href="{{ site.base_path }}/">

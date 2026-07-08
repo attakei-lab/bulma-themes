@@ -31,13 +31,13 @@ footer.footer, div.footer {
   vertical-align: -0.125em;
 }
 
-/* Themes dropdown: lay out theme links in a 3-column grid.
-   Scope to Bulma's reveal selectors so the dropdown stays display:none
-   until hovered / active (otherwise the .nav-themes specificity would
-   override Bulma's default-hidden state). */
-.navbar-item.has-dropdown.is-active .navbar-dropdown.nav-themes,
-.navbar-item.has-dropdown.is-hoverable:hover .navbar-dropdown.nav-themes,
-.navbar-item.has-dropdown.is-hoverable:focus-within .navbar-dropdown.nav-themes {
+/* Themes dropdown: Default sits full-width at the top, and the remaining
+   themes lay out in a 3-column grid below it. The grid is scoped to the
+   inner `.nav-theme-grid` wrapper (not `.nav-themes` itself) so
+   `.nav-themes` keeps Bulma's default show/hide behaviour — no
+   reveal-selector scoping needed, since the grid is only visible when the
+   dropdown is open. */
+.nav-themes .nav-theme-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(8rem, 1fr));
 }
