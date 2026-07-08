@@ -191,8 +191,16 @@ Pull request creation and post-creation handling — CI watch, CodeRabbit review
 
 ## Themes authoring
 
-@./themes-authoring.md
+When authoring or debugging a theme's SCSS (`packages/themes/src/<slug>/_variables.scss`),
+**read `.claude/themes-authoring.md` first** — it catalogs the Bulma 1.x custom-property
+`var()`-chain pitfalls and the template-wide mitigations every theme must emit. This guide is
+loaded on demand (not eagerly imported) to keep non-theme sessions cheap; read it in full
+before touching any `_variables.scss`.
 
 ## Website demos authoring
 
-@./website-demos-authoring.md
+When adding or editing per-theme demo pages or include snippets under
+`apps/website/src/theme/` or `apps/website/src/_includes/theme/`,
+**read `.claude/website-demos-authoring.md` first** — it defines the Showcase/Demo layout,
+the subsection dictionary, and the default-first cell rule. Loaded on demand for the same
+cost reason; read it in full before editing demo snippets.
