@@ -8,11 +8,9 @@
  * Light-only prototype. Inherits Bulma defaults for radius / shadow /
  * spacing; only colors (primary / link / admonitions) are customized.
  *
- * This file is compiled by `build.ts` into three CSS variants per theme
+ * This file is compiled by `build.ts` into a single CSS artifact per theme
  * (the directory name is used as the theme name):
- *   - dist/<theme>/theme.min.css       (variables applied on :root)
- *   - dist/<theme>/theme.data.min.css  (variables applied on [data-theme=<theme>])
- *   - dist/<theme>/theme.full.min.css  (Bulma bundle + variables on :root)
+ *   - dist/<theme>/theme.min.css  (Bulma bundle + variables on :root)
  *
  * Downstream consumers can also `@use` this file with `with (...)` to
  * override individual values and run their own build.

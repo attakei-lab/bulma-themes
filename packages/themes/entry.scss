@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: MIT
+
+/*
+ * Shared build entry for every theme. `build.ts` compiles this file once per
+ * theme with `loadPaths: [src/<theme>]`, so `@use "_variables"` resolves to
+ * that theme's source. Bundles Bulma and applies the theme's custom
+ * properties on :root, producing the single `theme.min.css` drop-in.
+ */
+@use "pkg:bulma";
+@use "_variables" as v;
+
+:root {
+  @include v.variables;
+}

@@ -2,9 +2,9 @@
 
 Pitfalls and conventions for authoring a new theme
 (`packages/themes/src/<slug>/_variables.scss`) on top of Bulma 1.x in
-this repository. Applies to all three CSS variants produced by
-`packages/themes/build.ts` (`theme.min.css`, `theme.data.min.css`,
-`theme.full.min.css`).
+this repository. `packages/themes/build.ts` compiles each theme into a
+single artifact — `theme.min.css` (`theme.css` in debug) — by applying
+`@mixin variables` on `:root` over a bundled Bulma.
 
 ## Bulma 1.x custom-property structure
 
@@ -43,27 +43,19 @@ values. The navbar background, `.button.is-primary`, and other surfaces
 that read `--bulma-primary` directly will **not** pick up your H/S/L
 overrides.
 
-### Impact by variant
+### Impact on the current build
 
-- `theme.min.css` — `@include variables` is applied on `:root`, so
-  H/S/L overrides cascade through Bulma's own `:root` definition of
-  `--bulma-primary`. No problem.
-- `theme.full.min.css` — same as `theme.min.css`. No problem.
-- `theme.data.min.css` — `@include variables` is applied on
-  `[data-theme=<slug>]`. **Derived colors do not follow.** If you intend
-  to use this variant for runtime theme switching, the override must
-  also restate the resolved colors directly.
+The sole build variant applies `@mixin variables` on `:root`, so H/S/L
+overrides cascade through Bulma's own `:root` definition of
+`--bulma-primary`. **No problem in practice.**
 
-### Mitigation
-
-If only `:root`-applied variants are used in practice, overriding H/S/L
-is enough. If you need `data-theme`-attribute switching to actually
-work, additionally emit explicit values like
-`--bulma-primary: hsl(<h>deg, <s>%, <l>%);` so the descendant scope
-overrides the resolved color too.
-
-This trap is currently treated as known: address it when a downstream
-consumer actually depends on the `data-theme` switching variant.
+The trap only bites a *descendant-scoped* application of the mixin
+(e.g. a hypothetical `[data-theme=<slug>]` runtime-switching variant):
+there the derived colors would not follow, and the override would have
+to restate the resolved colors directly with explicit values like
+`--bulma-primary: hsl(<h>deg, <s>%, <l>%);`. Keep this in mind if a
+`data-theme` switching variant is ever reintroduced; it is a non-issue
+for the current `:root` output.
 
 ## Pitfall 2: `<a>` color is not derived from `--bulma-link-l`
 
@@ -734,7 +726,7 @@ default (a muted active link colour) is fine for most themes.
 
 Unlike every pitfall above — which are Bulma custom-property *render-time*
 `var()`-chain failures — this one is a **build-time Sass syntax** trap. It
-bites at `sass.compileString` time, not in the browser.
+bites at `sass.compile` time, not in the browser.
 
 `hsl()` must be written two different ways depending on where it appears:
 

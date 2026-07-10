@@ -5,11 +5,9 @@
  *
  * Derived from Bootswatch Pulse (https://bootswatch.com/pulse/).
  *
- * This file is compiled by `build.ts` into three CSS variants
+ * This file is compiled by `build.ts` into a single CSS artifact
  * per theme (the directory name is used as the theme name):
- *   - dist/<theme>/theme.min.css       (variables applied on :root)
- *   - dist/<theme>/theme.data.min.css  (variables applied on [data-theme=<theme>])
- *   - dist/<theme>/theme.full.min.css  (Bulma bundle + variables on :root)
+ *   - dist/<theme>/theme.min.css  (Bulma bundle + variables on :root)
  *
  * Downstream consumers can also `@use` this file with
  * `with (...)` to override individual values and run their own
