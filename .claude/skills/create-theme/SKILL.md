@@ -271,7 +271,7 @@ From `packages/themes/`:
 bun run build
 ```
 
-Use `build`, not `build:debug`. The website's layouts reference `theme.full.min.css` (the release-mode output); `build:debug` writes only the non-minified `theme.full.css` and leaves the preview link 404 / empty.
+Use `build`, not `build:debug`. The website's layouts reference `theme.min.css` (the release-mode output); `build:debug` writes only the non-minified `theme.css` and leaves the preview link 404 / empty.
 
 If sass fails, attempt to auto-fix the offending value in `_variables.scss` (typical causes: malformed HSL, divide-by-zero in invert-l computation, missing semicolon). Up to **3 attempts**; after each, rebuild. On success, report:
 
@@ -310,7 +310,7 @@ For each round of the loop:
 
 1. Read the user's NG list.
 2. Edit `_variables.scss` to apply all NG fixes in one batch.
-3. Run `bun run build` from `packages/themes/` (the release build is what the website's `theme.full.min.css` link resolves to).
+3. Run `bun run build` from `packages/themes/` (the release build is what the website's `theme.min.css` link resolves to).
 4. If sass fails, repeat Phase B.4's auto-fix protocol (3 attempts, report cause).
 5. Ask the user to refresh and re-check.
 
