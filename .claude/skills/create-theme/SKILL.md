@@ -271,7 +271,7 @@ From `packages/themes/`:
 bun run build
 ```
 
-Use `build`, not `build:debug`. The website's layouts reference `theme.min.css` (the release-mode output); `build:debug` writes only the non-minified `theme.css` and leaves the preview link 404 / empty.
+Use `build`, not `build:debug`. The website's layouts reference `theme.min.css` (the release-mode output); `build:debug` writes only `theme.css`, never `theme.min.css` — so the preview 404s on a clean tree, or serves stale release CSS if `dist/` already holds a `theme.min.css` from an earlier `build`.
 
 If sass fails, attempt to auto-fix the offending value in `_variables.scss` (typical causes: malformed HSL, divide-by-zero in invert-l computation, missing semicolon). Up to **3 attempts**; after each, rebuild. On success, report:
 
