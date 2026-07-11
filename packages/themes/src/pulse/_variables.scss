@@ -41,6 +41,17 @@ $link-l: 39% !default;
 $link-invert-l: 100% !default;
 $link-on-scheme-l: $link-l !default;
 
+// --- secondary (Bootswatch Pulse $secondary #a991d4 → hsl(261, 44%, 70%);
+// see the "Choosing a theme's secondary" policy in themes-authoring.md). The
+// base colour is injected into Bulma's colour map via $custom-colors
+// (entry.scss). Pulse draws #fff text on every .btn-* variant (see the
+// admonition block below), so pin secondary invert-l to 100% to match. ---
+$secondary-h: 261 !default;
+$secondary-s: 44% !default;
+$secondary-l: 70% !default;
+$secondary-invert-l: 100% !default;
+$custom-colors: ("secondary": (hsl($secondary-h, $secondary-s, $secondary-l))) !default;
+
 // --- admonition palette (Pitfall 3: Bootswatch Pulse uses #fff text on
 // every .btn-* color variant; force -invert-l to 100% to match) ---
 $info-h: 199 !default;
@@ -79,6 +90,7 @@ $radius-large: 0 !default;
   --bulma-primary-s: #{$primary-s};
   --bulma-primary-l: #{$primary-l};
   --bulma-primary-invert-l: #{$primary-invert-l};
+  --bulma-secondary-invert-l: #{$secondary-invert-l};
   --bulma-link-h: #{$link-h};
   --bulma-link-s: #{$link-s};
   --bulma-link-l: #{$link-l};

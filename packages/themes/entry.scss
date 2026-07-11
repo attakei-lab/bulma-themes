@@ -2,12 +2,21 @@
 
 /*
  * Shared build entry for every theme. `build.ts` compiles this file once per
- * theme with `loadPaths: [src/<theme>]`, so `@use "_variables"` resolves to
- * that theme's source. Bundles Bulma and applies the theme's custom
- * properties on :root, producing the single `theme.min.css` drop-in.
+ * theme with `loadPaths: [src/<theme>, <bulma-root>]`, so `@use "_variables"`
+ * resolves to that theme's source and `@use "sass"` resolves to Bulma's
+ * bundled entry (`bulma/sass/_index.scss`).
+ *
+ * Bulma is configured with the theme's `$custom-colors` map so the library
+ * generates the full `secondary` surface (`.is-secondary` component modifiers,
+ * `.has-*-secondary` helpers, and the `--bulma-secondary-*` palette) through
+ * its own colour-generation path. `_variables` is `@use`d first so its map is
+ * available to configure Bulma; the umbrella `pkg:bulma` cannot take a `with()`
+ * configuration, which is why Bulma is pulled in as `@use "sass"` here.
  */
-@use "pkg:bulma";
 @use "_variables" as v;
+@use "sass" as bulma with (
+  $custom-colors: v.$custom-colors
+);
 
 :root {
   @include v.variables;
