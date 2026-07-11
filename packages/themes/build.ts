@@ -14,7 +14,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC_DIR = resolve(__dirname, "src");
 const DIST_DIR = resolve(__dirname, "dist");
 const ENTRY = resolve(__dirname, "entry.scss");
-const PACKAGE_IMPORTER = new sass.NodePackageImporter();
+// Bulma's package root (the directory holding `sass/`). Added to loadPaths so
+// `entry.scss` can `@use "sass" with (...)` to configure Bulma — the umbrella
+// `pkg:bulma` cannot be configured with `with()`, which is required to inject
+// the `secondary` colour into Bulma's `$custom-colors` map.
+const BULMA_ROOT = dirname(
+  fileURLToPath(import.meta.resolve("bulma/package.json")),
+);
 
 async function listThemes(): Promise<string[]> {
   const entries = await readdir(SRC_DIR, { withFileTypes: true });
@@ -28,8 +34,7 @@ async function compileTheme(theme: string, debug: boolean): Promise<void> {
   const outFile = join(outDir, `theme.${ext}`);
 
   const result = sass.compile(ENTRY, {
-    loadPaths: [themeDir],
-    importers: [PACKAGE_IMPORTER],
+    loadPaths: [themeDir, BULMA_ROOT],
     style: debug ? "expanded" : "compressed",
     sourceMap: debug,
   });

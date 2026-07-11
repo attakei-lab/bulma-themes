@@ -30,6 +30,19 @@ $link-l: 30% !default;
 $link-invert-l: 100% !default;
 $link-on-scheme-l: $link-l !default;
 
+// --- secondary (library extension colour paired with primary; see the
+// "Choosing a theme's secondary" policy in .claude/themes-authoring.md).
+// Default has no distinct supporting colour, so secondary aliases primary
+// — a valid outcome, not a special case. The base colour is injected into
+// Bulma's colour map via $custom-colors (entry.scss), which generates the
+// full .is-secondary / .has-*-secondary surface and the --bulma-secondary-*
+// palette; only invert-l is pinned here (mirroring the primary pin). ---
+$secondary-h: $primary-h !default;
+$secondary-s: $primary-s !default;
+$secondary-l: $primary-l !default;
+$secondary-invert-l: $primary-invert-l !default;
+$custom-colors: ("secondary": (hsl($secondary-h, $secondary-s, $secondary-l))) !default;
+
 // --- admonition palette (Pitfall 3: every admonition L sits at ≤50%, so
 // white text reads cleanly on the saturated fill — pin invert-l to 100%
 // instead of relying on the SCSS palette generator's default choice) ---
@@ -63,6 +76,7 @@ $radius: 0.375rem !default;
   --bulma-primary-s: #{$primary-s};
   --bulma-primary-l: #{$primary-l};
   --bulma-primary-invert-l: #{$primary-invert-l};
+  --bulma-secondary-invert-l: #{$secondary-invert-l};
   --bulma-link-h: #{$link-h};
   --bulma-link-s: #{$link-s};
   --bulma-link-l: #{$link-l};

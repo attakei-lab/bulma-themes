@@ -37,6 +37,17 @@ $link-l: 52% !default;
 $link-invert-l: 100% !default;
 $link-on-scheme-l: $link-l !default;
 
+// --- secondary (Bootswatch Cosmo $secondary $gray-800 #373a3c →
+// hsl(204, 4%, 23%), a dark neutral; see the "Choosing a theme's secondary"
+// policy in themes-authoring.md). The base colour is injected into Bulma's
+// colour map via $custom-colors (entry.scss). White text reads cleanly on
+// the dark fill, so pin invert-l to 100%. ---
+$secondary-h: 204 !default;
+$secondary-s: 4% !default;
+$secondary-l: 23% !default;
+$secondary-invert-l: 100% !default;
+$custom-colors: ("secondary": (hsl($secondary-h, $secondary-s, $secondary-l))) !default;
+
 // --- admonition palette (Cosmo draws white text on every saturated
 // button fill, so pin invert-l to 100% instead of relying on the SCSS
 // palette generator's default choice — Pitfall 3) ---
@@ -81,6 +92,7 @@ $radius-large: 0 !default;
   --bulma-primary-s: #{$primary-s};
   --bulma-primary-l: #{$primary-l};
   --bulma-primary-invert-l: #{$primary-invert-l};
+  --bulma-secondary-invert-l: #{$secondary-invert-l};
   --bulma-link-h: #{$link-h};
   --bulma-link-s: #{$link-s};
   --bulma-link-l: #{$link-l};
