@@ -144,6 +144,24 @@ unmodified one (`.title`, `.breadcrumb`, the modal-card chrome,
 etc.); in those cases the matrix has no "default vs modifier" axis
 to begin with.
 
+## The `secondary` extension colour
+
+This library adds a `secondary` palette that Bulma does not ship (see
+`.claude/themes-authoring.md`). It behaves like any built-in colour, so every
+colour subsection includes an `.is-secondary` cell placed **immediately after
+`.is-primary`** — `secondary` pairs with `primary` and reads as the second
+brand colour, ahead of `link` / the admonition colours.
+
+- Add the cell wherever a component demonstrates colour modifiers:
+  `element-button` (the base **and** `is-light` rows), `element-tag`,
+  `element-notification` (base **and** `is-light`), `element-progress`,
+  `element-table` (its colour-row table), `component-message`,
+  `component-panel`, `form-input`, `form-select`.
+- Do **not** repeat an explanatory note per snippet. A single one-line pointer
+  to `/docs/color-palette/` lives under the Demo heading in
+  `_layouts/theme.html`; the concept is documented on that page, not on the
+  theme pages.
+
 ## Integrated Showcase section
 
 `_includes/theme/_showcase.html` is a single page-band placed

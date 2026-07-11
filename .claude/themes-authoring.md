@@ -760,6 +760,48 @@ colour (e.g. a `.button.is-link` restyle) rather than registering a
 `--bulma-*` token. That is exactly where the interpolation habit from the
 pin blocks above misfires.
 
+## Choosing a theme's `secondary`
+
+Bulma has no `secondary` palette; this library adds one to every theme as a
+standard extension colour paired with `primary` (see "Theme library
+architecture" in `CLAUDE.md` for the wiring — `$secondary-h/s/l` plus a
+`$custom-colors` map fed to Bulma, which then generates the whole
+`.is-secondary` / `.has-*-secondary` surface itself). When authoring a theme,
+pick its `secondary` value with this policy, in priority order:
+
+1. **Sourced (highest priority).** When the theme is ported from an explicit
+   reference source (e.g. via the `create-theme` skill against a named site)
+   and that source defines a `secondary` / supporting colour, adopt it. Take
+   the value the source actually *renders* for its own secondary elements, and
+   verify it against the compiled output — a declared token can be overridden
+   by a later rule, and a preview site can layer its own styles on top of the
+   distributable theme.
+2. **Otherwise, explore.** Choose a supporting tone grounded in the theme's own
+   design language. Its role is deliberately open — `secondary` may read as an
+   **accent** (a distinct second hue), a **neutral** (a grey), or a **fallback**
+   equal to `primary` when the theme has no distinct supporting colour. Setting
+   `secondary` equal to `primary` is a valid outcome, not a special case that
+   needs justification.
+
+Express the value as `$secondary-h/s/l` tokens (mirroring `$primary-*`) and
+build the `$custom-colors` map from them, at the top of `_variables.scss`:
+
+```scss
+$secondary-h: 261 !default;
+$secondary-s: 44% !default;
+$secondary-l: 70% !default;
+$secondary-invert-l: 100% !default; // override-only — see below
+$custom-colors: ("secondary": (hsl($secondary-h, $secondary-s, $secondary-l))) !default;
+```
+
+`$secondary-invert-l` is **override-only**: because the base colour is passed
+through `$custom-colors`, Bulma auto-computes the text colour drawn on a
+`secondary` fill. Pin it (and emit `--bulma-secondary-invert-l` from `@mixin
+variables`) only when the source demands a specific text colour or a preview
+shows the auto choice is wrong. Record the concrete provenance of the value —
+the source hex, and why the invert is or isn't pinned — in a comment in the
+theme's own `_variables.scss`; this guide holds only the general policy.
+
 ## Minimum viable theme: variable checklist
 
 For a color-only theme that inherits Bulma defaults for radius / shadow
@@ -778,6 +820,11 @@ For a color-only theme that inherits Bulma defaults for radius / shadow
   --bulma-primary-s: #{$primary-s};
   --bulma-primary-l: #{$primary-l};
   --bulma-primary-invert-l: #{$primary-invert-l};   // Pitfall 3
+
+  // secondary — base colour comes from the $custom-colors map defined at the
+  // top of _variables.scss, not from the mixin; emit invert-l here only to
+  // override Bulma's auto choice (see "Choosing a theme's secondary")
+  --bulma-secondary-invert-l: #{$secondary-invert-l};
 
   // link (covers both body links and .button.is-link)
   --bulma-link-h: #{$link-h};
