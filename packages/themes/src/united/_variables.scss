@@ -40,7 +40,9 @@ $link-on-scheme-l: $link-l !default;
 // secondary" policy in themes-authoring.md). The base colour is injected into
 // Bulma's colour map via $custom-colors (entry.scss). Bootswatch United draws
 // #fff on .btn-secondary despite the light fill; pin invert-l to 100% to
-// match that source choice rather than rely on Bulma's auto-contrast. ---
+// match that source choice rather than rely on Bulma's auto-contrast. White on
+// this #aea79f fill is ~2.4:1 — below WCAG AA (3.0:1 for large text); an
+// intentional source-fidelity exception, not an oversight. ---
 $secondary-h: 32 !default;
 $secondary-s: 8% !default;
 $secondary-l: 65% !default;
