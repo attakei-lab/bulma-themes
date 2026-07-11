@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}: {{ site.title }}</title>
+  <link rel="stylesheet" href="{{ site.base_path }}/dist/default/theme.min.css">
+  <link rel="stylesheet" href="{{ site.base_path }}/assets/custom.css">
+</head>
+
+<body>
+  {% getBundle "fontawesome" %}
+  {% include "nav.html" %}
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <p class="title is-size-1">{{ title }}</p>
+      <p class="subtitle">{{ description }}</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      <div class="content">
+        {{ content | safe }}
+      </div>
+    </div>
+  </section>
+  {% include "footer.html" %}
+</body>
+
+</html>

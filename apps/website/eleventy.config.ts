@@ -41,6 +41,12 @@ export default async function (eleventyConfig: EleventyConfig) {
     "./assets/": "assets",
     [themesDistDir]: "dist",
   });
+  // Colocated images for docs pages: an asset next to `src/docs/<name>/index.md`
+  // is copied to `/docs/<name>/`, so the page can reference it with a plain
+  // relative path (the folder-form page and its assets share an output dir).
+  eleventyConfig.addPassthroughCopy(
+    "./src/docs/**/*.{png,svg,jpg,jpeg,webp,gif}",
+  );
   eleventyConfig.addCollection("theme", (api) =>
     api.getFilteredByGlob("./src/theme/*.md"),
   );
