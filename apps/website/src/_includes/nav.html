@@ -40,9 +40,59 @@
     </div>
 
     <div class="navbar-end">
+      <div class="navbar-item has-dropdown is-hoverable color-scheme-picker">
+        <a class="navbar-link" role="button" aria-label="Theme">
+          <span class="icon icon-mode-light"><i class="fas fa-sun"></i></span>
+          <span class="icon icon-mode-dark"><i class="fas fa-moon"></i></span>
+        </a>
+        <div class="navbar-dropdown is-right">
+          <a class="navbar-item" data-set-theme="light">
+            <span class="icon"><i class="fas fa-sun"></i></span>
+            <span>Light</span>
+          </a>
+          <a class="navbar-item" data-set-theme="dark">
+            <span class="icon"><i class="fas fa-moon"></i></span>
+            <span>Dark</span>
+          </a>
+        </div>
+      </div>
       <a class="navbar-item" href="{{ site.repo_url }}" target="_blank" >
         <span class="icon"><i class="fab fa-github"></i></span>
       </a>
     </div>
   </div>
 </nav>
+
+{# Light/dark colour-scheme picker. The trigger icon shows the *current* mode;
+   the dropdown sets it explicitly. Setting an explicit data-theme on :root
+   makes Bulma (and the themes' [data-theme="dark"] overrides) switch
+   deterministically, independent of the OS setting. #}
+<style>
+  :root[data-theme="dark"] .color-scheme-picker .icon-mode-light,
+  :root:not([data-theme="dark"]) .color-scheme-picker .icon-mode-dark {
+    display: none;
+  }
+  /* @11ty/font-awesome emits viewBox-less, width-less SVGs with
+     overflow:visible, so an icon's box overruns its slot and can intercept a
+     neighbour's pointer — the GitHub item was stealing hover from the theme
+     trigger's icon. These icons are decorative, so let the clickable ancestor
+     (<a> / .navbar-link) own the pointer instead. */
+  .navbar-end .icon,
+  .navbar-end .svg-inline--fa {
+    pointer-events: none;
+  }
+</style>
+<script>
+  (function () {
+    var root = document.documentElement;
+    root.dataset.theme = localStorage.getItem("theme") || "light";
+    document.addEventListener("click", function (e) {
+      var item = e.target.closest("[data-set-theme]");
+      if (!item) return;
+      e.preventDefault();
+      var value = item.getAttribute("data-set-theme");
+      root.dataset.theme = value;
+      localStorage.setItem("theme", value);
+    });
+  })();
+</script>
