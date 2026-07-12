@@ -336,4 +336,56 @@ $radius: 0.375rem !default;
     --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 25%);
     --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 94%);
   }
+
+  // --- Dark mode (Bulma neutral dark canvas + brand accents; driven by
+  // [data-theme="dark"]) ---
+  // united pins no scheme/text L, so Bulma's own [data-theme=dark] theme sets
+  // the canvas; only the light-only literal pins above need dark counterparts.
+  // `&` is :root, so this compiles to `:root[data-theme="dark"] …`.
+  &[data-theme="dark"] {
+    .box,
+    .card,
+    .dropdown,
+    .modal-card-head,
+    .panel {
+      --bulma-shadow:
+        0 0.5em 1em -0.125em hsl(0deg 0% 0% / 40%),
+        0 0 0 1px hsl(0deg 0% 100% / 10%);
+    }
+
+    .card,
+    .dropdown,
+    .panel {
+      --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 21%);
+    }
+
+    .tabs {
+      --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 24%);
+      --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+    }
+
+    .card {
+      --bulma-card-header-shadow: 0 0.125em 0.25em hsl(0deg 0% 0% / 30%);
+    }
+
+    .modal {
+      --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 11%);
+    }
+
+    code {
+      --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 78%);
+      --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 16%);
+    }
+
+    // The link button darkens on hover on light; on the dark ground it must
+    // lighten instead (Pitfall 15: bare Sass vars in the real property).
+    .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
+      &:hover,
+      &.is-hovered {
+        color: hsl($link-h, $link-s, 66%);
+      }
+    }
+  }
 }
