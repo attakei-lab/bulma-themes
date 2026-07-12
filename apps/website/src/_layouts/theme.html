@@ -93,7 +93,7 @@
 <body>
   {% getBundle "fontawesome" %}
   {% include "nav.html" %}
-  <section class="hero is-primary">
+  <section class="hero is-{{ headerColor or 'primary' }}">
     <div class="hero-body">
       <p class="title is-size-1">{{ title }}</p>
       <p class="subtitle">{{ description }}</p>

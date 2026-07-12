@@ -10,11 +10,21 @@
     body { margin: 0; }
     .thumb { padding: 1rem; }
     .thumb .buttons { gap: 0.1rem; }
+    /* Defensive: cap the description at two lines so a long value can't push
+       the button row out of the fixed-height (320px) gallery iframe. The cap
+       is a line count, so the max height is width-independent. */
+    .hero-body .subtitle {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      overflow: hidden;
+    }
   </style>
 </head>
 
 <body>
-  <nav class="navbar is-primary" role="navigation" aria-label="thumbnail">
+  <nav class="navbar is-{{ themePage.data.headerColor or 'primary' }}" role="navigation" aria-label="thumbnail">
     <div class="navbar-brand">
       <a class="navbar-item">
         <strong>{{ themePage.data.title }}</strong>
