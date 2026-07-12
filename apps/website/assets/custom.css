@@ -31,6 +31,38 @@ footer.footer, div.footer {
   vertical-align: -0.125em;
 }
 
+/* copy-component web component wraps fenced code blocks to add a copy button.
+   Position the button absolutely in the top-right corner of the pre block. */
+copy-component {
+  position: relative;
+  display: block;
+}
+
+copy-component button {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  padding: 0.2em 0.5em;
+  font-size: 0.75rem;
+  border: 1px solid var(--bulma-border);
+  border-radius: var(--bulma-radius-small);
+  background: var(--bulma-scheme-main);
+  color: var(--bulma-text);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+copy-component:hover button,
+copy-component:focus-within button {
+  opacity: 1;
+}
+
+copy-component button:focus {
+  opacity: 1;
+  outline: 2px solid var(--bulma-focus);
+}
+
 /* Themes dropdown: Default sits full-width at the top, and the remaining
    themes lay out in a 3-column grid below it. The grid is scoped to the
    inner `.nav-theme-grid` wrapper (not `.nav-themes` itself) so

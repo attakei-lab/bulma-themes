@@ -1,16 +1,14 @@
 ---
 layout: index.html
 title: Color Themes for Bulma
-theme: pulse
 ---
-
-Hello Bulma users!
 
 ## Quickstart
 
-If you want to apply this page's theme into your website,
-replace your `<link>` element using Bulma by it.
+Replace your Bulma `<link>` with the one below to apply the `default` theme:
 
 ```html
-<link rel="stylesheet" href="{{ site.url }}{{ site.repo }}/dist/{{ theme }}/theme.min.css" >
+<link rel="stylesheet" href="{{ site.url }}{{ site.base_path }}/dist/default/theme.min.css">
 ```
+
+To use a different theme, replace `default` with any theme slug from the [gallery below](#gallery) — for example, `pulse` or `cosmo`.

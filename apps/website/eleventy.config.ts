@@ -1,7 +1,12 @@
+import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import type { EleventyConfig } from "@11ty/eleventy";
 import fontAwesomePlugin from "@11ty/font-awesome";
+
+const require = createRequire(import.meta.url);
+// CJS-only package; load via require in ESM context
+const markdownCopyButton = require("eleventy-plugin-markdown-copy-button");
 
 const themesDistDir = resolve(
   dirname(
@@ -20,6 +25,7 @@ export const config = {
 };
 
 export default async function (eleventyConfig: EleventyConfig) {
+  eleventyConfig.addPlugin(markdownCopyButton);
   eleventyConfig.addPlugin(fontAwesomePlugin, {
     defaultAttributes: {
       class: "svg-inline--fa",
