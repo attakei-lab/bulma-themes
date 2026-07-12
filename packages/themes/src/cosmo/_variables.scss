@@ -5,9 +5,10 @@
  * ode to Metro": a vivid blue primary with saturated accent colors on a
  * clean, untinted white canvas.
  *
- * Light-only prototype. Inherits Bulma defaults for radius / shadow /
- * spacing; only colors (primary / link / admonitions / near-neutral text
- * tint) are customized.
+ * Ships a light default plus a `[data-theme="dark"]` dark variant (see the
+ * dark block at the end of the mixin). Inherits Bulma defaults for radius /
+ * shadow / spacing; only colors (primary / link / admonitions / near-neutral
+ * text tint) are customized.
  *
  * This file is compiled by `build.ts` into a single CSS artifact per theme
  * (the directory name is used as the theme name):
@@ -366,5 +367,66 @@ $radius-large: 0 !default;
   code {
     --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 25%);
     --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 94%);
+  }
+
+  // --- Dark mode (Bulma neutral dark canvas + Cosmo accents; driven by
+  // [data-theme="dark"]) ---
+  // Cosmo pins no scheme/text L, so Bulma's own [data-theme=dark] theme sets
+  // the canvas (neutral, since scheme-s is 0%) — no scheme/text override
+  // needed here. Only the light-only literal pins above need dark
+  // counterparts, plus the two real-property accent hovers that darken on
+  // light are flipped to lighten on dark. `&` is :root, so this compiles to
+  // `:root[data-theme="dark"] …`, winning over the light pins and Bulma's
+  // dark block.
+  &[data-theme="dark"] {
+    .box,
+    .card,
+    .dropdown,
+    .modal-card-head,
+    .panel {
+      --bulma-shadow:
+        0 0.5em 1em -0.125em hsl(0deg 0% 0% / 40%),
+        0 0 0 1px hsl(0deg 0% 100% / 10%);
+    }
+
+    .card,
+    .dropdown,
+    .panel {
+      --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 21%);
+    }
+
+    .tabs {
+      --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 24%);
+      --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+    }
+
+    .card {
+      --bulma-card-header-shadow: 0 0.125em 0.25em hsl(0deg 0% 0% / 30%);
+    }
+
+    .modal {
+      --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 11%);
+    }
+
+    code {
+      --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 78%);
+      --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 16%);
+    }
+
+    // On light, the link button and breadcrumb hover darken (L 40%); on the
+    // dark ground they must lighten instead (Pitfall 15: bare Sass vars in the
+    // real `color` property, #{} interpolation in the custom property value).
+    .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
+      &:hover,
+      &.is-hovered {
+        color: hsl($link-h, $link-s, 66%);
+      }
+    }
+
+    .breadcrumb {
+      --bulma-breadcrumb-item-hover-color: hsl(#{$link-h}, #{$link-s}, 66%);
+    }
   }
 }

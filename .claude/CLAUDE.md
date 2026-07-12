@@ -48,9 +48,9 @@ This is the sole pre-built artifact. Consumers who need to customize tokens use 
 
 Bulma is pulled in as `@use "sass"` (its bundled `sass/_index.scss`), resolved through a `loadPaths` entry pointing at Bulma's package root, which `build.ts` derives from `import.meta.resolve("bulma/package.json")`. Bulma is **configured** with the theme's `$custom-colors` map so it generates the `secondary` palette on its own colour path (see "Per-theme source" above). The umbrella `pkg:bulma` cannot be used for this: `@use "pkg:bulma" with (...)` is rejected because the umbrella does not forward `$custom-colors` as configurable — so `sass.NodePackageImporter` is no longer needed. There is no other build step or watcher.
 
-### Future-proofing
+### Dark mode
 
-Dark mode is expected for later themes — keep the `_variables.scss` mixin shape and `entry.scss` extensible (e.g. a sibling `@mixin variables-dark` or a `prefers-color-scheme` wrapping in the entry) rather than refactoring once a dark theme lands.
+A theme may ship an optional **dark variant** driven by `[data-theme="dark"]`; all five current themes do. To add one, the theme's `@mixin variables` appends a `&[data-theme="dark"] { … }` block (which compiles to `:root[data-theme="dark"] …`) — no change to `entry.scss` or `build.ts` is required. A theme whose mixin has no such block is simply light-only. The website's navbar `color-scheme-picker` sets `data-theme` on the document root, driving both Bulma's own dark theme and the themes' dark blocks. OS auto-follow via `prefers-color-scheme` is not emitted yet. See `.claude/themes-authoring.md`, "Dark mode", for the mechanism, the two canvas strategies (ride Bulma's neutral dark canvas vs. override with a native dark palette), and the light-only-pin → dark checklist.
 
 ## Website architecture (`apps/website/`)
 

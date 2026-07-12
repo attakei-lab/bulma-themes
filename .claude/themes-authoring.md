@@ -850,13 +850,114 @@ If your theme uses `.has-text-<token>` for any of primary / info /
 success / warning / danger as body text, also emit the corresponding
 `--bulma-<token>-on-scheme-l` (Pitfall 2).
 
+## Dark mode
+
+Every theme ships a light default plus an opt-in **dark variant** driven by
+`[data-theme="dark"]`. The website's `color-scheme-picker` (in the navbar,
+`apps/website/src/_includes/nav.html`) sets `data-theme` on the document root;
+Bulma's own dark theme keys off the same attribute
+(`bulma/sass/themes/_index.scss`), so a theme's dark overrides sit alongside
+Bulma's rather than replacing them.
+
+### Mechanism: an in-mixin `[data-theme="dark"]` block
+
+Append a `&[data-theme="dark"] { … }` block to the theme's `@mixin variables`.
+Because the mixin is `@include`d on `:root` (`entry.scss`), `&` resolves to
+`:root`, so the block compiles to `:root[data-theme="dark"] { … }` (and
+`:root[data-theme="dark"] .card { … }` for the element pins). That
+out-specifies the light `:root` / `:root .card` pins, and — being emitted
+after `@use "sass"` — it also wins source-order ties with Bulma's own
+`[data-theme=dark]` block. No change to `entry.scss` or `build.ts` is needed;
+themes without a dark block are simply unaffected.
+
+Only `[data-theme="dark"]` is targeted today (matching the picker and Bulma).
+An OS auto-follow via `@media (prefers-color-scheme: dark)` is intentionally
+**not** emitted — add it later, if wanted, by duplicating the dark block under
+that media query.
+
+### Two canvas strategies
+
+1. **Ride Bulma's neutral dark canvas** (default / cosmo / pulse / united). A
+   theme that does *not* pin `scheme-main-l` / `text-l` lets Bulma's own
+   `[data-theme=dark]` theme set the page background and body text; the dark
+   block then only re-pins the light-only literals (below) and keeps the
+   theme's accents. A `scheme-s: 0%` theme lands on neutral greys; a tinted
+   `scheme-s` carries its hue into the dark surfaces.
+2. **Override with a native dark palette** (solarized). A theme that pins its
+   light canvas (a Pitfall-5 waiver), or whose source ships its own dark
+   palette, overrides `scheme-h/s`, `scheme-main-l`, `text-h/s/l` and
+   `text-strong-l` in the dark block. Declare dark-scheme Sass vars (e.g.
+   `$scheme-dark-h/s`, `$text-dark-l`) and interpolate those in the dark pins
+   rather than the light `$scheme-*`.
+
+### Re-pin every light-only Pitfall literal
+
+The Pitfall pins hard-code **light-mode** literal values that do not respond to
+`[data-theme=dark]`, so in dark mode borders / shadows / modal backgrounds /
+code chips would stay light on the dark ground. Give each a dark counterpart in
+the dark block, reusing the same selector list and mirroring Bulma's dark
+values (from `bulma/sass/themes/dark.scss`):
+
+| pin (selector) | light | dark |
+| --- | --- | --- |
+| `--bulma-scheme-main-l` (modal head/body, `.tabs.is-boxed` active) | 100% | 9% |
+| `--bulma-scheme-main-bis-l` (modal foot) | 98% | 11% |
+| `--bulma-border-weak` (card / panel / dropdown separators) | …93% | …21% |
+| `--bulma-border` (`.tabs` underline) | …86% | …24% |
+| `--bulma-shadow` (box / card / dropdown / modal-head / panel) | near-black 2-stop | dark drop + faint light ring |
+| `--bulma-card-header-shadow` | scheme 4% | a darker literal |
+| `--bulma-code` / `--bulma-code-background` | primary 25% / 94% | primary ~78% / ~16% |
+
+### Lift link-related tones for legibility
+
+A theme's link lightness is tuned for a light background; on the dark canvas a
+dark link (`link-l` ≲ ~45%) reads with poor contrast. In the dark block, lift
+the body link and breadcrumb (and, if the theme restyles it, the
+`.button.is-link` text-link base + hover):
+
+```scss
+&[data-theme="dark"] {
+  a { --bulma-link-text: hsl(#{$link-h}, #{$link-s}, 70%); }
+  .breadcrumb { --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, 70%); }
+}
+```
+
+A solid-fill `.is-link` button (no restyle) stays legible without this. Any
+real-property accent hover that *darkens* on light (e.g. a text-link
+`.button.is-link` hover at `link-l - x`) must *lighten* on dark instead —
+Pitfall 15 applies (bare Sass vars in the real `color` property).
+
+### `.message.is-dark` header/body collision
+
+Bulma draws `.message.is-dark`'s header from `dark-l` and its body from the
+generic `background-l`. When a theme redefines `dark` to a tone whose lightness
+matches the dark-mode `background-l` (~14%) — as solarized's base02 does — the
+header and body collapse to one colour in dark mode. Give the body a distinct,
+lighter panel:
+
+```scss
+&[data-theme="dark"] {
+  .message.is-dark .message-body {
+    background-color: hsl($dark-h, $dark-s, 20%); // bare Sass vars — Pitfall 15
+  }
+}
+```
+
+### Verify on the preview
+
+Toggle the navbar `color-scheme-picker` to dark and walk the same axes as the
+light review — canvas, body text, card / box shadows, separators, tabs
+underline, modal, code chip, breadcrumb, **link legibility**, and nav / hero.
+Nothing should stay light-on-dark, and links must stay readable.
+
 ## Status of existing themes against these pitfalls
 
-`default`, `pulse`, and `cosmo` all carry the template-wide pitfall
-pins above, including the **Pitfall 14** `.breadcrumb` link-colour pin
-(`cosmo` shipped with it; `default` / `pulse` gained it in the breadcrumb
-retrofit). No existing theme has a known outstanding gap against the
-pitfalls above.
+All five themes (`default`, `cosmo`, `pulse`, `united`, `solarized`) carry
+the template-wide pitfall pins above, including the **Pitfall 14**
+`.breadcrumb` link-colour pin, and each ships a `[data-theme="dark"]` dark
+variant (see **Dark mode**). `solarized` uses the native-dark-palette
+strategy; the other four ride Bulma's neutral dark canvas. No existing theme
+has a known outstanding gap against the pitfalls above.
 
 An earlier revision of this section flagged `pulse` as tripping
 **Pitfall 2**. That was inaccurate: `pulse` does set
