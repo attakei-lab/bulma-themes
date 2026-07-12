@@ -4,8 +4,6 @@ title: Color Themes for Bulma
 theme: pulse
 ---
 
-Hello Bulma users!
-
 ## Quickstart
 
 If you want to apply this page's theme into your website,
