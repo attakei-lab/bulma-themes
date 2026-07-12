@@ -42,6 +42,18 @@ $text-s: 13% !default;
 $text-l: 46% !default; // base00 #657b83
 $text-strong-l: 40% !default; // base01 #586e75
 
+// --- dark mode (native Solarized dark; driven by [data-theme="dark"]) ---
+// Solarized flips warm-light to cool-dark: base03 background, base0 text.
+// scheme-s is dialled down (like the light 65%) so the mid-tone dark surfaces
+// (borders at L21/24) don't over-saturate — base03 is ~100% sat at L11.
+$scheme-dark-h: 192 !default;
+$scheme-dark-s: 35% !default;
+$scheme-dark-main-l: 11% !default; // base03 #002b36
+$text-dark-h: 186 !default;
+$text-dark-s: 8% !default;
+$text-dark-l: 55% !default; // base0 #839496
+$text-dark-strong-l: 60% !default; // base1 #93a1a1
+
 // --- primary / link (Solarized blue #268bd2; link shares the hue) ---
 $primary-h: 205 !default;
 $primary-s: 69% !default;
@@ -279,5 +291,74 @@ $radius: 0.375rem !default;
   code {
     --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 25%);
     --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 94%);
+  }
+
+  // --- Dark mode (native Solarized dark, driven by [data-theme="dark"]) ---
+  // The provisional navbar toggle sets data-theme on :root; `&` here is :root
+  // (the mixin is @include-d in :root), so this block compiles to
+  // `:root[data-theme="dark"] …` — out-specifying and out-ordering both the
+  // light pins above and Bulma's own [data-theme=dark] block. Overriding the
+  // scheme/text H/S/L flips the whole canvas (same mechanism the light pins
+  // use); every light-only literal pin above then gets a dark counterpart so
+  // borders / shadows / modal / code don't stay light on the dark ground.
+  &[data-theme="dark"] {
+    --bulma-scheme-h: #{$scheme-dark-h};
+    --bulma-scheme-s: #{$scheme-dark-s};
+    --bulma-scheme-main-l: #{$scheme-dark-main-l};
+    --bulma-text-h: #{$text-dark-h};
+    --bulma-text-s: #{$text-dark-s};
+    --bulma-text-l: #{$text-dark-l};
+    --bulma-text-strong-l: #{$text-dark-strong-l};
+
+    // keep the base02 nav chrome (re-pin so Bulma's dark palette can't shift it)
+    --bulma-dark-h: #{$dark-h};
+    --bulma-dark-s: #{$dark-s};
+    --bulma-dark-l: #{$dark-l};
+    --bulma-dark-invert-l: #{$dark-invert-l};
+
+    .box,
+    .card,
+    .dropdown,
+    .modal-card-head,
+    .panel {
+      --bulma-shadow:
+        0 0.5em 1em -0.125em hsl(0deg 0% 0% / 40%),
+        0 0 0 1px hsl(0deg 0% 100% / 10%);
+    }
+
+    .card,
+    .dropdown,
+    .panel {
+      --bulma-border-weak: hsl(#{$scheme-dark-h}, #{$scheme-dark-s}, 21%);
+    }
+
+    .tabs {
+      --bulma-border: hsl(#{$scheme-dark-h}, #{$scheme-dark-s}, 24%);
+      --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-dark-h}, #{$scheme-dark-s}, #{$scheme-dark-main-l});
+    }
+
+    .card {
+      --bulma-card-header-shadow: 0 0.125em 0.25em hsl(0deg 0% 0% / 30%);
+    }
+
+    .modal {
+      --bulma-modal-card-head-background-color: hsl(#{$scheme-dark-h}, #{$scheme-dark-s}, #{$scheme-dark-main-l});
+      --bulma-modal-card-body-background-color: hsl(#{$scheme-dark-h}, #{$scheme-dark-s}, #{$scheme-dark-main-l});
+      --bulma-modal-card-foot-background-color: hsl(#{$scheme-dark-h}, #{$scheme-dark-s}, 14%);
+    }
+
+    code {
+      --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 78%);
+      --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 16%);
+    }
+
+    // `.message.is-dark`: Bulma draws the header from `dark-l` (our base02,
+    // 14%) and the body from the generic `background-l`, which in dark mode is
+    // also ~14% with the same dark h/s — so header and body collapse to one
+    // colour. Give the body a distinct, lighter *muted* teal panel so the two
+    // read apart (Pitfall 15: bare Sass vars in the real `background-color`).
+    .message.is-dark .message-body {
+      background-color: hsl($scheme-dark-h, $scheme-dark-s, 20%);
+    }
   }
 }
