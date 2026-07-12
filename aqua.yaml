@@ -15,4 +15,4 @@ packages:
 - name: rhysd/actionlint@v1.7.12
 - name: wasilibs/go-yamllint@v1.38.0
 - name: oxc-project/oxc/oxfmt@apps_v1.70.0
-- name: evilmartians/lefthook@v2.1.9
+- name: evilmartians/lefthook@v2.1.10
