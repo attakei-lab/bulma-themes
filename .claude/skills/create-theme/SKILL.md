@@ -48,6 +48,7 @@ Run a hybrid extraction:
 3. Parse `:root { --... }` custom properties first — the common case for any site that exposes its palette as CSS variables (Bootstrap / Bootswatch are one such family, but the skill is not limited to them). Fall back to rule-body scanning (the primary-button rule, `a`, `body`, etc.) when no useful custom properties exist. Treat framework-specific names like `--bs-*` / `.btn-primary` as examples of one source family, not a requirement — extract from whatever the reference site actually uses.
 4. Convert any hex / rgb values to HSL (deterministic; compute inline).
 5. If after extraction you have fewer than 4 of the following 6 tokens — primary, link, scheme bg, text fg, one admonition, radius — declare low confidence and ask the user for a screenshot of the reference site, then read colors from the image instead.
+6. If the reference site offers a **dark mode**, capture its dark palette too (dark background, text, and any shifted accents) — it feeds the native-dark strategy of the Phase B.1 dark block. If it has none, the theme rides Bulma's neutral dark canvas instead.
 
 Map extracted values to Bulma tokens using this target shape (matches `packages/themes/src/default/_variables.scss`):
 
@@ -59,10 +60,11 @@ Map extracted values to Bulma tokens using this target shape (matches `packages/
 - always emit (Pitfall 10): pin `--bulma-shadow` on `.box, .card, .panel` with a literal two-stop value so the drop shadow + inner 1px ring render. Skip when the theme already overrides `--bulma-shadow` at `:root` with a fully literal value (e.g. a hairline ring) — that route resolves without further chains
 - always emit (Pitfall 11): pin `--bulma-border-weak` on `.card, .panel` and `--bulma-card-header-shadow` on `.card` so the sub-component separators render
 - always emit (Pitfall 14): pin `--bulma-breadcrumb-item-color` on `.breadcrumb` to the body-link literal so breadcrumb links keep the brand colour (base colour only — do not pin the hover token; see Phase B.1 template)
+- always emit (dark variant — see `.claude/themes-authoring.md`, "Dark mode"): a `&[data-theme="dark"]` block giving every light-only Pitfall pin a dark counterpart, lifting the body-link / breadcrumb / `.button.is-link` tones for legibility on the dark ground, and fixing `.message.is-dark` where the theme redefines `dark`. Ride Bulma's neutral dark canvas by default; use the captured dark palette (native-dark strategy) when the source ships a dark mode or the theme pins its own light canvas
 - conditional: `*-on-scheme-l` only if the reference site uses the token as body text (Pitfall 2)
 - conditional: `radius-small`, `$radius`, `radius-medium`, `radius-large` only if the source's corner radius clearly differs from Bulma's defaults. Judge this from the **rendered look**, not just a declared value — a source may declare a non-zero radius token yet read as flat/square (e.g. a Metro-style theme). Confirm the radius against the visual, and with the user in Phase C, rather than adopting the declared number verbatim
 - conditional: shadow tokens only if the source shows a distinct, simple `box-shadow` on box-like elements
-- **never** emit `scheme-main-l`, `background-l`, `text-l`, `text-strong-l` unless the user explicitly requests it (Pitfall 5: pinning these breaks dark-mode auto-switching)
+- **avoid** emitting `scheme-main-l`, `background-l`, `text-l`, `text-strong-l` unless the theme's identity needs a fixed light canvas (Pitfall 5). Pinning them is a deliberate waiver — the theme then owns the **dark** canvas too and must override these in its `[data-theme="dark"]` block (native-dark strategy). If the light canvas can stay Bulma's, leave them unpinned so Bulma's own dark theme supplies the dark canvas
 
 Also note two **theme-intent signals** while extracting — they do not map to a token, but drive the conditional restyle blocks in Phase B.1:
 
@@ -296,14 +298,21 @@ Tell the user:
 Send the user a single checklist covering the token axes:
 
 ```
-scheme bg / text fg / primary / link / info / success / warning / danger / radius / shadow / navbar burger / link decoration (underline) / breadcrumb / link button
+scheme bg / text fg / primary / link / info / success / warning / danger / radius / shadow / navbar burger / link decoration (underline) / breadcrumb / link button / dark mode (toggle the navbar color-scheme picker)
 ```
 
-The last three axes surface the link-related work: `link decoration` checks
+The link-related axes surface the link work: `link decoration` checks
 whether body links match the source's underline style (Phase B.1 underline
 block); `breadcrumb` checks breadcrumb links carry the brand colour
 (Pitfall 14); `link button` checks `.button.is-link` against the source's
 link-style button (Phase B.1 restyle block).
+
+`dark mode` covers the whole `[data-theme="dark"]` block: have the user toggle
+the navbar **color-scheme picker** to dark and confirm nothing stays
+light-on-dark — canvas, body text, card / box shadows, separators, tabs
+underline, modal, code chip, breadcrumb, **link legibility**, and
+`.message.is-dark` header vs body. See `.claude/themes-authoring.md`,
+"Dark mode".
 
 Ask the user to open `http://localhost:<port>/theme/<slug>/`, walk through the checklist, and reply with all items that do not match the reference site (as a list).
 
@@ -387,6 +396,5 @@ EOF
 ## Out of scope
 
 - Editing or re-tuning an existing theme (the skill errors out on slug collision; a separate flow handles edits).
-- Dark-mode variants (themes-authoring.md > Future-proofing reserves this work).
 - Adding new demo HTML partials under `apps/website/src/_includes/theme/`.
 - Any work that touches `packages/themes/build.ts` or the website's Eleventy config.
