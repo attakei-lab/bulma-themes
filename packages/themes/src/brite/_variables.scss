@@ -487,7 +487,8 @@ $radius: 0.375rem !default;
 
   .pagination-previous,
   .pagination-next,
-  .pagination-link {
+  .pagination-link,
+  .pagination-ellipsis {
     border-color: hsl(0deg 0% 0%);
   }
 
@@ -647,6 +648,19 @@ $radius: 0.375rem !default;
       --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
       --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
       --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 11%);
+    }
+
+    // Form-control frames lift off pure black in dark mode. The source
+    // keeps them black even in dark, but on the darker Bulma canvas that
+    // reads ~1.2:1 and the fields disappear; hsl(210, 8%, 42%) clears the
+    // 3:1 non-text guideline (3.3:1) while staying quiet next to the
+    // black chrome, whose frames and shadows remain black.
+    .input,
+    .textarea,
+    .select select,
+    input[type="checkbox"],
+    input[type="radio"] {
+      border-color: hsl(210deg 8% 42%);
     }
 
     // Source dark code colour (#f292c1) over a dark scheme chip.
