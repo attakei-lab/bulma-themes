@@ -50,7 +50,7 @@ Bulma is pulled in as `@use "sass"` (its bundled `sass/_index.scss`), resolved t
 
 ### Dark mode
 
-Every theme ships an opt-in **dark variant** driven by `[data-theme="dark"]`. Each theme's `@mixin variables` appends a `&[data-theme="dark"] { … }` block (which compiles to `:root[data-theme="dark"] …`) — no change to `entry.scss` or `build.ts` is required, and a theme without the block is simply light-only. The website's navbar `color-scheme-picker` sets `data-theme` on the document root, driving both Bulma's own dark theme and the themes' dark blocks. OS auto-follow via `prefers-color-scheme` is not emitted yet. See `.claude/themes-authoring.md`, "Dark mode", for the mechanism, the two canvas strategies (ride Bulma's neutral dark canvas vs. override with a native dark palette), and the light-only-pin → dark checklist.
+A theme may ship an optional **dark variant** driven by `[data-theme="dark"]`; all five current themes do. To add one, the theme's `@mixin variables` appends a `&[data-theme="dark"] { … }` block (which compiles to `:root[data-theme="dark"] …`) — no change to `entry.scss` or `build.ts` is required. A theme whose mixin has no such block is simply light-only. The website's navbar `color-scheme-picker` sets `data-theme` on the document root, driving both Bulma's own dark theme and the themes' dark blocks. OS auto-follow via `prefers-color-scheme` is not emitted yet. See `.claude/themes-authoring.md`, "Dark mode", for the mechanism, the two canvas strategies (ride Bulma's neutral dark canvas vs. override with a native dark palette), and the light-only-pin → dark checklist.
 
 ## Website architecture (`apps/website/`)
 
