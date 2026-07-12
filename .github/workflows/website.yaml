@@ -1,5 +1,5 @@
 ---
-name: 'Deploy website to GitHub Pages'
+name: 'Deploy website to GitHub Pages as mirror'
 
 on:
   push:
@@ -31,6 +31,9 @@ jobs:
       - name: 'Build website'
         run: |
           bun run --cwd=apps/website build
+        env:
+          PRODUCTION_FQDN: 'attakei-lab.github.io'
+          PRODUCTION_PATH: '/bulma-themes'
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
