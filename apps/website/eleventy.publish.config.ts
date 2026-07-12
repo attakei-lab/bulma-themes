@@ -6,7 +6,9 @@ export { config };
 export default async function (eleventyConfig: EleventyConfig) {
   await baseConfig(eleventyConfig);
   eleventyConfig.addGlobalData("site", {
-    url: "https://bulma-themes.attakei.dev",
-    base_path: "",
+    url: process.env.PRODUCTION_FQDN
+      ? `https://${process.env.PRODUCTION_FQDN}`
+      : "",
+    base_path: process.env.PRODUCTION_PATH || "",
   });
 }
