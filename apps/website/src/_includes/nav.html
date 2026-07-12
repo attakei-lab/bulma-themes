@@ -41,16 +41,16 @@
 
     <div class="navbar-end">
       <div class="navbar-item has-dropdown is-hoverable color-scheme-picker">
-        <a class="navbar-link" role="button" aria-label="Theme">
+        <a class="navbar-link" role="button" aria-label="Theme" aria-haspopup="true" aria-expanded="false" tabindex="0">
           <span class="icon icon-mode-light"><i class="fas fa-sun"></i></span>
           <span class="icon icon-mode-dark"><i class="fas fa-moon"></i></span>
         </a>
         <div class="navbar-dropdown is-right">
-          <a class="navbar-item" data-set-theme="light">
+          <a class="navbar-item" role="button" tabindex="0" data-set-theme="light">
             <span class="icon"><i class="fas fa-sun"></i></span>
             <span>Light</span>
           </a>
-          <a class="navbar-item" data-set-theme="dark">
+          <a class="navbar-item" role="button" tabindex="0" data-set-theme="dark">
             <span class="icon"><i class="fas fa-moon"></i></span>
             <span>Dark</span>
           </a>
@@ -85,14 +85,69 @@
 <script>
   (function () {
     var root = document.documentElement;
-    root.dataset.theme = localStorage.getItem("theme") || "light";
+
+    // localStorage can throw in blocked/private storage — guard so the picker
+    // still initializes and works for the session.
+    function readTheme() {
+      try {
+        return localStorage.getItem("theme");
+      } catch (e) {
+        return null;
+      }
+    }
+    function writeTheme(value) {
+      try {
+        localStorage.setItem("theme", value);
+      } catch (e) {
+        /* ignore */
+      }
+    }
+
+    root.dataset.theme = readTheme() || "light";
+
+    function apply(item) {
+      var value = item.getAttribute("data-set-theme");
+      root.dataset.theme = value;
+      writeTheme(value);
+    }
+
     document.addEventListener("click", function (e) {
       var item = e.target.closest("[data-set-theme]");
       if (!item) return;
       e.preventDefault();
-      var value = item.getAttribute("data-set-theme");
-      root.dataset.theme = value;
-      localStorage.setItem("theme", value);
+      apply(item);
     });
+
+    // The options are role="button"; activate them on Enter / Space too.
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var item = e.target.closest("[data-set-theme]");
+      if (!item) return;
+      e.preventDefault();
+      apply(item);
+    });
+
+    // Reflect the (hover/focus-driven) dropdown state on the trigger.
+    var picker = document.querySelector(".color-scheme-picker");
+    var trigger = picker && picker.querySelector(".navbar-link");
+    if (picker && trigger) {
+      function setExpanded(open) {
+        trigger.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+      picker.addEventListener("mouseenter", function () {
+        setExpanded(true);
+      });
+      picker.addEventListener("mouseleave", function () {
+        setExpanded(false);
+      });
+      picker.addEventListener("focusin", function () {
+        setExpanded(true);
+      });
+      picker.addEventListener("focusout", function () {
+        setTimeout(function () {
+          if (!picker.contains(document.activeElement)) setExpanded(false);
+        }, 0);
+      });
+    }
   })();
 </script>
