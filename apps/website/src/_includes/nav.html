@@ -6,7 +6,7 @@
       </svg>
     </a>
 
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" tabindex="0" data-target="navbarBasicExample">
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
@@ -17,7 +17,7 @@
   <div id="navbarBasicExample" class="navbar-menu">
     <div class="navbar-start">
       <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link">Themes</a>
+        <a class="navbar-link" role="button" aria-haspopup="true" aria-expanded="false" tabindex="0">Themes</a>
         <div class="navbar-dropdown nav-themes">
           <!-- Default is the project baseline: full-width above the theme grid, outside it. -->
           {% for theme in collections.theme %}
@@ -81,6 +81,15 @@
   .navbar-end .svg-inline--fa {
     pointer-events: none;
   }
+  /* Collapsed-by-default dropdowns in the mobile menu: below Bulma's
+     navbar breakpoint (1024px) it renders .navbar-dropdown as an
+     always-open flat list; keep it hidden until its parent is toggled
+     open (is-active, set by the tap/keyboard handler below). */
+  @media screen and (max-width: 1023px) {
+    .navbar .navbar-item.has-dropdown:not(.is-active) .navbar-dropdown {
+      display: none;
+    }
+  }
 </style>
 <script>
   (function () {
@@ -125,6 +134,51 @@
       if (!item) return;
       e.preventDefault();
       apply(item);
+    });
+
+    // Burger toggle for the collapsed (narrow-viewport) navbar: clicking —
+    // or activating with Enter / Space, matching the picker's keyboard
+    // support — mirrors `is-active` onto the burger and its target menu.
+    var burger = document.querySelector(".navbar-burger");
+    var menu = burger && document.getElementById(burger.dataset.target);
+    if (burger && menu) {
+      function toggleMenu() {
+        var open = burger.classList.toggle("is-active");
+        menu.classList.toggle("is-active", open);
+        burger.setAttribute("aria-expanded", open ? "true" : "false");
+        // Closing the menu also resets any dropdown left open inside it.
+        if (!open) {
+          menu.querySelectorAll(".has-dropdown.is-active").forEach(function (item) {
+            item.classList.remove("is-active");
+            var link = item.querySelector(".navbar-link");
+            if (link) link.setAttribute("aria-expanded", "false");
+          });
+        }
+      }
+      burger.addEventListener("click", toggleMenu);
+      burger.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        toggleMenu();
+      });
+    }
+
+    // In the mobile menu, dropdown parents open on tap / Enter / Space
+    // (Bulma's is-hoverable only drives desktop hover). Guarded by the
+    // navbar breakpoint so desktop hover behaviour stays untouched.
+    var mobileNav = window.matchMedia("(max-width: 1023px)");
+    function toggleDropdown(e) {
+      if (!mobileNav.matches) return;
+      var link = e.target.closest(".navbar-item.has-dropdown > .navbar-link");
+      if (!link) return;
+      e.preventDefault();
+      var open = link.parentElement.classList.toggle("is-active");
+      link.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    document.addEventListener("click", toggleDropdown);
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      toggleDropdown(e);
     });
 
     // Reflect the (hover/focus-driven) dropdown state on the trigger.
