@@ -1,0 +1,669 @@
+/*
+ * Brite theme variables.
+ *
+ * Ported from Bootswatch "Brite" (https://bootswatch.com/brite/) — a
+ * neobrutalist design language: a neon yellow-green primary (#a2e436),
+ * plain-black underlined body links, a 2px black frame on every component,
+ * and hard offset shadows (3px 3px 0 #000) with a press-flat hover effect
+ * on buttons. Ships a light default plus a `[data-theme="dark"]` dark
+ * variant riding Bulma's neutral dark canvas (the source's dark palette is
+ * Bootstrap's stock neutral gray, and its light canvas is plain white, so
+ * neither canvas is pinned); links flip to the source's dark-mode light
+ * green (#c7ef86).
+ *
+ * This file is compiled by `build.ts` into a single CSS artifact per theme
+ * (the directory name is used as the theme name):
+ *   - dist/<theme>/theme.min.css  (Bulma bundle + variables on :root)
+ *
+ * Downstream consumers can also `@use` this file with `with (...)` to
+ * override individual values and run their own build.
+ */
+
+// --- scheme / text (Bootstrap's cool-gray ramp: #212529 body text on a
+// plain-white canvas — hue 210 at 11% saturation; L stays Bulma's) ---
+$scheme-h: 210 !default;
+$scheme-s: 11% !default;
+$text-h: 210 !default;
+$text-s: 11% !default;
+
+// --- primary / link ---
+// primary = Brite's neon green #a2e436. The source renders #000 text on
+// the fill (.btn-primary --bs-btn-color: #000) → invert-l 0% (Pitfall 3).
+$primary-h: 83 !default;
+$primary-s: 76% !default;
+$primary-l: 55% !default;
+$primary-invert-l: 0% !default;
+
+// link = plain black (--bs-link-color: #000), underlined at weight 500.
+$link-h: 0 !default;
+$link-s: 0% !default;
+$link-l: 0% !default;
+$link-invert-l: 100% !default;
+$link-on-scheme-l: $link-l !default;
+
+// dark-mode link = the light green the source's dark palette switches to
+// (--bs-link-color: #c7ef86 under [data-bs-theme=dark]).
+$link-dark-h: 83 !default;
+$link-dark-s: 77% !default;
+$link-dark-l: 73% !default;
+
+// --- secondary (library extension colour; see "Choosing a theme's
+// secondary" in .claude/themes-authoring.md). Sourced: Brite declares
+// --bs-secondary: #fff — a white fill that reads through the black border
+// chrome. The source draws #000 text on it (.list-group-item-secondary
+// et al.), which matches Bulma's auto-computed contrast on a white fill,
+// so invert-l stays unpinned (override-only). ---
+$secondary-h: 0 !default;
+$secondary-s: 0% !default;
+$secondary-l: 100% !default;
+$custom-colors: ("secondary": (hsl($secondary-h, $secondary-s, $secondary-l))) !default;
+
+// --- admonition palette (all bright pastels; the source renders #000 text
+// on every one — .alert / .list-group-item-* set color: #000 — so each
+// invert-l pins to 0% per Pitfall 3) ---
+$info-h: 188 !default;
+$info-s: 85% !default;
+$info-l: 53% !default;
+$info-invert-l: 0% !default;
+$success-h: 143 !default;
+$success-s: 55% !default;
+$success-l: 62% !default;
+$success-invert-l: 0% !default;
+$warning-h: 47 !default;
+$warning-s: 100% !default;
+$warning-l: 50% !default;
+$warning-invert-l: 0% !default;
+$danger-h: 0 !default;
+$danger-s: 88% !default;
+$danger-l: 68% !default;
+$danger-invert-l: 0% !default;
+
+// --- radius (source --bs-border-radius: 0.375rem — the same value as
+// Bulma's --bulma-radius default; declared so the Pitfall 6 control pin
+// and the Pitfall 13 card pin can interpolate a literal value) ---
+$radius: 0.375rem !default;
+
+@mixin variables {
+  --bulma-scheme-h: #{$scheme-h};
+  --bulma-scheme-s: #{$scheme-s};
+  --bulma-text-h: #{$text-h};
+  --bulma-text-s: #{$text-s};
+  --bulma-primary-h: #{$primary-h};
+  --bulma-primary-s: #{$primary-s};
+  --bulma-primary-l: #{$primary-l};
+  --bulma-primary-invert-l: #{$primary-invert-l};
+  --bulma-link-h: #{$link-h};
+  --bulma-link-s: #{$link-s};
+  --bulma-link-l: #{$link-l};
+  --bulma-link-invert-l: #{$link-invert-l};
+  --bulma-link-on-scheme-l: #{$link-on-scheme-l};
+  --bulma-info-h: #{$info-h};
+  --bulma-info-s: #{$info-s};
+  --bulma-info-l: #{$info-l};
+  --bulma-info-invert-l: #{$info-invert-l};
+  --bulma-success-h: #{$success-h};
+  --bulma-success-s: #{$success-s};
+  --bulma-success-l: #{$success-l};
+  --bulma-success-invert-l: #{$success-invert-l};
+  --bulma-warning-h: #{$warning-h};
+  --bulma-warning-s: #{$warning-s};
+  --bulma-warning-l: #{$warning-l};
+  --bulma-warning-invert-l: #{$warning-invert-l};
+  --bulma-danger-h: #{$danger-h};
+  --bulma-danger-s: #{$danger-s};
+  --bulma-danger-l: #{$danger-l};
+  --bulma-danger-invert-l: #{$danger-invert-l};
+
+  // Brite's signature hard shadow: a solid 3px offset block in border
+  // black, no blur (source: box-shadow: 3px 3px 0 0 var(--bs-border-color)
+  // with --bs-border-color forced to #000). Pinning it at :root as a fully
+  // literal value also settles Pitfall 10 — the consumers (.dropdown /
+  // .modal-card-head, and the opted-out group below) inherit an
+  // already-resolved shadow, so no element-level pin is needed.
+  --bulma-shadow: 3px 3px 0 0 hsl(0deg 0% 0%);
+
+  // The source only shadows buttons, dropdowns, alerts, modals, and
+  // toasts — its cards rely on the black frame alone. Opt the box-like
+  // containers out of the :root hard shadow.
+  .box,
+  .card,
+  .panel {
+    --bulma-shadow: none;
+  }
+
+  // Pitfall 6: pin every --bulma-control-* on the shared control selector
+  // group so bare `.button` / `.input` / `.textarea` / `.select select` /
+  // `.pagination-*` and their icons resolve padding, border, height, and
+  // radius correctly. Border width is 2px here — the source forces
+  // --bs-border-width: 2px on all controls — and the paddings compensate
+  // so control heights stay consistent.
+  .button,
+  .control,
+  .file-cta,
+  .file-name,
+  .input,
+  .pagination,
+  .pagination-ellipsis,
+  .pagination-link,
+  .pagination-next,
+  .pagination-previous,
+  .select,
+  .select select,
+  .textarea {
+    --bulma-control-border-width: 2px;
+    --bulma-control-height: 2.5em;
+    --bulma-control-padding-vertical: calc(0.5em - 2px);
+    --bulma-control-padding-horizontal: calc(0.75em - 2px);
+    --bulma-control-radius: #{$radius};
+  }
+
+  // Pitfall 8 pin, plus the source's body-link treatment: Brite underlines
+  // links (--bs-link-decoration: underline) and bolds them (a { font-weight:
+  // 500 }).
+  a {
+    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+
+    font-weight: 500;
+    text-decoration: underline;
+  }
+
+  // Strip the body-link underline off navigation / control components whose
+  // `<a>` children are chrome, not prose links. Same specificity (0,2,0) as
+  // the `a` rule above but declared later, so it wins the source-order tie.
+  // `.button.is-link` is intentionally excluded — it re-adds its own
+  // underline at higher specificity below. The 500 weight is kept on nav /
+  // tabs / breadcrumb chrome (the source sets those to 500 itself); only
+  // the button-like chrome resets to the regular weight below.
+  .navbar-item,
+  .navbar-link,
+  .menu-list a,
+  .pagination-previous,
+  .pagination-next,
+  .pagination-link,
+  .pagination-ellipsis,
+  .tabs a,
+  .dropdown-item,
+  .panel-block,
+  .panel-tabs a,
+  .card-footer-item,
+  .button,
+  .tag {
+    text-decoration: none;
+  }
+
+  .button,
+  .tag {
+    font-weight: 400;
+  }
+
+  // Pitfall 4: burger icon on .navbar.is-primary follows primary-invert.
+  .navbar.is-primary {
+    --bulma-navbar-burger-color: var(--bulma-primary-invert);
+  }
+
+  // Pitfall 9: pin <use>-pattern SVG icons inside .panel-icon to 1em so
+  // they sit in the icon slot instead of overflowing rightward.
+  .panel-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .panel-icon svg use {
+    width: 100%;
+    height: 100%;
+  }
+
+  // Pitfall 11: separator borders on `.card-footer` / `.panel-block` /
+  // `.panel-tabs` / `.dropdown-divider` chain through --bulma-border-weak,
+  // and `.tabs a` / `.tabs ul` chain through --bulma-border; both fail to
+  // resolve at the descendants. Pin literals on the parents. Brite draws
+  // every rule in border black, so the separators pin to black too.
+  .card,
+  .dropdown,
+  .panel {
+    --bulma-border-weak: hsl(0deg 0% 0%);
+  }
+
+  .tabs {
+    --bulma-border: hsl(0deg 0% 0%);
+
+    // Pitfall 12 shape: `--bulma-tabs-boxed-link-active-background-color:
+    // var(--bulma-scheme-main)` registered on `.tabs` fails at the active
+    // is-boxed tab, letting the ul underline bleed through. Pin Bulma's
+    // light-mode scheme-main-l (100%).
+    --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+  }
+
+  .card {
+    // Card-header separator, drawn as a hard 2px black line to match the
+    // source's card-header border-bottom (Pitfall 11's shadow pin).
+    --bulma-card-header-shadow: 0 2px 0 hsl(0deg 0% 0%);
+
+    // Pitfall 13: --bulma-card-radius is Bulma's SCSS-default 0.75rem,
+    // re-declared directly on `.card`; scope the override to `.card` so
+    // it wins on specificity and follows the theme radius.
+    --bulma-card-radius: #{$radius};
+  }
+
+  // Pitfall 12: `.modal` registers the modal-card background tokens via a
+  // scheme-main var() chain that fails at the descendants, leaving the
+  // card transparent over the dark overlay. Pin Bulma's light-mode
+  // scheme-main-l / scheme-main-bis-l literals on the parent.
+  .modal {
+    --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 98%);
+  }
+
+  // Pitfall 13 (continued): Bulma only rounds `<img>` children of
+  // .card-image; mirror the rule for background-styled `<figure>`
+  // placeholders so they stay clipped to the card radius.
+  .card-image:first-child > figure {
+    border-start-start-radius: var(--bulma-card-radius);
+    border-start-end-radius: var(--bulma-card-radius);
+  }
+
+  .card-image:last-child > figure {
+    border-end-start-radius: var(--bulma-card-radius);
+    border-end-end-radius: var(--bulma-card-radius);
+  }
+
+  // Inline code: the source keeps Bootstrap's pink code colour (#d63384)
+  // rather than tinting it into the brand hue; pair it with a neutral
+  // scheme-tinted chip. Scoped to `code` (0,1,1) so both win over Bulma's
+  // :root registration.
+  code {
+    --bulma-code: hsl(330deg 67% 52%);
+    --bulma-code-background: hsl(#{$scheme-h}, #{$scheme-s}, 95%);
+  }
+
+  // --- Brite identity: 2px black frames + hard-shadow press effect ---
+
+  // Buttons (source .btn): every variant wears a 2px black border — the
+  // real border-color overrides each modifier's own border var — sits
+  // lifted 3px up-left on a hard black shadow, and presses flat on hover.
+  // The margin compensates the translate so layout flow is unchanged
+  // (ported one-to-one from the source rule).
+  .button {
+    --bulma-button-border-width: 2px;
+
+    margin: 3px 0 0 3px;
+    border-color: hsl(0deg 0% 0%);
+    box-shadow: 3px 3px 0 0 hsl(0deg 0% 0%);
+    transform: translate(-3px, -3px);
+    transition: all 0.3s;
+
+    &:hover,
+    &.is-hovered,
+    &:active,
+    &.is-active {
+      border-color: hsl(0deg 0% 0%);
+      box-shadow: none;
+      transform: translate(0, 0);
+    }
+  }
+
+  // Joined buttons: the press-effect chrome stays on has-addons segments
+  // (the source keeps it inside .btn-group / .input-group too) — the 3px
+  // margin and the -3px translate cancel out, so every segment paints at
+  // its natural position, lifted on its own hard shadow. Only the joint
+  // width needs care. A button paints 3px left of its layout edge on both
+  // sides (translate shifts paint, not layout; the leading 3px margin
+  // re-centres the left edge but the trailing edge has no margin), so a
+  // trailing button's painted right edge sits 3px inside its layout edge,
+  // while an input's sits exactly on it. For adjacent 2px frames to paint
+  // as one 2px rule, the overlap is -5px after a button (-2px frame
+  // overlap, -3px translate compensation) and -2px after an input.
+  .buttons.has-addons .button:not(:last-child) {
+    margin-inline-end: -5px;
+  }
+
+  .field.has-addons .control:not(:last-child) {
+    margin-inline-end: -2px;
+  }
+
+  .field.has-addons .control:not(:last-child):has(> .button) {
+    margin-inline-end: -5px;
+  }
+
+  // A button row in has-addons is 3px taller than a bare input (the 3px
+  // top margin holding the lift). Stretch the inputs / selects of a group
+  // that contains a button to the full row height, so the input's bottom
+  // edge lines up with the bottom of the buttons' hard shadow instead of
+  // leaving a 3px step.
+  .field.has-addons:has(.button) .control > .input,
+  .field.has-addons:has(.button) .control > .select,
+  .field.has-addons:has(.button) .control > .select > select {
+    height: calc(2.5em + 3px);
+  }
+
+  // An input that precedes a button segment also stretches 3px wider,
+  // with the overlap widened to match, so the resting joint stays a
+  // single 2px rule — and when the button presses flat (its paint
+  // shifting 3px right, slipping under the input per the z-order below),
+  // the revealed strip is input frame, not a gap. Inputs only: a select's
+  // width is intrinsic (percentage-based widening is circular there), so
+  // a select-before-button joint keeps the default overlap.
+  .field.has-addons .control:has(> .input):has(+ .control > .button) {
+    margin-inline-end: -5px;
+
+    > .input {
+      width: calc(100% + 3px);
+      max-width: calc(100% + 3px);
+    }
+  }
+
+  // Invert Bulma's addon z-order juggling (hover: 2 / focus, active: 3 /
+  // active:hover: 4): a pressed segment reads as sinking below the group,
+  // so it must slip UNDER its neighbours instead of rising above them.
+  // Every segment gets a small positive z-index; the hovered / focused /
+  // active one drops to 0.
+  .buttons.has-addons .button {
+    z-index: 1;
+
+    &:hover,
+    &.is-hovered,
+    &:focus,
+    &.is-focused,
+    &:active,
+    &.is-active,
+    &.is-selected {
+      z-index: 0;
+
+      &:hover {
+        z-index: 0;
+      }
+    }
+  }
+
+  .field.has-addons .control {
+    .button,
+    .input,
+    .select select {
+      &:not([disabled]) {
+        z-index: 1;
+
+        &:hover,
+        &.is-hovered,
+        &:focus,
+        &.is-focused,
+        &:active,
+        &.is-active {
+          z-index: 0;
+
+          &:hover {
+            z-index: 0;
+          }
+        }
+      }
+    }
+  }
+
+  // Text inputs keep the black 2px frame in every state (source
+  // .form-control / .form-select border on --bs-border-color: #000).
+  .input,
+  .textarea,
+  .select select {
+    border-color: hsl(0deg 0% 0%);
+  }
+
+  // Colour-modified inputs align the frame with the modifier colour
+  // instead of the black chrome. Declared after (and above) the black
+  // pin so they win; literal hsl() per colour because Bulma's own
+  // modifier border runs through a var() chain that cannot be relied on
+  // (bare Sass vars in the real property — Pitfall 15).
+  .input.is-primary,
+  .textarea.is-primary,
+  .select.is-primary select {
+    border-color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  .input.is-link,
+  .textarea.is-link,
+  .select.is-link select {
+    border-color: hsl($link-h, $link-s, $link-l);
+  }
+
+  .input.is-info,
+  .textarea.is-info,
+  .select.is-info select {
+    border-color: hsl($info-h, $info-s, $info-l);
+  }
+
+  .input.is-success,
+  .textarea.is-success,
+  .select.is-success select {
+    border-color: hsl($success-h, $success-s, $success-l);
+  }
+
+  .input.is-warning,
+  .textarea.is-warning,
+  .select.is-warning select {
+    border-color: hsl($warning-h, $warning-s, $warning-l);
+  }
+
+  .input.is-danger,
+  .textarea.is-danger,
+  .select.is-danger select {
+    border-color: hsl($danger-h, $danger-s, $danger-l);
+  }
+
+  // Checkboxes / radios (source .form-check-input): restyled native
+  // inputs — a 1em box with the 2px black frame; checking fills it with
+  // the primary green and draws a black glyph (the source's own SVGs).
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 1em;
+    height: 1em;
+    appearance: none;
+    vertical-align: -0.125em;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: 2px solid hsl(0deg 0% 0%);
+  }
+
+  input[type="checkbox"] {
+    border-radius: 0.25em;
+  }
+
+  input[type="radio"] {
+    border-radius: 50%;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+    background-color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  }
+
+  input[type="radio"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23000'/%3e%3c/svg%3e");
+  }
+
+  .pagination-previous,
+  .pagination-next,
+  .pagination-link {
+    border-color: hsl(0deg 0% 0%);
+  }
+
+  // Join the page-number items into one segmented set (source: Bootstrap
+  // pagination renders as a single joined group). Adjacent 2px frames
+  // collapse into each other, and only the set's outer corners keep the
+  // radius. `.is-rounded` opts out — its circular pills stay separate.
+  .pagination:not(.is-rounded) .pagination-list {
+    .pagination-link,
+    .pagination-ellipsis {
+      margin: 0;
+      border-radius: 0;
+    }
+
+    li:not(:first-child) .pagination-link,
+    li:not(:first-child) .pagination-ellipsis {
+      margin-inline-start: -2px;
+    }
+
+    li:first-child :is(.pagination-link, .pagination-ellipsis) {
+      border-start-start-radius: $radius;
+      border-end-start-radius: $radius;
+    }
+
+    li:last-child :is(.pagination-link, .pagination-ellipsis) {
+      border-start-end-radius: $radius;
+      border-end-end-radius: $radius;
+    }
+  }
+
+  // Bordered containers: the source frames tables, cards, alerts,
+  // badges, dropdowns, and modals in the same 2px black border.
+  .box,
+  .card,
+  .dropdown-content,
+  .message,
+  .modal-card,
+  .notification,
+  .panel,
+  .table,
+  .tag {
+    border: 2px solid hsl(0deg 0% 0%);
+  }
+
+  // Navbar: bottom rule only, like the source's fixed-top navbar
+  // (.navbar.fixed-top { border-width: 0 0 2px 0 }).
+  .navbar {
+    border-bottom: 2px solid hsl(0deg 0% 0%);
+  }
+
+  .progress {
+    border: 2px solid hsl(0deg 0% 0%);
+  }
+
+  // Notifications map to the source's alerts, which carry the hard shadow
+  // on top of the frame (.alert { box-shadow: 3px 3px 0 0 ... }).
+  .notification {
+    box-shadow: 3px 3px 0 0 hsl(0deg 0% 0%);
+  }
+
+  // Burger button (source .navbar-toggler): framed and rounded like every
+  // other control.
+  .navbar-burger {
+    border: 2px solid hsl(0deg 0% 0%);
+    border-radius: $radius;
+  }
+
+  // Breadcrumb: the source frames it (2px black, weight 500 — the weight
+  // comes from the body-link rule above). Bulma's bare breadcrumb has no
+  // padding, so the frame gets breathing room here.
+  .breadcrumb {
+    // Pitfall 14: `.breadcrumb a` reads --bulma-breadcrumb-item-color,
+    // whose link-text var() chain fails at the child; pin the literal
+    // link colour on the parent (base colour only — hover falls back to
+    // the pinned base when its own chain fails).
+    --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+
+    padding: 0.75em 1em;
+    border: 2px solid hsl(0deg 0% 0%);
+    border-radius: $radius;
+  }
+
+  // Tabs (source .nav-tabs): the whole tab strip is a bordered, rounded
+  // container with a small inner gutter, each tab is a pill, and the
+  // active (or hovered) pill wears its own full black frame. Scoped to
+  // the plain variant — `.is-boxed` / `.is-toggle` keep Bulma's styling.
+  .tabs:not(.is-boxed, .is-toggle) {
+    ul {
+      gap: 4px;
+      padding: 0.4rem;
+      border: 2px solid hsl(0deg 0% 0%);
+      border-radius: 0.5rem;
+    }
+
+    a {
+      margin-bottom: 0;
+      border: 2px solid transparent;
+      border-radius: $radius;
+    }
+
+    li.is-active a,
+    a:hover {
+      border-color: hsl(0deg 0% 0%);
+    }
+  }
+
+  // Link buttons (source .btn-link): keep the shared button chrome — black
+  // border, hard shadow, press effect — but with a transparent fill and a
+  // black underlined label (bare Sass vars in the real `color` property —
+  // Pitfall 15). Scope to the plain `.is-link` button and leave the
+  // modifier combinations to Bulma's own styling.
+  .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
+    background-color: transparent;
+    color: hsl($link-h, $link-s, $link-l);
+    text-decoration: underline;
+
+    &:hover,
+    &.is-hovered {
+      background-color: transparent;
+      color: hsl($link-h, $link-s, $link-l);
+      text-decoration: underline;
+    }
+  }
+
+  // --- Dark mode (Bulma neutral dark canvas + Brite accents; driven by
+  // [data-theme="dark"]) ---
+  // brite pins no scheme/text L, so Bulma's own [data-theme=dark] theme
+  // sets the canvas. The source keeps its borders and hard shadows black
+  // in dark mode too ([data-bs-theme=dark] re-asserts --bs-border-color:
+  // #000), so the black frame / shadow rules above carry over unchanged;
+  // only links, canvas-literal pins, and code need dark counterparts.
+  // `&` is :root, so this compiles to `:root[data-theme="dark"] …`.
+  &[data-theme="dark"] {
+    // The light-mode link is plain black — illegible on the dark canvas.
+    // Flip the link tokens to the source's dark palette (#c7ef86).
+    --bulma-link-h: #{$link-dark-h};
+    --bulma-link-s: #{$link-dark-s};
+    --bulma-link-l: #{$link-dark-l};
+    --bulma-link-on-scheme-l: #{$link-dark-l};
+    --bulma-link-invert-l: 0%;
+
+    a {
+      --bulma-link-text: hsl(#{$link-dark-h}, #{$link-dark-s}, #{$link-dark-l});
+    }
+
+    // Source dark mode renders breadcrumb links white
+    // ([data-bs-theme=dark] .breadcrumb a { color: #fff }).
+    .breadcrumb {
+      --bulma-breadcrumb-item-color: hsl(0deg 0% 100%);
+    }
+
+    .tabs {
+      --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+    }
+
+    .modal {
+      --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 11%);
+    }
+
+    // Source dark code colour (#f292c1) over a dark scheme chip.
+    code {
+      --bulma-code: hsl(331deg 79% 76%);
+      --bulma-code-background: hsl(#{$scheme-h}, #{$scheme-s}, 16%);
+    }
+
+    // Source dark .btn-link renders white ([data-bs-theme=dark] .btn-link
+    // { color: #fff }).
+    .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
+      color: hsl(0deg 0% 100%);
+
+      &:hover,
+      &.is-hovered {
+        color: hsl(0deg 0% 100%);
+      }
+    }
+  }
+}
