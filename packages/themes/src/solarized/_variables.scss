@@ -2,17 +2,18 @@
  * Solarized theme variables.
  *
  * Ported from Ethan Schoonover's Solarized palette
- * (https://ethanschoonover.com/solarized/). Light-only prototype using the
- * Solarized *light* mode: warm cream background (base3) + deliberately
- * low-contrast base00/base01 text, with the eight Solarized accents mapped
- * onto Bulma's brand/admonition roles.
+ * (https://ethanschoonover.com/solarized/). The light default uses the
+ * Solarized *light* mode (warm cream background base3 + deliberately
+ * low-contrast base00/base01 text) and the `[data-theme="dark"]` variant uses
+ * Solarized's *dark* mode (base03 background / base0 text); the eight
+ * Solarized accents are mapped onto Bulma's brand/admonition roles.
  *
  * NOTE — scheme-main-l / text-l / text-strong-l are pinned here (see the
  * mixin). This is a deliberate waiver of Pitfall 5: Solarized's identity is
- * its specific background and muted-text lightness, so the L axis is fixed
- * rather than left to Bulma. Consequence: dark-mode auto-switching no longer
- * reaches those tokens. Acceptable for this light-only theme; revisit when a
- * dark variant is authored (Solarized already defines a base03 dark mode).
+ * its specific background and muted-text lightness, so the light L axis is
+ * fixed rather than left to Bulma. Because that also freezes Bulma's own dark
+ * switching, the `[data-theme="dark"]` block re-derives these (and the
+ * light-only pins) for the native Solarized dark palette.
  *
  * Colour provenance (Solarized name -> hex -> HSL):
  *   base3   #fdf6e3  scheme background (cream)

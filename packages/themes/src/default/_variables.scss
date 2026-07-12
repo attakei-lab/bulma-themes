@@ -1,9 +1,10 @@
 /*
  * Default theme variables.
  *
- * Light-only prototype. Inherits Bulma defaults for radius / shadow /
- * spacing; only colors (primary / link / admonitions / scheme tint) are
- * customized.
+ * Ships a light default plus a `[data-theme="dark"]` dark variant (see the
+ * dark block at the end of the mixin). Inherits Bulma defaults for radius /
+ * shadow / spacing; only colors (primary / link / admonitions / scheme tint)
+ * are customized.
  *
  * This file is compiled by `build.ts` into a single CSS artifact per theme
  * (the directory name is used as the theme name):
