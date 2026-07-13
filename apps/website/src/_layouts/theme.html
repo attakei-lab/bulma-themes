@@ -99,6 +99,11 @@
             setTimeout(() => {
               $label.textContent = originalLabel;
             }, 1500);
+          }).catch(() => {
+            $label.textContent = 'Copy failed';
+            setTimeout(() => {
+              $label.textContent = originalLabel;
+            }, 1500);
           });
         });
       });
