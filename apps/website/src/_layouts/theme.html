@@ -86,6 +86,22 @@
           closeAllModals();
         }
       });
+
+      // Copy-to-clipboard for the Download section's <link> snippet.
+      (document.querySelectorAll('[data-copy-target]') || []).forEach(($button) => {
+        const $target = document.querySelector($button.dataset.copyTarget);
+        if (!$target) return;
+        const $label = $button.querySelector('span:last-child');
+        const originalLabel = $label.textContent;
+        $button.addEventListener('click', () => {
+          navigator.clipboard.writeText($target.value).then(() => {
+            $label.textContent = 'Copied!';
+            setTimeout(() => {
+              $label.textContent = originalLabel;
+            }, 1500);
+          });
+        });
+      });
     });
   </script>
 </head>
@@ -113,6 +129,34 @@
             <div class="pl-2">
               <div class="content">
                 {{ content | safe }}
+              </div>
+            </div>
+          </div>
+          <div id="download" class="mb-6">
+            <h2 class="title">Download</h2>
+            <div class="pl-2">
+              <div class="content">
+                <p>
+                  <a href="{{ site.base_path }}/dist/{{ page.fileSlug }}/theme.min.css" download>theme.min.css</a>
+                  — the compiled stylesheet, a drop-in replacement for Bulma.
+                </p>
+                <p>
+                  <a href="{{ site.base_path }}/dist/{{ page.fileSlug }}/_variables.scss" download>_variables.scss</a>
+                  — the Sass source, for customizing tokens in your own build. See the
+                  <a href="{{ site.base_path }}/docs/custom-build/">Custom Build</a> docs.
+                </p>
+              </div>
+              <div class="field has-addons">
+                <div class="control is-expanded">
+                  <input class="input" type="text" id="download-link-snippet" readonly
+                         value='<link rel="stylesheet" href="{{ site.url }}{{ site.base_path }}/dist/{{ page.fileSlug }}/theme.min.css">'>
+                </div>
+                <div class="control">
+                  <button class="button" type="button" data-copy-target="#download-link-snippet">
+                    <span class="icon"><i class="fas fa-copy"></i></span>
+                    <span>Copy</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}: {{ site.title }}</title>
+  <link rel="stylesheet" href="{{ site.base_path }}/dist/default/theme.min.css">
+  <link rel="stylesheet" href="{{ site.base_path }}/assets/custom.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&display=swap">
+</head>
+
+<body>
+  {% getBundle "fontawesome" %}
+  {% include "nav.html" %}
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <p class="title is-size-1">{{ title }}</p>
+      <p class="subtitle">{{ description }}</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      <div class="columns is-multiline">
+        {% for doc in collections.docs %}
+        <div class="column is-half">
+          <div class="card">
+            <div class="card-content">
+              <p class="title is-5">{{ doc.data.title }}</p>
+              <p class="subtitle is-6">{{ doc.data.description }}</p>
+            </div>
+            <footer class="card-footer">
+              <a href="{{ site.base_path }}{{ doc.url }}" class="card-footer-item">Read</a>
+            </footer>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% include "footer.html" %}
+</body>
+
+</html>
