@@ -34,9 +34,14 @@
           </div>
         </div>
       </div>
-      <a class="navbar-item" href="{{ site.base_path }}/docs/color-palette/">
-        Docs
-      </a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link" role="button" aria-haspopup="true" aria-expanded="false" tabindex="0" href="{{ site.base_path }}/docs/">Docs</a>
+        <div class="navbar-dropdown">
+          {% for doc in collections.docs %}
+            <a class="navbar-item" href="{{ site.base_path }}{{ doc.url }}">{{ doc.data.title }}</a>
+          {% endfor %}
+        </div>
+      </div>
     </div>
 
     <div class="navbar-end">
