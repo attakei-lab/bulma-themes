@@ -410,6 +410,7 @@ $pagination-color: hsl(0deg 0% 33%) !default;
   .pagination-previous:active,
   .pagination-next:active,
   .pagination-link:not(.is-current):active {
+    position: relative; // stand alone from :hover (touch / keyboard activation)
     top: 2px;
     border-bottom-width: 2px;
   }
@@ -600,6 +601,21 @@ $pagination-color: hsl(0deg 0% 33%) !default;
     input[type="checkbox"],
     input[type="radio"] {
       border-color: hsl(0deg 0% 42%);
+    }
+
+    // Light-mode literal text colours need dark counterparts too: the boxed
+    // active tab (light: #333) sits on a near-black dark tab background, and
+    // the non-current pagination label (light: 33%) sits on the dark canvas.
+    // Lift both to a readable light tone.
+    .tabs.is-boxed li.is-active a {
+      color: hsl(0deg 0% 90%);
+    }
+
+    .pagination-previous,
+    .pagination-next,
+    .pagination-link:not(.is-current),
+    .pagination-ellipsis {
+      color: hsl(0deg 0% 72%);
     }
   }
 }
