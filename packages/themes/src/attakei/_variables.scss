@@ -1,5 +1,6 @@
 /*
- * Default theme variables.
+ * Attakei theme variables — the site's own house color (not a fallback or
+ * baseline value set; see `.claude/CLAUDE.md`, "Website architecture").
  *
  * Ships a light default plus a `[data-theme="dark"]` dark variant (see the
  * dark block at the end of the mixin). Inherits Bulma defaults for radius /

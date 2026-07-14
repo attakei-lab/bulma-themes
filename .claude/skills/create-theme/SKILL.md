@@ -50,7 +50,9 @@ Run a hybrid extraction:
 5. If after extraction you have fewer than 4 of the following 6 tokens — primary, link, scheme bg, text fg, one admonition, radius — declare low confidence and ask the user for a screenshot of the reference site, then read colors from the image instead.
 6. If the reference site offers a **dark mode**, capture its dark palette too (dark background, text, and any shifted accents) — it feeds the native-dark strategy of the Phase B.1 dark block. If it has none, the theme rides Bulma's neutral dark canvas instead.
 
-Map extracted values to Bulma tokens using this target shape (matches `packages/themes/src/default/_variables.scss`):
+Map extracted values to Bulma tokens using this target shape (matches the file
+*structure* of `packages/themes/src/attakei/_variables.scss` — its color values are
+that theme's own house palette, not defaults to copy):
 
 - always emit (when extracted): `scheme-h/s`, `text-h/s`, `primary-h/s/l`, `link-h/s/l`, `info/success/warning/danger -h/s/l`
 - always emit (Pitfall 3): `primary-invert-l` (100% if `$primary-l ≲ 35%`, else 0%); `link-invert-l` likewise
@@ -77,7 +79,7 @@ For any token in the "missing" set, leave it unemitted and report it as "left to
 
 ### B.1 — Write `packages/themes/src/<slug>/_variables.scss`
 
-Use the structure of `packages/themes/src/default/_variables.scss` as the template (SPDX header, `!default` Sass variables, `@mixin variables { ... }`). Always include these two fixed rules inside the mixin:
+Use the structure of `packages/themes/src/attakei/_variables.scss` as the template (SPDX header, `!default` Sass variables, `@mixin variables { ... }`) — reuse its file layout only, not its color values, which belong to that specific theme. Always include these two fixed rules inside the mixin:
 
 ```scss
 // Pitfall 6: pin every --bulma-control-* on the shared control selector

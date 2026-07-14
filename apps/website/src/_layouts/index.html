@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ site.title }}</title>
-  <link rel="stylesheet" href="{{ site.base_path }}/dist/default/theme.min.css">
+  <link rel="stylesheet" href="{{ site.base_path }}/dist/{{ site.houseTheme }}/theme.min.css">
   <link rel="stylesheet" href="{{ site.base_path }}/assets/custom.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -74,9 +74,9 @@
     <div class="container">
       <h2 class="title">Themes</h2>
       <div class="columns is-multiline">
-        <!-- Default is the project baseline, not a showcased theme — kept out of the gallery. -->
+        <!-- The site's own house theme (site.houseTheme) is not a showcased theme — kept out of the gallery. -->
         {% for theme in collections.theme %}
-        {% if theme.data.theme != "default" %}
+        {% if theme.data.theme != site.houseTheme %}
         <div class="column is-one-third">
           <div class="card">
             <div class="card-image">
