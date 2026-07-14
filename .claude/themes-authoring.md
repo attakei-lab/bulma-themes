@@ -205,7 +205,7 @@ with a fresh `var()` substitution apparently sidesteps the failure.
 The unmodified `.button` (specificity `(0, 1, 0)`) never gets a
 re-declaration, so it stays stuck with the broken chain.
 
-Both Pulse and the default theme exhibit this — the bug is
+Both Pulse and the Attakei theme exhibit this — the bug is
 template-wide, not theme-specific. Root cause is open.
 
 The same chain failure affects every other bare control element — `.input`,
@@ -877,7 +877,7 @@ that media query.
 
 ### Two canvas strategies
 
-1. **Ride Bulma's neutral dark canvas** (default / cosmo / pulse / united). A
+1. **Ride Bulma's neutral dark canvas** (attakei / cosmo / pulse / united). A
    theme that does *not* pin `scheme-main-l` / `text-l` lets Bulma's own
    `[data-theme=dark]` theme set the page background and body text; the dark
    block then only re-pins the light-only literals (below) and keeps the
@@ -952,7 +952,7 @@ Nothing should stay light-on-dark, and links must stay readable.
 
 ## Status of existing themes against these pitfalls
 
-All five themes (`default`, `cosmo`, `pulse`, `united`, `solarized`) carry
+All five themes (`attakei`, `cosmo`, `pulse`, `united`, `solarized`) carry
 the template-wide pitfall pins above, including the **Pitfall 14**
 `.breadcrumb` link-colour pin, and each ships a `[data-theme="dark"]` dark
 variant (see **Dark mode**). `solarized` uses the native-dark-palette

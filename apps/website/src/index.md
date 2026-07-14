@@ -5,10 +5,10 @@ title: Color Themes for Bulma
 
 ## Quickstart
 
-Replace your Bulma `<link>` with the one below to apply the `default` theme:
+Replace your Bulma `<link>` with the one below to apply this site's own theme:
 
 ```html
-<link rel="stylesheet" href="{{ site.url }}{{ site.base_path }}/dist/default/theme.min.css">
+<link rel="stylesheet" href="{{ site.url }}{{ site.base_path }}/dist/{{ site.houseTheme }}/theme.min.css">
 ```
 
-To use a different theme, replace `default` with any theme slug from the [gallery below](#gallery) — for example, `pulse` or `cosmo`.
+To use a different theme, replace `{{ site.houseTheme }}` with any theme slug from the [gallery below](#gallery) — for example, `pulse` or `cosmo`.

@@ -10,6 +10,7 @@ type SiteData = {
   base_path: string;
   title: string;
   repo_url: string;
+  houseTheme: string;
 };
 
 const defaults: SiteData = {
@@ -17,6 +18,7 @@ const defaults: SiteData = {
   base_path: "",
   title: "Color Themes for Bulma",
   repo_url: "https://github.com/attakei-lab/bulma-themes",
+  houseTheme: "attakei",
 };
 
 export default function (configData: { site?: Partial<GlobalData> }): SiteData {

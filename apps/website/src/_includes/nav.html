@@ -19,19 +19,19 @@
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link" role="button" aria-haspopup="true" aria-expanded="false" tabindex="0">Themes</a>
         <div class="navbar-dropdown nav-themes">
-          <!-- Default is the project baseline: full-width above the theme grid, outside it. -->
-          {% for theme in collections.theme %}
-            {% if theme.data.theme == "default" %}
-              <a class="navbar-item" href="{{ site.base_path }}{{ theme.url }}">{{ theme.data.title }}</a>
-            {% endif %}
-          {% endfor %}
           <div class="nav-theme-grid">
             {% for theme in collections.theme %}
-              {% if theme.data.theme != "default" %}
+              {% if theme.data.theme != site.houseTheme %}
                 <a class="navbar-item" href="{{ site.base_path }}{{ theme.url }}">{{ theme.data.title }}</a>
               {% endif %}
             {% endfor %}
           </div>
+          <!-- The site's own house theme (site.houseTheme): full-width below the theme grid, outside it. -->
+          {% for theme in collections.theme %}
+            {% if theme.data.theme == site.houseTheme %}
+              <a class="navbar-item" href="{{ site.base_path }}{{ theme.url }}">This website's theme</a>
+            {% endif %}
+          {% endfor %}
         </div>
       </div>
       <div class="navbar-item has-dropdown is-hoverable">
