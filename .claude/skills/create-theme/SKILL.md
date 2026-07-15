@@ -304,7 +304,7 @@ Cleanup (Phase F.2 and the user-abort fallback) must also verify `pid` before ki
 
 From `packages/themes/`:
 
-```
+```shell
 bun run build
 ```
 
@@ -333,13 +333,13 @@ Review is **faithful reproduction first**: the user checks each axis against the
 
 Send a **two-tier checklist**. The **base colour axes** run for every source:
 
-```
+```text
 scheme bg / text fg / primary / link / info / success / warning / danger / radius / shadow / navbar burger / link decoration (underline) / breadcrumb / dark mode (toggle the navbar color-scheme picker)
 ```
 
 For a **component-framework source**, also send the **structural axes** — generic categories here; the source-specific concretisation (which Bulma component, exact values) lives in `source-notes.md`:
 
-```
+```text
 button chrome & press / link button (is-ghost) / pagination structure (joined?) / tabs variant shapes (is-boxed etc.) / breadcrumb container / notification & message chrome / checkbox & radio / dark & light modifier colours / typography (uppercase / weight)
 ```
 
@@ -383,13 +383,13 @@ Do not proceed past this point without an explicit user approval of the visual d
 
 Stage **only** the SCSS file. Do **not** `git add .` or `-A` (the website MD skeleton is still uncommitted and intentionally separate).
 
-```
+```shell
 git add packages/themes/src/<slug>/_variables.scss
 ```
 
 Commit using HEREDOC. Include `Refs: #N` if an Issue number was agreed in Phase A.1:
 
-```
+```shell
 git commit -m "$(cat <<'EOF'
 feat(themes): add <Title> theme variables
 
@@ -410,13 +410,13 @@ Propose a draft, let the user revise, and iterate until they approve the body.
 
 Stage **only** the MD file:
 
-```
+```shell
 git add apps/website/src/theme/<slug>.md
 ```
 
 Commit with the same `Refs:` rule:
 
-```
+```shell
 git commit -m "$(cat <<'EOF'
 feat(website): add <slug> theme page
 
