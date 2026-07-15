@@ -1,0 +1,51 @@
+<button type="button" id="scroll-to-top" class="button is-primary" aria-label="Back to top">
+  <span class="icon"><i class="fas fa-arrow-up"></i></span>
+</button>
+
+<style>
+  #scroll-to-top {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 20;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    border-radius: 50%;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+
+  #scroll-to-top:not(.is-visible) {
+    display: none;
+  }
+
+  #scroll-to-top:hover,
+  #scroll-to-top:focus-visible {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #scroll-to-top {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    var button = document.getElementById("scroll-to-top");
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function updateVisibility() {
+      button.classList.toggle("is-visible", window.scrollY > window.innerHeight);
+    }
+
+    updateVisibility();
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+
+    button.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    });
+  })();
+</script>
