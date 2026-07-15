@@ -113,7 +113,9 @@ light-mode literal added below also needs a dark counterpart in the
 
 6. **Checkbox / radio = primary fill + white glyph** (Bootstrap `.form-check-input`;
    Bulma has no token — direct restyle of the native input; real `background-color` →
-   bare Sass vars).
+   bare Sass vars). `appearance: none` removes the browser's native focus outline, so
+   **restore a `:focus-visible` ring** (keyboard accessibility) and dim the disabled
+   state.
    ```scss
    input[type="checkbox"], input[type="radio"] {
      width: 1em; height: 1em; appearance: none; vertical-align: -0.125em;
@@ -127,6 +129,11 @@ light-mode literal added below also needs a dark counterpart in the
      background-color: hsl($primary-h, $primary-s, $primary-l);
      border-color: hsl($primary-h, $primary-s, $primary-l);
    }
+   input[type="checkbox"]:focus-visible, input[type="radio"]:focus-visible {
+     outline: 2px solid hsl($primary-h, $primary-s, $primary-l);
+     outline-offset: 2px;
+   }
+   input[type="checkbox"]:disabled, input[type="radio"]:disabled { opacity: 0.5; }
    /* checked glyphs: white check SVG (checkbox) / white dot SVG (radio) */
    ```
 
@@ -138,9 +145,13 @@ light-mode literal added below also needs a dark counterpart in the
    /* …repeat for is-primary / is-link / is-info / is-success / is-warning */
    ```
 
-8. **Card / box = 1px border, no shadow** (Bootstrap `.card`). Set `--bulma-shadow:
-   none` and a 1px border on `.box, .card` (exclude them from the Pitfall-10 shadow
-   pin); real `border` → bare Sass vars. Add a dark border counterpart.
+8. **Card / box = 1px border, no shadow** (Bootstrap `.card`). The B.1 Pitfall-10
+   template lists `.box, .card, .panel` for the default (shadowed) case; for a
+   Bootstrap-derived theme **drop `.box, .card` from that pin** (keep it on
+   `.dropdown, .modal-card-head, .panel`) and instead give `.box, .card` their own
+   rule with `--bulma-shadow: none` + a 1px border (real `border` → bare Sass vars),
+   plus a dark border counterpart. Do not leave both rules active — the border
+   treatment replaces the shadow pin for box/card, it does not stack on it.
 
 9. **Base-element chrome must respect Bulma's variant modifiers.** When a theme adds
    chrome to a bare element selector (`.button`, `.pagination-link`, `.tabs`, …), it must

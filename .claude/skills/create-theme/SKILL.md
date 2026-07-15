@@ -337,8 +337,10 @@ button chrome & press / pagination structure (joined?) / tabs variant shapes (is
 The link-related axes surface the link work: `link decoration` checks
 whether body links match the source's underline style (Phase B.1 underline
 block); `breadcrumb` checks breadcrumb links carry the brand colour
-(Pitfall 14); `link button` checks `.button.is-link` against the source's
-link-style button (Phase B.1 restyle block).
+(Pitfall 14); `link button` checks that the source's link-style button
+(`.btn-link`) is served by Bulma's native `.button.is-ghost` — and that the
+theme's base-`.button` chrome does not leak into it (Phase B.1). `.is-link`
+itself stays Bulma's solid semantic colour and is **not** restyled.
 
 `dark mode` covers the whole `[data-theme="dark"]` block: have the user toggle
 the navbar **color-scheme picker** to dark and confirm nothing stays
