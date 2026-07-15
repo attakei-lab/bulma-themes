@@ -239,6 +239,12 @@ a {
 }
 ```
 
+`.breadcrumb a` is deliberately excluded from this reset — it is a genuine prose
+link, not chrome, so it keeps the underline. But its **active (current-page) item**
+is not a navigable link and must lose the underline anyway; that exception is
+handled separately by source-notes' Framework-universal default #4 (`.breadcrumb
+.is-active a { text-decoration: none; }`), not by adding it to the list above.
+
 Bootstrap's `.btn-link` maps to Bulma's **native `.is-ghost`** button (a
 transparent, link-coloured text button), *not* to `.is-link` (a semantic colour).
 **Do not restyle `.is-link`** — leave Bulma's solid semantic intact. No theme code
@@ -328,22 +334,24 @@ Review is **faithful reproduction first**: the user checks each axis against the
 Send a **two-tier checklist**. The **base colour axes** run for every source:
 
 ```
-scheme bg / text fg / primary / link / info / success / warning / danger / radius / shadow / navbar burger / link decoration (underline) / breadcrumb / link button / dark mode (toggle the navbar color-scheme picker)
+scheme bg / text fg / primary / link / info / success / warning / danger / radius / shadow / navbar burger / link decoration (underline) / breadcrumb / dark mode (toggle the navbar color-scheme picker)
 ```
 
 For a **component-framework source**, also send the **structural axes** — generic categories here; the source-specific concretisation (which Bulma component, exact values) lives in `source-notes.md`:
 
 ```
-button chrome & press / pagination structure (joined?) / tabs variant shapes (is-boxed etc.) / breadcrumb container / notification & message chrome / checkbox & radio / dark & light modifier colours / typography (uppercase / weight)
+button chrome & press / link button (is-ghost) / pagination structure (joined?) / tabs variant shapes (is-boxed etc.) / breadcrumb container / notification & message chrome / checkbox & radio / dark & light modifier colours / typography (uppercase / weight)
 ```
 
 The link-related axes surface the link work: `link decoration` checks
 whether body links match the source's underline style (Phase B.1 underline
 block); `breadcrumb` checks breadcrumb links carry the brand colour
-(Pitfall 14); `link button` checks that the source's link-style button
-(`.btn-link`) is served by Bulma's native `.button.is-ghost` — and that the
-theme's base-`.button` chrome does not leak into it (Phase B.1). `.is-link`
-itself stays Bulma's solid semantic colour and is **not** restyled.
+(Pitfall 14). `link button` (structural axis, component-framework sources
+only — a palette-only source has no `.btn-link` to verify) checks that the
+source's link-style button is served by Bulma's native `.button.is-ghost` —
+and that the theme's base-`.button` chrome does not leak into it (Phase
+B.1). `.is-link` itself stays Bulma's solid semantic colour and is **not**
+restyled.
 
 `dark mode` covers the whole `[data-theme="dark"]` block: have the user toggle
 the navbar **color-scheme picker** to dark and confirm nothing stays
