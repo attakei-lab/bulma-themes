@@ -26,6 +26,16 @@ so it must be enforced here at every invocation.)
 
 ## Phase A — Pre-work agreement & extraction
 
+### Source-import principles
+
+Extraction is governed by a few principles that apply to **any** reference source, not just one framework. They also fix the generic/source-specific split this skill maintains: generic process stays here; concrete source-family facts live in `source-notes.md`.
+
+- **Classify the source first.** A source is either **palette-only** (a colour scheme with no component framework — e.g. a named palette like Solarized) or a **component-framework** source (colours *and* styled components — e.g. a Bootswatch theme). The colour pass (A.2) runs for both; the structural pass (A.3) runs only for component-framework sources.
+- **Colour is the baseline; structure is additive.** The original job is landing a palette into Bulma's structure (A.2). A component-framework source adds a second job — porting its component chrome / typography / interaction (A.3) — which is often heavier than expected.
+- **Measure the rendered output, not a single artifact.** Verify values against the **compiled / rendered CSS**, not one source file: an override file can omit an effect that is actually applied (e.g. Lumen's alert "shadow" was a thick bottom border applied via the compiled rule, not visible in a first-glance scan). Never conclude "the source doesn't do X" from an incomplete artifact.
+- **A user's (or source's) word is perceptual, not a CSS name.** When someone calls a thing a "shadow", a "box", or a "connected" set, that vocabulary describes what they *see*, not a specific CSS property or selector — Lumen's "shadow" was a dark bottom border, not `box-shadow`. Translate the word to the source's actual mechanism and confirm by measurement.
+- **Faithful reproduction first; flag extensions.** Default to reproducing what the source actually renders. When the user asks for something the source does **not** do, verify its absence against the source, then apply it and record it in the SCSS comment as a **deliberate extension** (mirrors the `secondary` provenance-comment convention in `.claude/themes-authoring.md`).
+
 ### A.1 — Lock the inputs (single batched ask)
 
 Immediately after invocation, ask the user once for all of the following, presenting your best derivations as defaults:
@@ -39,9 +49,9 @@ Immediately after invocation, ask the user once for all of the following, presen
 
 Do not write any file before all of the above are agreed.
 
-### A.2 — Extract tokens from the URL
+### A.2 — Extract the colour palette (all sources)
 
-Run a hybrid extraction:
+The colour pass runs for **every** source (palette-only and component-framework alike); it is the whole job for a palette-only source. Run a hybrid extraction:
 
 1. `WebFetch` the URL; parse out `<link rel="stylesheet">` hrefs.
 2. `WebFetch` each linked stylesheet (limit to same-origin / CDN matches that look like the site's own CSS — skip analytics / fonts).
@@ -57,6 +67,7 @@ that theme's own house palette, not defaults to copy):
 - always emit (when extracted): `scheme-h/s`, `text-h/s`, `primary-h/s/l`, `link-h/s/l`, `info/success/warning/danger -h/s/l`
 - always emit (Pitfall 3): `primary-invert-l` (100% if `$primary-l ≲ 35%`, else 0%); `link-invert-l` likewise
 - always emit (`secondary` extension colour — see `.claude/themes-authoring.md`, "Choosing a theme's secondary"): `secondary-h/s/l` plus a `$custom-colors` map at the top of the file — `("secondary": (hsl($secondary-h, $secondary-s, $secondary-l)))`. **If the source defines its own secondary / supporting colour** (e.g. `--bs-secondary`, `.btn-secondary`, a declared swatch), adopt the value it *actually renders* — verify against the compiled CSS, since a declared token can be overridden downstream. Otherwise choose a supporting tone (accent / neutral / equal-to-primary are all valid). `secondary-invert-l` is override-only: emit `--bulma-secondary-invert-l` only when the source's text-on-secondary differs from Bulma's auto contrast
+- conditional (`dark` / `light` modifier colours): if the source defines its own `$dark` / `$light` (often a grey-ramp value — e.g. Bootstrap's `$gray-700` / `$gray-100`, typically brighter than Bulma's near-black / near-white defaults), emit `--bulma-dark-h/s/l` (+ `--bulma-dark-invert-l`) and `--bulma-light-h/s/l` so `.is-dark` / `.is-light` surfaces match the source
 - always emit (Pitfall 6): pin `--bulma-control-*` on the shared control selector group inside the mixin so bare `.button` / `.input` / `.textarea` / `.select select` / `.pagination-*` resolve their padding, border, and height correctly (see Phase B.1 template)
 - always emit (Pitfall 9): pin `.panel-icon svg` and its `<use>` to `1em` inside the mixin so `<use href="#symbol">`-pattern SVGs (the shape `@11ty/font-awesome` emits) sit inside the panel-icon slot instead of drifting to the right of the label
 - always emit (Pitfall 10): pin `--bulma-shadow` on `.box, .card, .panel` with a literal two-stop value so the drop shadow + inner 1px ring render. Skip when the theme already overrides `--bulma-shadow` at `:root` with a fully literal value (e.g. a hairline ring) — that route resolves without further chains
@@ -68,12 +79,29 @@ that theme's own house palette, not defaults to copy):
 - conditional: shadow tokens only if the source shows a distinct, simple `box-shadow` on box-like elements
 - **avoid** emitting `scheme-main-l`, `background-l`, `text-l`, `text-strong-l` unless the theme's identity needs a fixed light canvas (Pitfall 5). Pinning them is a deliberate waiver — the theme then owns the **dark** canvas too and must override these in its `[data-theme="dark"]` block (native-dark strategy). If the light canvas can stay Bulma's, leave them unpinned so Bulma's own dark theme supplies the dark canvas
 
-Also note two **theme-intent signals** while extracting — they do not map to a token, but drive the conditional restyle blocks in Phase B.1:
+For any token in the "missing" set, leave it unemitted and report it as "left to Bulma default" at the end of Phase B. The **body-link decoration** signal that used to be listed here is structural (non-colour) intent and now lives in A.3.
 
-- **Body-link decoration.** Does the source underline body links (a common default for Bootstrap-derived and many content-first sites)? If so, plan the underline + navigation-chrome-reset block (Phase B.1). Bulma's base `a` is `text-decoration: none`, so this is opt-in.
-- **Link-vs-primary collision.** Are the source's link and primary colours the same (or near-identical) hue? If they are, Bulma's solid-fill `.button.is-link` becomes visually indistinguishable from `.button.is-primary`. Check how the source renders its own link-style button — if it is a borderless, transparent-background text link, plan the `.button.is-link` restyle block (Phase B.1).
+### A.3 — Extract structural intent (component-framework sources only)
 
-For any token in the "missing" set, leave it unemitted and report it as "left to Bulma default" at the end of Phase B.
+Skip this for palette-only sources — they have no components to port, so A.2 is the whole extraction. For a **component-framework** source, the colour pass alone loses the theme's identity, which also lives in component chrome, typography, and interaction. Run a second pass:
+
+1. **Read the source's theme-override layer *and* the compiled CSS.** The override layer (the file where the source deviates from its base framework) shows intent; the compiled CSS confirms what actually renders. Cross-check both — a rule may be applied through the compiled output even when the override file does not show it (Source-import principle: measure the rendered output).
+2. **Extract the non-colour axes:**
+   - **Component chrome & interaction** — borders / shadows / press effects, and *which states change geometry vs colour* (e.g. a bottom-border that shrinks as a button presses down; a joined / segmented pagination).
+   - **Typography** — letter case (uppercase?) and weight on buttons / pagination / etc.
+   - **Container decoration** — background boxes or frames on breadcrumb, alerts, cards.
+3. **Re-map components.** For each source component, identify the Bulma component it maps to, and verify the mapping against the rendered output — a source term like "shadow" is perceptual, so translate it to the real mechanism (Source-import principle: a user's word is not a CSS name). Concrete per-source mapping tables live in `source-notes.md`.
+
+For a **Bootstrap-derived** source, apply the **Framework-universal defaults** catalogued in `source-notes.md` (`.btn-link` → native `.is-ghost`; joined pagination; pagination-current kept at Bulma's link default; breadcrumb active muted; checkbox/radio primary fill; control state-icon; card border; base-element chrome that excludes native variants) **by default** — they recur on every Bootstrap port and are Bootstrap-**structural** facts, not per-theme judgement. Prefer a `--bulma-*` **token override** where one resolves; fall back to a direct property only on a confirmed var-chain pitfall or where no token exists (source-notes' token-first principle). **Do not over-interfere with Bulma's class system** — change the *look*, not the semantics/variants. The **per-theme specifics** (the "shadow"/chrome mechanism, uppercase/weight, colours, `secondary`) are the ones you measure and confirm in Phase C.
+
+**Body-link decoration is not on that default list** — unlike the structural facts above, `$link-decoration` is a single, easily overridden Sass variable, so assuming "Bootstrap-derived ⇒ underline" would itself violate the measure-the-rendered-output principle. Always confirm the source's actual compiled `a { text-decoration }` before applying the underline + navigation-chrome-reset block (Phase B.1) — treat it the same as any other per-theme structural signal in A.3, common as it is.
+
+Two more points earlier drafts got wrong (now fixed in source-notes) are worth calling out:
+
+- **`.btn-link` maps to the native `.is-ghost`, not `.is-link`.** `.btn-link` is a *form* (a button that looks like a link); `.is-link` is a *semantic colour*. Leave `.is-link` alone and let Bulma's own `.is-ghost` be the text link — no restyle. (An earlier draft repurposed `.is-link`, fighting Bulma's semantics.)
+- **Pagination-current stays link-coloured** (Bulma's default, which conforms to `.is-link`); do not force it to primary.
+
+Apply each structural intent as a nested rule in the Phase B.1 mixin, and record its provenance in the SCSS comment: **sourced** (faithful) vs **deliberate extension** (Source-import principle: faithful reproduction first). Every light-mode literal you add here — borders, background boxes, and **text colours** — needs a dark counterpart in the `[data-theme="dark"]` block; see Phase C's dark-mode axis.
 
 ## Phase B — Skeleton write + dev server
 
@@ -178,11 +206,13 @@ emit these inside the mixin (also driven from theme intent, not default):
 ```
 
 For themes whose source **underlines body links** (the body-link-decoration
-signal from Phase A.2), underline `<a>` and reset the underline back off
+signal from Phase A.3 — common for Bootstrap-derived sources, but always
+confirm against the compiled output rather than assuming; see source-notes'
+"Measure-first" note), underline `<a>` and reset the underline back off
 navigation / control chrome — Bulma's base `a` is `text-decoration: none`,
 and the chrome components do not re-declare it, so a bare `a` underline
 would leak into navbar / tabs / pagination / buttons. Drive from theme
-intent, not a default:
+intent, confirmed by measurement:
 
 ```scss
 a {
@@ -211,27 +241,31 @@ a {
 }
 ```
 
-For themes where **link and primary share a hue** so the solid-fill
-`.button.is-link` is indistinguishable from `.button.is-primary` (the
-link-vs-primary-collision signal), and the source renders its link button
-as a borderless text link, restyle `.button.is-link` to match. Note the
-`hsl()` uses **bare Sass vars** in the real `color` property (Pitfall 15),
-not `#{}` interpolation. Drive from theme intent, not a default:
+`.breadcrumb a` is deliberately excluded from this reset — it is a genuine prose
+link, not chrome, so it keeps the underline. But its **active (current-page) item**
+is not a navigable link and must lose the underline anyway; that exception is
+handled separately by source-notes' Framework-universal default #4 (`.breadcrumb
+.is-active a { text-decoration: none; }`), not by adding it to the list above.
+
+Bootstrap's `.btn-link` maps to Bulma's **native `.is-ghost`** button (a
+transparent, link-coloured text button), *not* to `.is-link` (a semantic colour).
+**Do not restyle `.is-link`** — leave Bulma's solid semantic intact. No theme code
+is needed for the text link itself; if the source underlines `.btn-link` at rest,
+pin the native token (token-first):
 
 ```scss
-.button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
-  background-color: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  color: hsl($link-h, $link-s, $link-l);
-  text-decoration: underline;
+.button.is-ghost {
+  --bulma-button-ghost-decoration: underline;
+}
+```
 
-  &:hover,
-  &.is-hovered {
-    background-color: transparent;
-    color: hsl($link-h, $link-s, 40%);
-    text-decoration: underline;
-  }
+If the theme chromes the base `.button` (frame / gloss / border), it **must**
+exclude the chrome-less native variants, or `.is-ghost` / `.is-text` inherit the
+chrome and stop looking like links (Pitfall-adjacent over-interference):
+
+```scss
+.button:not(.is-outlined, .is-inverted, .is-ghost, .is-text) {
+  // …the theme's button chrome…
 }
 ```
 
@@ -272,7 +306,7 @@ Cleanup (Phase F.2 and the user-abort fallback) must also verify `pid` before ki
 
 From `packages/themes/`:
 
-```
+```shell
 bun run build
 ```
 
@@ -297,24 +331,39 @@ Tell the user:
 
 ## Phase C — Iterate via the website preview
 
-Send the user a single checklist covering the token axes:
+Review is **faithful reproduction first**: the user checks each axis against the reference site, and anything the source does *not* do is treated as a deliberate extension — flagged and comment-tagged as such (see the Source-import principles).
 
+Send a **two-tier checklist**. The **base colour axes** run for every source:
+
+```text
+scheme bg / text fg / primary / link / info / success / warning / danger / radius / shadow / navbar burger / link decoration (underline) / breadcrumb / dark mode (toggle the navbar color-scheme picker)
 ```
-scheme bg / text fg / primary / link / info / success / warning / danger / radius / shadow / navbar burger / link decoration (underline) / breadcrumb / link button / dark mode (toggle the navbar color-scheme picker)
+
+For a **component-framework source**, also send the **structural axes** — generic categories here; the source-specific concretisation (which Bulma component, exact values) lives in `source-notes.md`:
+
+```text
+button chrome & press / link button (is-ghost) / pagination structure (joined?) / tabs variant shapes (is-boxed etc.) / breadcrumb container / notification & message chrome / checkbox & radio / dark & light modifier colours / typography (uppercase / weight)
 ```
 
 The link-related axes surface the link work: `link decoration` checks
 whether body links match the source's underline style (Phase B.1 underline
 block); `breadcrumb` checks breadcrumb links carry the brand colour
-(Pitfall 14); `link button` checks `.button.is-link` against the source's
-link-style button (Phase B.1 restyle block).
+(Pitfall 14). `link button` (structural axis, component-framework sources
+only — a palette-only source has no `.btn-link` to verify) checks that the
+source's link-style button is served by Bulma's native `.button.is-ghost` —
+and that the theme's base-`.button` chrome does not leak into it (Phase
+B.1). `.is-link` itself stays Bulma's solid semantic colour and is **not**
+restyled.
 
 `dark mode` covers the whole `[data-theme="dark"]` block: have the user toggle
 the navbar **color-scheme picker** to dark and confirm nothing stays
 light-on-dark — canvas, body text, card / box shadows, separators, tabs
 underline, modal, code chip, breadcrumb, **link legibility**, and
-`.message.is-dark` header vs body. See `.claude/themes-authoring.md`,
-"Dark mode".
+`.message.is-dark` header vs body. Also confirm every **light-only literal
+added in A.3** — structural borders, background boxes, and especially **text
+colours** (e.g. boxed active-tab text, non-current pagination text) — has a
+dark counterpart; a light-mode text colour left on the dark canvas is a common
+miss. See `.claude/themes-authoring.md`, "Dark mode".
 
 Ask the user to open `http://localhost:<port>/theme/<slug>/`, walk through the checklist, and reply with all items that do not match the reference site (as a list).
 
@@ -336,13 +385,13 @@ Do not proceed past this point without an explicit user approval of the visual d
 
 Stage **only** the SCSS file. Do **not** `git add .` or `-A` (the website MD skeleton is still uncommitted and intentionally separate).
 
-```
+```shell
 git add packages/themes/src/<slug>/_variables.scss
 ```
 
 Commit using HEREDOC. Include `Refs: #N` if an Issue number was agreed in Phase A.1:
 
-```
+```shell
 git commit -m "$(cat <<'EOF'
 feat(themes): add <Title> theme variables
 
@@ -363,13 +412,13 @@ Propose a draft, let the user revise, and iterate until they approve the body.
 
 Stage **only** the MD file:
 
-```
+```shell
 git add apps/website/src/theme/<slug>.md
 ```
 
 Commit with the same `Refs:` rule:
 
-```
+```shell
 git commit -m "$(cat <<'EOF'
 feat(website): add <slug> theme page
 
