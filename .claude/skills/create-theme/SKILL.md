@@ -90,11 +90,12 @@ Skip this for palette-only sources — they have no components to port, so A.2 i
    - **Container decoration** — background boxes or frames on breadcrumb, alerts, cards.
 3. **Re-map components.** For each source component, identify the Bulma component it maps to, and verify the mapping against the rendered output — a source term like "shadow" is perceptual, so translate it to the real mechanism (Source-import principle: a user's word is not a CSS name). Concrete per-source mapping tables live in `source-notes.md`.
 
-For a **Bootstrap-derived** source, apply the **Framework-universal defaults** catalogued in `source-notes.md` (body-link underline; `.btn-link` → native `.is-ghost`; joined pagination; pagination-current kept at Bulma's link default; breadcrumb active muted; checkbox/radio primary fill; control state-icon; card border; base-element chrome that excludes native variants) **by default** — they recur on every Bootstrap port and are framework facts, not per-theme judgement. Prefer a `--bulma-*` **token override** where one resolves; fall back to a direct property only on a confirmed var-chain pitfall or where no token exists (source-notes' token-first principle). **Do not over-interfere with Bulma's class system** — change the *look*, not the semantics/variants. The **per-theme specifics** (the "shadow"/chrome mechanism, uppercase/weight, colours, `secondary`) are the ones you measure and confirm in Phase C.
+For a **Bootstrap-derived** source, apply the **Framework-universal defaults** catalogued in `source-notes.md` (`.btn-link` → native `.is-ghost`; joined pagination; pagination-current kept at Bulma's link default; breadcrumb active muted; checkbox/radio primary fill; control state-icon; card border; base-element chrome that excludes native variants) **by default** — they recur on every Bootstrap port and are Bootstrap-**structural** facts, not per-theme judgement. Prefer a `--bulma-*` **token override** where one resolves; fall back to a direct property only on a confirmed var-chain pitfall or where no token exists (source-notes' token-first principle). **Do not over-interfere with Bulma's class system** — change the *look*, not the semantics/variants. The **per-theme specifics** (the "shadow"/chrome mechanism, uppercase/weight, colours, `secondary`) are the ones you measure and confirm in Phase C.
 
-Three points earlier drafts got wrong (now fixed in source-notes) are worth calling out:
+**Body-link decoration is not on that default list** — unlike the structural facts above, `$link-decoration` is a single, easily overridden Sass variable, so assuming "Bootstrap-derived ⇒ underline" would itself violate the measure-the-rendered-output principle. Always confirm the source's actual compiled `a { text-decoration }` before applying the underline + navigation-chrome-reset block (Phase B.1) — treat it the same as any other per-theme structural signal in A.3, common as it is.
 
-- **Body-link decoration** *is* a default here (Bootstrap-derived sources underline body links) → apply the underline + navigation-chrome-reset block (Phase B.1). Bulma's base `a` is `text-decoration: none`, so it is opt-in in Bulma but a default for these sources.
+Two more points earlier drafts got wrong (now fixed in source-notes) are worth calling out:
+
 - **`.btn-link` maps to the native `.is-ghost`, not `.is-link`.** `.btn-link` is a *form* (a button that looks like a link); `.is-link` is a *semantic colour*. Leave `.is-link` alone and let Bulma's own `.is-ghost` be the text link — no restyle. (An earlier draft repurposed `.is-link`, fighting Bulma's semantics.)
 - **Pagination-current stays link-coloured** (Bulma's default, which conforms to `.is-link`); do not force it to primary.
 
@@ -203,11 +204,13 @@ emit these inside the mixin (also driven from theme intent, not default):
 ```
 
 For themes whose source **underlines body links** (the body-link-decoration
-signal from Phase A.3), underline `<a>` and reset the underline back off
+signal from Phase A.3 — common for Bootstrap-derived sources, but always
+confirm against the compiled output rather than assuming; see source-notes'
+"Measure-first" note), underline `<a>` and reset the underline back off
 navigation / control chrome — Bulma's base `a` is `text-decoration: none`,
 and the chrome components do not re-declare it, so a bare `a` underline
-would leak into navbar / tabs / pagination / buttons. **Default for
-Bootstrap-derived sources**; otherwise drive from theme intent:
+would leak into navbar / tabs / pagination / buttons. Drive from theme
+intent, confirmed by measurement:
 
 ```scss
 a {

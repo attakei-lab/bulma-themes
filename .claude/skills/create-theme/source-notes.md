@@ -22,10 +22,10 @@ path — see the pagination-current teaching example below.
 **Do not over-interfere with Bulma's class system.** A theme changes the *look*; it
 should not fight Bulma's *semantics or variant system*. Three anti-patterns to avoid,
 each caught in a real port: (a) repurposing a semantic class (mapping `.btn-link` onto
-`.is-link` — see universal default #2); (b) overriding a semantic default with a
-framework-foreign value (forcing pagination-current to primary — #4); (c) letting
+`.is-link` — see universal default #1); (b) overriding a semantic default with a
+framework-foreign value (forcing pagination-current to primary — #3); (c) letting
 base-element chrome clobber a native variant (a `.button` frame reaching `.is-ghost` —
-#9). Restyling *layout / appearance* (e.g. joined pagination, #3) is legitimate theming
+#8). Restyling *layout / appearance* (e.g. joined pagination, #2) is legitimate theming
 and is **not** over-interference, even when invasive.
 
 ---
@@ -48,18 +48,28 @@ repo-native — so keep this scoped to Bootstrap-derived sources.)
   — good for colours. It is large and a fetch/grep can miss a specific selector, so
   confirm component structure from the override file **and** the compiled rule.
 
+### Measure-first: body-link decoration is NOT a blanket default
+
+Bootstrap's stock `$link-decoration` default is `underline`, and both Lumen and
+Spacelab happened to keep it — but unlike the structural facts below, this is a
+single, theme-exposed Sass **variable** that a Bootswatch author can (and sometimes
+does) override to `none`. Treating it as an unconditional "Bootstrap-derived ⇒
+underline" default would itself violate the Source-import principle of measuring the
+rendered output rather than assuming. **Always confirm the source's actual compiled
+`a { text-decoration }` (or `--bs-link-decoration`) before applying** the underline +
+navigation-chrome-reset block (`SKILL.md` › Phase B.1 template) — do not apply it
+just because the source is Bootstrap-derived.
+
 ### Framework-universal defaults (always apply)
 
-These hold for **any** Bootstrap-derived source (Bootstrap-framework facts, not
-per-theme choices), and each recurred across ports. **Emit them by default.** Every
-light-mode literal added below also needs a dark counterpart in the
-`[data-theme="dark"]` block (a recurring miss — check it).
+These hold for **any** Bootstrap-derived source (Bootstrap-framework **structural**
+facts — baked into the component's CSS architecture, not a simple override-able
+variable like link decoration above — so they carry far less per-theme variance) and
+each recurred across ports. **Emit them by default.** Every light-mode literal added
+below also needs a dark counterpart in the `[data-theme="dark"]` block (a recurring
+miss — check it).
 
-1. **Body links: underline + chrome reset.** Bootstrap 5.3 underlines body links
-   (`--bs-link-decoration: underline`). Apply the underline + navigation-chrome-reset
-   block (see `SKILL.md` › Phase B.1 template).
-
-2. **Do NOT repurpose `.is-link`; map `.btn-link` to Bulma's native `.is-ghost`.**
+1. **Do NOT repurpose `.is-link`; map `.btn-link` to Bulma's native `.is-ghost`.**
    Bootstrap `.btn-link` is a *form* (a button that looks like a text link); Bulma
    `.is-link` is a *semantic colour* (a navigation role, rendered as a solid fill).
    Different axes — do **not** restyle `.is-link` into a text link. Bulma already ships
@@ -70,9 +80,9 @@ light-mode literal added below also needs a dark counterpart in the
    ```scss
    .button.is-ghost { --bulma-button-ghost-decoration: underline; }
    ```
-   Caveat: this only works if the base `.button` chrome excludes `.is-ghost` — see #9.
+   Caveat: this only works if the base `.button` chrome excludes `.is-ghost` — see #8.
 
-3. **Joined pagination.** Bootstrap page numbers are one segmented set (adjacent
+2. **Joined pagination.** Bootstrap page numbers are one segmented set (adjacent
    borders overlap, only outer corners rounded). `.is-rounded` opts out.
    ```scss
    .pagination:not(.is-rounded) .pagination-list {
@@ -93,7 +103,7 @@ light-mode literal added below also needs a dark counterpart in the
    over-interference, but keep it variant-safe: exclude `.is-rounded` (above) and verify
    focus rings / hover z-order / RTL at the joints in Phase C.
 
-4. **Pagination current stays at Bulma's default (link colour).** Bootstrap's active
+3. **Pagination current stays at Bulma's default (link colour).** Bootstrap's active
    page is `$primary`, but Bulma colours `.pagination-link.is-current` with the *link*
    colour, which conforms to the `.is-link` semantic — **keep it**. Do **not** force it
    to primary (an earlier draft did, overriding Bulma's semantic default). A theme that
@@ -101,7 +111,7 @@ light-mode literal added below also needs a dark counterpart in the
    `--bulma-pagination-selected-item-*` tokens (token-first) — but that is opt-in, not a
    universal default.
 
-5. **Breadcrumb: non-active = link, active = muted grey, no underline.** Token-first for
+4. **Breadcrumb: non-active = link, active = muted grey, no underline.** Token-first for
    the colours; strip the underline on the active `<a>`.
    ```scss
    .breadcrumb {
@@ -111,7 +121,7 @@ light-mode literal added below also needs a dark counterpart in the
    .breadcrumb .is-active a { text-decoration: none; }
    ```
 
-6. **Checkbox / radio = primary fill + white glyph** (Bootstrap `.form-check-input`;
+5. **Checkbox / radio = primary fill + white glyph** (Bootstrap `.form-check-input`;
    Bulma has no token — direct restyle of the native input; real `background-color` →
    bare Sass vars). `appearance: none` removes the browser's native focus outline, so
    **restore a `:focus-visible` ring** (keyboard accessibility) and dim the disabled
@@ -137,7 +147,7 @@ light-mode literal added below also needs a dark counterpart in the
    /* checked glyphs: white check SVG (checkbox) / white dot SVG (radio) */
    ```
 
-7. **Control right-icon follows the input's state colour** (Bootstrap colours its
+6. **Control right-icon follows the input's state colour** (Bootstrap colours its
    validation icon; Bulma leaves it a fixed muted grey; no token — direct, per state,
    bare Sass vars). Left icon stays neutral.
    ```scss
@@ -145,7 +155,7 @@ light-mode literal added below also needs a dark counterpart in the
    /* …repeat for is-primary / is-link / is-info / is-success / is-warning */
    ```
 
-8. **Card / box = 1px border, no shadow** (Bootstrap `.card`). The B.1 Pitfall-10
+7. **Card / box = 1px border, no shadow** (Bootstrap `.card`). The B.1 Pitfall-10
    template lists `.box, .card, .panel` for the default (shadowed) case; for a
    Bootstrap-derived theme **drop `.box, .card` from that pin** (keep it on
    `.dropdown, .modal-card-head, .panel`) and instead give `.box, .card` their own
@@ -153,7 +163,7 @@ light-mode literal added below also needs a dark counterpart in the
    plus a dark border counterpart. Do not leave both rules active — the border
    treatment replaces the shadow pin for box/card, it does not stack on it.
 
-9. **Base-element chrome must respect Bulma's variant modifiers.** When a theme adds
+8. **Base-element chrome must respect Bulma's variant modifiers.** When a theme adds
    chrome to a bare element selector (`.button`, `.pagination-link`, `.tabs`, …), it must
    not clobber Bulma's variants that expect different/absent chrome. Either **exclude**
    the chrome-less native variants — `.button:not(.is-outlined, .is-inverted, .is-ghost,
@@ -186,22 +196,18 @@ These vary by theme — extract them in A.3 from the compiled CSS and confirm in
 | Bootstrap (source) | Bulma (this library) | Notes |
 | --- | --- | --- |
 | `.alert` | `.notification` / `.message` | chrome per theme |
-| `.btn` | `.button` | chrome/typography per theme; exclude native variants (#9) |
-| `.btn-link` | **`.button.is-ghost`** (native) | do NOT repurpose `.is-link` (#2) |
+| `.btn` | `.button` | chrome/typography per theme; exclude native variants (#8) |
+| `.btn-link` | **`.button.is-ghost`** (native) | do NOT repurpose `.is-link` (#1) |
 | `.btn-secondary` | `.button.is-secondary` | `$secondary` (usually `$gray-*`) adopted |
 | `.nav-tabs` | `.tabs.is-boxed` | rounded-top, active connects to content |
-| `.pagination` / `.page-link` | `.pagination-link` etc. | joined set (#3) |
-| `.page-item.active .page-link` | `.pagination-link.is-current` | keep Bulma's link default (#4) |
-| `.breadcrumb` | `.breadcrumb` | active muted / non-active link (#5) |
-| `.form-check-input` | `input[type=checkbox]` / `input[type=radio]` | primary fill (#6) |
-| `.card` | `.card` / `.box` | 1px border, no shadow (#8) |
+| `.pagination` / `.page-link` | `.pagination-link` etc. | joined set (#2) |
+| `.page-item.active .page-link` | `.pagination-link.is-current` | keep Bulma's link default (#3) |
+| `.breadcrumb` | `.breadcrumb` | active muted / non-active link (#4) |
+| `.form-check-input` | `input[type=checkbox]` / `input[type=radio]` | primary fill (#5) |
+| `.card` | `.card` / `.box` | 1px border, no shadow (#7) |
 | `.navbar` | `.navbar` | chrome per theme |
 | `$dark` / `$light` | `--bulma-dark-*` / `--bulma-light-*` | `.is-dark` / `.is-light` |
 | `--bs-<color>` palette | `--bulma-<token>-h/s/l` | hex/rgb → HSL |
-
-> Untested but likely (confirm on a future port and append): `.badge`→`.tag`,
-> `.list-group`→`.panel`, `.modal`→`.modal`, `.dropdown`→`.dropdown`,
-> `.progress`→`.progress`, `.table`→`.table`.
 
 ### Teaching examples
 
@@ -216,4 +222,15 @@ These vary by theme — extract them in A.3 from the compiled CSS and confirm in
 - **Form vs semantic (`.btn-link` ≠ `.is-link`).** `.btn-link` is an appearance variant
   (looks like a link); `.is-link` is a semantic colour (navigation role). Bulma's
   appearance variants are `.is-ghost` / `.is-text`. Mapping `.btn-link` onto `.is-link`
-  repurposed a semantic class — the correct target is the native `.is-ghost` (#2).
+  repurposed a semantic class — the correct target is the native `.is-ghost` (#1).
+
+### Not yet verified — future work, not actionable guidance
+
+Unlike every entry above, the mappings below have **not** been confirmed against a
+compiled/rendered source (the Source-import "measure, don't assume" principle applies
+here too). Do not treat them as guidance to apply; they are a to-investigate list.
+Confirm on a future port, move the entry into the re-mapping table above once
+verified, and remove it from here:
+
+`.badge`→`.tag`, `.list-group`→`.panel`, `.modal`→`.modal`, `.dropdown`→`.dropdown`,
+`.progress`→`.progress`, `.table`→`.table`.
