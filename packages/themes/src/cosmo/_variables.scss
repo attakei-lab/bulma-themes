@@ -181,28 +181,11 @@ $radius-large: 0 !default;
     --bulma-navbar-burger-color: var(--bulma-primary-invert);
   }
 
-  // Cosmo mirrors Bootswatch's `.btn-link`: the link-colored button is a
-  // borderless, transparent-background text button whose label carries the
-  // link/primary hue — not Bulma's default solid fill. Because Cosmo's link
-  // and primary share the same blue, the default `.is-link` fill would be
-  // visually indistinguishable from `.button.is-primary`; this restyle keeps
-  // them distinct. Scope to the plain `.is-link` button and leave the
-  // `.is-outlined` / `.is-inverted` / `.is-light` / `.is-dark` / `.is-soft`
-  // / `.is-bold` combinations to Bulma's own modifier styling.
-  .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
-    background-color: transparent;
-    border-color: transparent;
-    box-shadow: none;
-    color: hsl($link-h, $link-s, $link-l);
-    text-decoration: underline;
-
-    &:hover,
-    &.is-hovered {
-      background-color: transparent;
-      color: hsl($link-h, $link-s, 40%);
-      text-decoration: underline;
-    }
-  }
+  // Bootstrap-derived universal default #1: `.btn-link` maps to Bulma's
+  // native `.button.is-ghost` (a transparent, link-coloured text button),
+  // not `.is-link` (which stays Bulma's solid semantic colour, so it is
+  // intentionally left un-restyled here even though Cosmo's link and primary
+  // share the same hue — that is a valid, expected outcome, not a defect).
 
   // Breadcrumb link colour: Bulma registers
   // `--bulma-breadcrumb-item-color: var(--bulma-link-text)` (and hover:
@@ -252,14 +235,23 @@ $radius-large: 0 !default;
   // per Pitfall 1's eager-substitution behaviour, the pin must go on the
   // parent `.dropdown` selector — pinning on `.dropdown-content` is too
   // late.
-  .box,
-  .card,
   .dropdown,
   .modal-card-head,
   .panel {
     --bulma-shadow:
       0 0.5em 1em -0.125em hsl(221deg 14% 4% / 10%),
       0 0 0 1px hsl(221deg 14% 4% / 2%);
+  }
+
+  // Bootstrap-derived universal default #7: card / box get a 1px border and
+  // no drop shadow (Bootstrap `.card`) — this replaces, rather than stacks
+  // on, the Pitfall-10 shadow pin above (hence `.box, .card` are excluded
+  // from that selector group). Real `border` → bare Sass vars.
+  .box,
+  .card {
+    --bulma-shadow: none;
+
+    border: 1px solid hsl($scheme-h, $scheme-s, 87%);
   }
 
   // Pitfall 11: separator borders on `.card-footer` / `.panel-block` /
@@ -369,6 +361,119 @@ $radius-large: 0 !default;
     --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 94%);
   }
 
+  // --- Bootstrap-derived universal defaults ---
+
+  // #2: joined pagination. Bootstrap page numbers are one segmented set
+  // (adjacent borders overlap, only outer corners rounded). `.is-rounded`
+  // opts out.
+  .pagination:not(.is-rounded) .pagination-list {
+    .pagination-link,
+    .pagination-ellipsis {
+      margin: 0;
+      border-radius: 0;
+    }
+
+    li:not(:first-child) .pagination-link,
+    li:not(:first-child) .pagination-ellipsis {
+      margin-inline-start: -1px;
+    }
+
+    li:first-child :is(.pagination-link, .pagination-ellipsis) {
+      border-start-start-radius: #{$radius};
+      border-end-start-radius: #{$radius};
+    }
+
+    li:last-child :is(.pagination-link, .pagination-ellipsis) {
+      border-start-end-radius: #{$radius};
+      border-end-end-radius: #{$radius};
+    }
+  }
+
+  // #5: checkbox / radio = primary fill + white glyph (Bootstrap
+  // `.form-check-input`; no Bulma token — direct restyle of the native
+  // input; real `background-color` → bare Sass vars). `appearance: none`
+  // removes the native focus outline, so restore a `:focus-visible` ring.
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 1em;
+    height: 1em;
+    appearance: none;
+    vertical-align: -0.125em;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: 1px solid hsl($scheme-h, $scheme-s, 70%);
+  }
+
+  input[type="checkbox"] {
+    border-radius: 0.25em;
+  }
+
+  input[type="radio"] {
+    border-radius: 50%;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="checkbox"]:indeterminate,
+  input[type="radio"]:checked {
+    background-color: hsl($primary-h, $primary-s, $primary-l);
+    border-color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible {
+    outline: 2px solid hsl($primary-h, $primary-s, $primary-l);
+    outline-offset: 2px;
+  }
+
+  input[type="checkbox"]:disabled,
+  input[type="radio"]:disabled {
+    opacity: 0.5;
+  }
+
+  input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  }
+
+  // `appearance: none` makes an indeterminate checkbox otherwise render
+  // identically to an unchecked one; give it the same primary fill as
+  // :checked (above) plus a dash glyph.
+  input[type="checkbox"]:indeterminate {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
+  }
+
+  input[type="radio"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+  }
+
+  // #6: control right-icon follows the input's state colour (Bootstrap
+  // colours its validation icon; Bulma leaves it a fixed muted grey; no
+  // token — direct, per state, bare Sass vars). Left icon stays neutral.
+  .control.has-icons-right .input.is-primary ~ .icon.is-right {
+    color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  .control.has-icons-right .input.is-link ~ .icon.is-right {
+    color: hsl($link-h, $link-s, $link-l);
+  }
+
+  .control.has-icons-right .input.is-info ~ .icon.is-right {
+    color: hsl($info-h, $info-s, $info-l);
+  }
+
+  .control.has-icons-right .input.is-success ~ .icon.is-right {
+    color: hsl($success-h, $success-s, $success-l);
+  }
+
+  .control.has-icons-right .input.is-warning ~ .icon.is-right {
+    color: hsl($warning-h, $warning-s, $warning-l);
+  }
+
+  .control.has-icons-right .input.is-danger ~ .icon.is-right {
+    color: hsl($danger-h, $danger-s, $danger-l);
+  }
+
   // --- Dark mode (Bulma neutral dark canvas + Cosmo accents; driven by
   // [data-theme="dark"]) ---
   // Cosmo pins no scheme/text L, so Bulma's own [data-theme=dark] theme sets
@@ -379,14 +484,22 @@ $radius-large: 0 !default;
   // `:root[data-theme="dark"] …`, winning over the light pins and Bulma's
   // dark block.
   &[data-theme="dark"] {
-    .box,
-    .card,
     .dropdown,
     .modal-card-head,
     .panel {
       --bulma-shadow:
         0 0.5em 1em -0.125em hsl(0deg 0% 0% / 40%),
         0 0 0 1px hsl(0deg 0% 100% / 10%);
+    }
+
+    .box,
+    .card {
+      border-color: hsl($scheme-h, $scheme-s, 28%);
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      border-color: hsl($scheme-h, $scheme-s, 42%);
     }
 
     .card,
@@ -415,16 +528,8 @@ $radius-large: 0 !default;
       --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 16%);
     }
 
-    // On light, the link button and breadcrumb hover darken (L 40%); on the
-    // dark ground they must lighten instead (Pitfall 15: bare Sass vars in the
-    // real `color` property, #{} interpolation in the custom property value).
-    .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
-      &:hover,
-      &.is-hovered {
-        color: hsl($link-h, $link-s, 66%);
-      }
-    }
-
+    // On light, the breadcrumb hover darkens (L 40%); on the dark ground it
+    // must lighten instead.
     .breadcrumb {
       --bulma-breadcrumb-item-hover-color: hsl(#{$link-h}, #{$link-s}, 66%);
     }

@@ -284,7 +284,13 @@ $radius: 0.375rem !default;
   // lifted 3px up-left on a hard black shadow, and presses flat on hover.
   // The margin compensates the translate so layout flow is unchanged
   // (ported one-to-one from the source rule).
-  .button {
+  // Bootstrap-derived universal default #8: exclude Bulma's chrome-less
+  // native variants from the base `.button` frame, or `.is-ghost` / `.is-text`
+  // (the `.btn-link` equivalent) inherit the black frame and stop reading as
+  // a text link. `.is-outlined` / `.is-inverted` are excluded too, for
+  // consistency with the other Bootstrap-derived themes — they keep Bulma's
+  // own outlined/inverted styling instead of Brite's frame-and-lift.
+  .button:not(.is-outlined, .is-inverted, .is-ghost, .is-text) {
     --bulma-button-border-width: 2px;
 
     margin: 3px 0 0 3px;
@@ -313,8 +319,13 @@ $radius: 0.375rem !default;
   // trailing button's painted right edge sits 3px inside its layout edge,
   // while an input's sits exactly on it. For adjacent 2px frames to paint
   // as one 2px rule, the overlap is -5px after a button (-2px frame
-  // overlap, -3px translate compensation) and -2px after an input.
-  .buttons.has-addons .button:not(:last-child) {
+  // overlap, -3px translate compensation) and -2px after an input. This
+  // geometry assumes the 3px frame/lift from the base `.button` rule above,
+  // so every selector below re-states the same `:not(.is-outlined,
+  // .is-inverted, .is-ghost, .is-text)` exclusion (universal default #8) —
+  // an unframed button sits flush like a plain control and must not be
+  // pulled into the framed-button overlap math.
+  .buttons.has-addons .button:not(:last-child, .is-outlined, .is-inverted, .is-ghost, .is-text) {
     margin-inline-end: -5px;
   }
 
@@ -322,7 +333,10 @@ $radius: 0.375rem !default;
     margin-inline-end: -2px;
   }
 
-  .field.has-addons .control:not(:last-child):has(> .button) {
+  .field.has-addons
+    .control:not(:last-child):has(
+      > .button:not(.is-outlined, .is-inverted, .is-ghost, .is-text)
+    ) {
     margin-inline-end: -5px;
   }
 
@@ -331,9 +345,22 @@ $radius: 0.375rem !default;
   // that contains a button to the full row height, so the input's bottom
   // edge lines up with the bottom of the buttons' hard shadow instead of
   // leaving a 3px step.
-  .field.has-addons:has(.button) .control > .input,
-  .field.has-addons:has(.button) .control > .select,
-  .field.has-addons:has(.button) .control > .select > select {
+  .field.has-addons:has(
+      .button:not(.is-outlined, .is-inverted, .is-ghost, .is-text)
+    )
+    .control
+    > .input,
+  .field.has-addons:has(
+      .button:not(.is-outlined, .is-inverted, .is-ghost, .is-text)
+    )
+    .control
+    > .select,
+  .field.has-addons:has(
+      .button:not(.is-outlined, .is-inverted, .is-ghost, .is-text)
+    )
+    .control
+    > .select
+    > select {
     height: calc(2.5em + 3px);
   }
 
@@ -344,7 +371,10 @@ $radius: 0.375rem !default;
   // the revealed strip is input frame, not a gap. Inputs only: a select's
   // width is intrinsic (percentage-based widening is circular there), so
   // a select-before-button joint keeps the default overlap.
-  .field.has-addons .control:has(> .input):has(+ .control > .button) {
+  .field.has-addons
+    .control:has(> .input):has(
+      + .control > .button:not(.is-outlined, .is-inverted, .is-ghost, .is-text)
+    ) {
     margin-inline-end: -5px;
 
     > .input {
@@ -448,6 +478,34 @@ $radius: 0.375rem !default;
     border-color: hsl($danger-h, $danger-s, $danger-l);
   }
 
+  // Bootstrap-derived universal default #6: control right-icon follows the
+  // input's state colour (Bootstrap colours its validation icon; Bulma
+  // leaves it a fixed muted grey; no token — direct, per state). Left icon
+  // stays neutral.
+  .control.has-icons-right .input.is-primary ~ .icon.is-right {
+    color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  .control.has-icons-right .input.is-link ~ .icon.is-right {
+    color: hsl($link-h, $link-s, $link-l);
+  }
+
+  .control.has-icons-right .input.is-info ~ .icon.is-right {
+    color: hsl($info-h, $info-s, $info-l);
+  }
+
+  .control.has-icons-right .input.is-success ~ .icon.is-right {
+    color: hsl($success-h, $success-s, $success-l);
+  }
+
+  .control.has-icons-right .input.is-warning ~ .icon.is-right {
+    color: hsl($warning-h, $warning-s, $warning-l);
+  }
+
+  .control.has-icons-right .input.is-danger ~ .icon.is-right {
+    color: hsl($danger-h, $danger-s, $danger-l);
+  }
+
   // Checkboxes / radios (source .form-check-input): restyled native
   // inputs — a 1em box with the 2px black frame; checking fills it with
   // the primary green and draws a black glyph (the source's own SVGs).
@@ -475,6 +533,24 @@ $radius: 0.375rem !default;
   input[type="checkbox"]:checked,
   input[type="radio"]:checked {
     background-color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  // `appearance: none` removes the native focus outline; restore a
+  // `:focus-visible` ring and dim the disabled state (keyboard a11y).
+  // Brite's neon-green primary is only ~1.5:1 against the white canvas —
+  // well under the 3:1 non-text contrast guideline — so use the theme's
+  // black chrome for the light-mode ring instead (21:1); the dark-mode
+  // override below switches to the light green already used for links
+  // there, which contrasts well on the dark canvas.
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible {
+    outline: 2px solid hsl(0deg 0% 0%);
+    outline-offset: 2px;
+  }
+
+  input[type="checkbox"]:disabled,
+  input[type="radio"]:disabled {
+    opacity: 0.5;
   }
 
   input[type="checkbox"]:checked {
@@ -566,9 +642,21 @@ $radius: 0.375rem !default;
     // the pinned base when its own chain fails).
     --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
 
+    // Bootstrap-derived universal default #4: the active (current-page)
+    // item is muted grey, not the (here, plain-black) link colour. Same
+    // chain shape as above (--bulma-link-text-active), pin literally.
+    --bulma-breadcrumb-item-active-color: hsl(#{$scheme-h}, #{$scheme-s}, 45%);
+
     padding: 0.75em 1em;
     border: 2px solid hsl(0deg 0% 0%);
     border-radius: $radius;
+  }
+
+  // The active item is not a navigable link; strip the body-link underline
+  // back off it (the reset list above does not cover `.breadcrumb`, since
+  // its non-active links are meant to stay underlined).
+  .breadcrumb .is-active a {
+    text-decoration: none;
   }
 
   // Tabs (source .nav-tabs): the whole tab strip is a bordered, rounded
@@ -595,23 +683,10 @@ $radius: 0.375rem !default;
     }
   }
 
-  // Link buttons (source .btn-link): keep the shared button chrome — black
-  // border, hard shadow, press effect — but with a transparent fill and a
-  // black underlined label (bare Sass vars in the real `color` property —
-  // Pitfall 15). Scope to the plain `.is-link` button and leave the
-  // modifier combinations to Bulma's own styling.
-  .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
-    background-color: transparent;
-    color: hsl($link-h, $link-s, $link-l);
-    text-decoration: underline;
-
-    &:hover,
-    &.is-hovered {
-      background-color: transparent;
-      color: hsl($link-h, $link-s, $link-l);
-      text-decoration: underline;
-    }
-  }
+  // Bootstrap-derived universal default #1: `.btn-link` maps to Bulma's
+  // native `.button.is-ghost` (a transparent, link-coloured text button),
+  // not `.is-link` — which stays Bulma's solid semantic colour and is
+  // intentionally left un-restyled here.
 
   // --- Dark mode (Bulma neutral dark canvas + Brite accents; driven by
   // [data-theme="dark"]) ---
@@ -638,6 +713,7 @@ $radius: 0.375rem !default;
     // ([data-bs-theme=dark] .breadcrumb a { color: #fff }).
     .breadcrumb {
       --bulma-breadcrumb-item-color: hsl(0deg 0% 100%);
+      --bulma-breadcrumb-item-active-color: hsl(#{$scheme-h}, #{$scheme-s}, 62%);
     }
 
     .tabs {
@@ -669,15 +745,21 @@ $radius: 0.375rem !default;
       --bulma-code-background: hsl(#{$scheme-h}, #{$scheme-s}, 16%);
     }
 
-    // Source dark .btn-link renders white ([data-bs-theme=dark] .btn-link
-    // { color: #fff }).
-    .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
-      color: hsl(0deg 0% 100%);
+    // The light-mode control right-icon uses `$link-h/s/l` (bare Sass vars,
+    // compile-time black) for `.is-link`; dark mode only flips the
+    // `--bulma-link-*` custom properties above, which this bare-var rule
+    // never reads, so the icon stays black and nearly invisible on the dark
+    // canvas. Re-declare it with the dark link palette.
+    .control.has-icons-right .input.is-link ~ .icon.is-right {
+      color: hsl($link-dark-h, $link-dark-s, $link-dark-l);
+    }
 
-      &:hover,
-      &.is-hovered {
-        color: hsl(0deg 0% 100%);
-      }
+    // The checkbox/radio focus ring switches from the light-mode black
+    // (chrome-consistent) to the dark-mode link green, which already
+    // contrasts well against the dark canvas.
+    input[type="checkbox"]:focus-visible,
+    input[type="radio"]:focus-visible {
+      outline-color: hsl($link-dark-h, $link-dark-s, $link-dark-l);
     }
   }
 }
