@@ -162,13 +162,21 @@ $radius-large: 0 !default;
   // literal link colour on the parent `.breadcrumb` (base colour only — a
   // hover lightness cannot be hard-coded generically and a base-only pin
   // does not regress hover).
+  // Bootstrap-derived universal default #4: non-active breadcrumb items
+  // are links (pinned above); the active (current-page) item is muted grey,
+  // not a link colour. `--bulma-breadcrumb-item-active-color` chains through
+  // `--bulma-link-text-active` (a compound hsl(var(), var(), calc(var()))
+  // expression on :root) the same way Pitfall 8/14 do — pin it literally.
   .breadcrumb {
     --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+    --bulma-breadcrumb-item-active-color: hsl(#{$scheme-h}, #{$scheme-s}, 45%);
   }
 
   // Bootswatch Pulse underlines links; underline breadcrumb link items too.
   // The current-page `.is-active` item is not a navigable link, so leave it
-  // un-underlined.
+  // un-underlined (Bulma's own `.breadcrumb li.is-active a` rule does not
+  // set text-decoration, so it is unaffected by this `:not(.is-active)`
+  // scope).
   .breadcrumb li:not(.is-active) a {
     text-decoration: underline;
   }
@@ -204,14 +212,22 @@ $radius-large: 0 !default;
   // per Pitfall 1's eager-substitution behaviour, the pin must go on the
   // parent `.dropdown` selector — pinning on `.dropdown-content` is too
   // late.
-  .box,
-  .card,
   .dropdown,
   .modal-card-head,
   .panel {
     --bulma-shadow:
       0 0.5em 1em -0.125em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%),
       0 0 0 1px hsla(#{$scheme-h}, #{$scheme-s}, 4%, 2%);
+  }
+
+  // Bootstrap-derived universal default #7: card / box get a 1px border and
+  // no drop shadow (Bootstrap `.card`) — replaces, rather than stacks on,
+  // the Pitfall-10 shadow pin above. Real `border` → bare Sass vars.
+  .box,
+  .card {
+    --bulma-shadow: none;
+
+    border: 1px solid hsl($scheme-h, $scheme-s, 87%);
   }
 
   // Pitfall 11: separator borders on `.card-footer` / `.panel-block` /
@@ -290,27 +306,10 @@ $radius-large: 0 !default;
     border-end-end-radius: var(--bulma-card-radius);
   }
 
-  // Match Bootswatch Pulse's `.btn-link`: a borderless, transparent
-  // text-link button — purple link text with a persistent underline, no
-  // border and no fill. Scope to the plain `.is-link` and leave the
-  // `.is-outlined` / `.is-inverted` / `.is-light` / `.is-dark` / `.is-soft`
-  // / `.is-bold` combinations to Bulma's own modifier styling. `hsl()` uses
-  // bare Sass vars in the real `color` property (Pitfall 15), not `#{}`
-  // interpolation.
-  .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
-    background-color: transparent;
-    border-color: transparent;
-    box-shadow: none;
-    color: hsl($link-h, $link-s, $link-l);
-    text-decoration: underline;
-
-    &:hover,
-    &.is-hovered {
-      background-color: transparent;
-      color: hsl($link-h, $link-s, 30%);
-      text-decoration: underline;
-    }
-  }
+  // Bootstrap-derived universal default #1: `.btn-link` maps to Bulma's
+  // native `.button.is-ghost` (a transparent, link-coloured text button),
+  // not `.is-link` — which stays Bulma's solid semantic colour and is
+  // intentionally left un-restyled here.
 
   // Widen the active tab's underline from Bulma's 1px to 3px so it
   // reads as a clear accent under plain `.tabs`. Under `.tabs.is-boxed`,
@@ -341,20 +340,133 @@ $radius-large: 0 !default;
     --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 94%);
   }
 
+  // --- Bootstrap-derived universal defaults ---
+
+  // #2: joined pagination. Bootstrap page numbers are one segmented set
+  // (adjacent borders overlap, only outer corners rounded). `.is-rounded`
+  // opts out.
+  .pagination:not(.is-rounded) .pagination-list {
+    .pagination-link,
+    .pagination-ellipsis {
+      margin: 0;
+      border-radius: 0;
+    }
+
+    li:not(:first-child) .pagination-link,
+    li:not(:first-child) .pagination-ellipsis {
+      margin-inline-start: -1px;
+    }
+
+    li:first-child :is(.pagination-link, .pagination-ellipsis) {
+      border-start-start-radius: #{$radius};
+      border-end-start-radius: #{$radius};
+    }
+
+    li:last-child :is(.pagination-link, .pagination-ellipsis) {
+      border-start-end-radius: #{$radius};
+      border-end-end-radius: #{$radius};
+    }
+  }
+
+  // #5: checkbox / radio = primary fill + white glyph (Bootstrap
+  // `.form-check-input`; no Bulma token — direct restyle of the native
+  // input; real `background-color` → bare Sass vars). `appearance: none`
+  // removes the native focus outline, so restore a `:focus-visible` ring.
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 1em;
+    height: 1em;
+    appearance: none;
+    vertical-align: -0.125em;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: 1px solid hsl($scheme-h, $scheme-s, 70%);
+  }
+
+  input[type="checkbox"] {
+    border-radius: 0.25em;
+  }
+
+  input[type="radio"] {
+    border-radius: 50%;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+    background-color: hsl($primary-h, $primary-s, $primary-l);
+    border-color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible {
+    outline: 2px solid hsl($primary-h, $primary-s, $primary-l);
+    outline-offset: 2px;
+  }
+
+  input[type="checkbox"]:disabled,
+  input[type="radio"]:disabled {
+    opacity: 0.5;
+  }
+
+  input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  }
+
+  input[type="radio"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+  }
+
+  // #6: control right-icon follows the input's state colour (Bootstrap
+  // colours its validation icon; Bulma leaves it a fixed muted grey; no
+  // token — direct, per state, bare Sass vars). Left icon stays neutral.
+  .control.has-icons-right .input.is-primary ~ .icon.is-right {
+    color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  .control.has-icons-right .input.is-link ~ .icon.is-right {
+    color: hsl($link-h, $link-s, $link-l);
+  }
+
+  .control.has-icons-right .input.is-info ~ .icon.is-right {
+    color: hsl($info-h, $info-s, $info-l);
+  }
+
+  .control.has-icons-right .input.is-success ~ .icon.is-right {
+    color: hsl($success-h, $success-s, $success-l);
+  }
+
+  .control.has-icons-right .input.is-warning ~ .icon.is-right {
+    color: hsl($warning-h, $warning-s, $warning-l);
+  }
+
+  .control.has-icons-right .input.is-danger ~ .icon.is-right {
+    color: hsl($danger-h, $danger-s, $danger-l);
+  }
+
   // --- Dark mode (Bulma neutral dark canvas + brand accents; driven by
   // [data-theme="dark"]) ---
   // pulse pins no scheme/text L, so Bulma's own [data-theme=dark] theme sets
   // the canvas; only the light-only literal pins above need dark counterparts.
   // `&` is :root, so this compiles to `:root[data-theme="dark"] …`.
   &[data-theme="dark"] {
-    .box,
-    .card,
     .dropdown,
     .modal-card-head,
     .panel {
       --bulma-shadow:
         0 0.5em 1em -0.125em hsl(0deg 0% 0% / 40%),
         0 0 0 1px hsl(0deg 0% 100% / 10%);
+    }
+
+    .box,
+    .card {
+      border-color: hsl($scheme-h, $scheme-s, 28%);
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      border-color: hsl($scheme-h, $scheme-s, 42%);
     }
 
     .card,
@@ -391,18 +503,7 @@ $radius-large: 0 !default;
 
     .breadcrumb {
       --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, 70%);
-    }
-
-    // The link button also darkens on hover on light; lighten both its base
-    // and hover for the dark ground (Pitfall 15: bare Sass vars in the real
-    // `color` property).
-    .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
-      color: hsl($link-h, $link-s, 70%);
-
-      &:hover,
-      &.is-hovered {
-        color: hsl($link-h, $link-s, 82%);
-      }
+      --bulma-breadcrumb-item-active-color: hsl(#{$scheme-h}, #{$scheme-s}, 62%);
     }
   }
 }
