@@ -307,7 +307,12 @@ $pagination-color: hsl(0deg 0% 33%) !default;
   // constant); on active it sinks 2px (border 4→2px, margin-top 2px). The
   // direct border-color (0,2,0) wins over Bulma's per-variant border var in
   // every state, so the raised edge is uniform.
-  .button {
+  // Bootstrap-derived universal default #8: exclude Bulma's chrome-less
+  // native variants from the base `.button` frame, or `.is-ghost` / `.is-text`
+  // (the `.btn-link` equivalent) inherit the raised-border chrome and stop
+  // reading as a text link. `.is-outlined` / `.is-inverted` are excluded too,
+  // for consistency with the other Bootstrap-derived themes.
+  .button:not(.is-outlined, .is-inverted, .is-ghost, .is-text) {
     border-style: solid;
     border-width: 0 1px 4px;
     border-color: transparent hsl(0deg 0% 0% / 12%) hsl(0deg 0% 0% / 24%);
@@ -327,31 +332,11 @@ $pagination-color: hsl(0deg 0% 33%) !default;
     }
   }
 
-  // Lumen's link and primary share the same blue, so Bulma's solid-fill
-  // `.button.is-link` is indistinguishable from `.button.is-primary`. The
-  // source renders its link-style button (Bootstrap `.btn-link`) as a
-  // borderless, transparent, uppercase text link — restyle to match, and
-  // drop the raised bottom-border chrome for it. Note: `color: hsl(...)` is
-  // a real property, so bare Sass vars (Pitfall 15), not `#{}`.
-  .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
-    border-color: transparent;
-    background-color: transparent;
-    box-shadow: none;
-    color: hsl($link-h, $link-s, $link-l);
-    text-decoration: underline;
-
-    &:hover,
-    &.is-hovered,
-    &:active,
-    &.is-active {
-      margin-top: 0;
-      border-color: transparent;
-      border-bottom-width: 4px;
-      background-color: transparent;
-      color: hsl($link-h, $link-s, 33%);
-      text-decoration: underline;
-    }
-  }
+  // Bootstrap-derived universal default #1: `.btn-link` maps to Bulma's
+  // native `.button.is-ghost` (a transparent, link-coloured text button),
+  // not `.is-link` — which stays Bulma's solid semantic colour and is
+  // intentionally left un-restyled here even though Lumen's link and
+  // primary share the same hue (a valid, expected outcome, not a defect).
 
   // Navbar (source `.navbar @include shadow()`): the visible part on a
   // full-width bar is the 4px bottom border. Translucent black reads as a
@@ -377,16 +362,54 @@ $pagination-color: hsl(0deg 0% 33%) !default;
   // Bootstrap's joined item set). Give every item the raised bottom-border
   // chrome and press effect, then collapse the number list into one joined
   // group (adjacent 1px side borders overlap; only the outer corners keep
-  // the radius). `.is-rounded` opts out — its circular pills stay separate.
+  // the radius). Typography applies unconditionally. Under `.is-rounded`,
+  // Bulma makes `.pagination-link` a full circle, and the non-uniform
+  // bottom-heavy border would warp that circle — so its chrome is scoped to
+  // `.pagination:not(.is-rounded) .pagination-link` (universal default #8)
+  // and `.is-rounded` gets a shape-safe equivalent below (box-shadow, not
+  // border). `.pagination-previous` / `.pagination-next` are never fully
+  // circular, so their border stays unconditional.
   .pagination-previous,
   .pagination-next,
   .pagination-link,
   .pagination-ellipsis {
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .pagination-previous,
+  .pagination-next,
+  .pagination-ellipsis {
     border-style: solid;
     border-width: 0 1px 4px;
     border-color: transparent hsl(0deg 0% 0% / 12%) hsl(0deg 0% 0% / 24%);
-    font-weight: 700;
-    text-transform: uppercase;
+  }
+
+  .pagination:not(.is-rounded) .pagination-link {
+    border-style: solid;
+    border-width: 0 1px 4px;
+    border-color: transparent hsl(0deg 0% 0% / 12%) hsl(0deg 0% 0% / 24%);
+  }
+
+  // `.is-rounded` still carries the same "weighted bottom, presses flat"
+  // identity — an asymmetric border-width would warp the circular pill, so
+  // reach for a non-blurred, unspread box-shadow instead: a flat "ledge"
+  // under the circle that shrinks/lifts exactly like the non-rounded
+  // border does, without touching the box model or the circular shape.
+  .pagination.is-rounded .pagination-link {
+    box-shadow: 0 2px 0 hsl(0deg 0% 0% / 24%);
+  }
+
+  .pagination.is-rounded .pagination-link:not(.is-current):hover {
+    position: relative;
+    top: 1px;
+    box-shadow: 0 1px 0 hsl(0deg 0% 0% / 24%);
+  }
+
+  .pagination.is-rounded .pagination-link:not(.is-current):active {
+    position: relative;
+    top: 2px;
+    box-shadow: none;
   }
 
   // Grey label on the inactive items only. The active page (`.is-current`,
@@ -401,7 +424,7 @@ $pagination-color: hsl(0deg 0% 33%) !default;
 
   .pagination-previous:hover,
   .pagination-next:hover,
-  .pagination-link:not(.is-current):hover {
+  .pagination:not(.is-rounded) .pagination-link:not(.is-current):hover {
     position: relative;
     top: 1px;
     border-bottom-width: 3px;
@@ -409,7 +432,7 @@ $pagination-color: hsl(0deg 0% 33%) !default;
 
   .pagination-previous:active,
   .pagination-next:active,
-  .pagination-link:not(.is-current):active {
+  .pagination:not(.is-rounded) .pagination-link:not(.is-current):active {
     position: relative; // stand alone from :hover (touch / keyboard activation)
     top: 2px;
     border-bottom-width: 2px;
@@ -468,12 +491,53 @@ $pagination-color: hsl(0deg 0% 33%) !default;
     border-color: hsl($primary-h, $primary-s, $primary-l);
   }
 
+  // `appearance: none` removes the native focus outline; restore a
+  // `:focus-visible` ring and dim the disabled state (keyboard a11y).
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible {
+    outline: 2px solid hsl($primary-h, $primary-s, $primary-l);
+    outline-offset: 2px;
+  }
+
+  input[type="checkbox"]:disabled,
+  input[type="radio"]:disabled {
+    opacity: 0.5;
+  }
+
   input[type="checkbox"]:checked {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
   }
 
   input[type="radio"]:checked {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+  }
+
+  // Bootstrap-derived universal default #6: control right-icon follows the
+  // input's state colour (Bootstrap colours its validation icon; Bulma
+  // leaves it a fixed muted grey; no token — direct, per state). Left icon
+  // stays neutral.
+  .control.has-icons-right .input.is-primary ~ .icon.is-right {
+    color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  .control.has-icons-right .input.is-link ~ .icon.is-right {
+    color: hsl($link-h, $link-s, $link-l);
+  }
+
+  .control.has-icons-right .input.is-info ~ .icon.is-right {
+    color: hsl($info-h, $info-s, $info-l);
+  }
+
+  .control.has-icons-right .input.is-success ~ .icon.is-right {
+    color: hsl($success-h, $success-s, $success-l);
+  }
+
+  .control.has-icons-right .input.is-warning ~ .icon.is-right {
+    color: hsl($warning-h, $warning-s, $warning-l);
+  }
+
+  .control.has-icons-right .input.is-danger ~ .icon.is-right {
+    color: hsl($danger-h, $danger-s, $danger-l);
   }
 
   // Notifications / messages map to the source's alerts; extend the raised
@@ -567,7 +631,7 @@ $pagination-color: hsl(0deg 0% 33%) !default;
     }
 
     // Lumen's link lightness (41%) is too dim on the dark canvas — lift the
-    // body-link and text-link `.button.is-link` tones.
+    // body-link tone.
     a {
       --bulma-link-text: hsl(#{$link-h}, #{$link-s}, 66%);
     }
@@ -581,19 +645,6 @@ $pagination-color: hsl(0deg 0% 33%) !default;
       // Lift the grey box off pure light onto the dark canvas.
       border-color: transparent hsl(0deg 0% 32%) hsl(0deg 0% 24%);
       background-color: hsl(0deg 0% 18%);
-    }
-
-    // The text-link `.button.is-link` darkens on hover in light mode; on
-    // dark it must lighten instead (Pitfall 15: bare Sass vars).
-    .button.is-link:not(.is-outlined, .is-inverted, .is-light, .is-dark, .is-soft, .is-bold) {
-      color: hsl($link-h, $link-s, 66%);
-
-      &:hover,
-      &.is-hovered,
-      &:active,
-      &.is-active {
-        color: hsl($link-h, $link-s, 74%);
-      }
     }
 
     // The unchecked checkbox/radio frame lifts off the light grey onto the
