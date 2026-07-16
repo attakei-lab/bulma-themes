@@ -394,6 +394,7 @@ $radius-large: 0 !default;
   }
 
   input[type="checkbox"]:checked,
+  input[type="checkbox"]:indeterminate,
   input[type="radio"]:checked {
     background-color: hsl($primary-h, $primary-s, $primary-l);
     border-color: hsl($primary-h, $primary-s, $primary-l);
@@ -412,6 +413,13 @@ $radius-large: 0 !default;
 
   input[type="checkbox"]:checked {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  }
+
+  // `appearance: none` makes an indeterminate checkbox otherwise render
+  // identically to an unchecked one; give it the same primary fill as
+  // :checked (above) plus a dash glyph.
+  input[type="checkbox"]:indeterminate {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
   }
 
   input[type="radio"]:checked {
@@ -504,6 +512,24 @@ $radius-large: 0 !default;
     .breadcrumb {
       --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, 70%);
       --bulma-breadcrumb-item-active-color: hsl(#{$scheme-h}, #{$scheme-s}, 62%);
+    }
+
+    // The checkbox/radio focus ring and the primary/link control-icon
+    // colours are bare-Sass-var literals (Pitfall 15), so they don't pick up
+    // the dark-mode custom-property lift above; re-declare them at the same
+    // 70% lightness as the body-link lift, for the same 3:1 contrast reason
+    // (39% lightness is only ~2.1:1 against the dark canvas).
+    input[type="checkbox"]:focus-visible,
+    input[type="radio"]:focus-visible {
+      outline-color: hsl($primary-h, $primary-s, 70%);
+    }
+
+    .control.has-icons-right .input.is-primary ~ .icon.is-right {
+      color: hsl($primary-h, $primary-s, 70%);
+    }
+
+    .control.has-icons-right .input.is-link ~ .icon.is-right {
+      color: hsl($link-h, $link-s, 70%);
     }
   }
 }
