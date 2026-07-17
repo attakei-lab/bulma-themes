@@ -1,0 +1,532 @@
+/*
+ * Yeti theme variables — ported from Bootswatch Yeti
+ * (https://bootswatch.com/yeti/), a flat, friendly Bootstrap theme built
+ * around a bright sky-blue accent and thin Open Sans typography.
+ *
+ * Ships a light default plus a `[data-theme="dark"]` dark variant (see the
+ * dark block at the end of the mixin). Rides Bulma's neutral dark canvas —
+ * Yeti's scheme is untinted grey, matching Bootstrap 5.3's neutral dark mode.
+ *
+ * Provenance (measured against Yeti's compiled bootstrap.css :root palette):
+ *   primary/link  #008cba  (== Bootstrap $blue; link-color aliases primary)
+ *   info          #5bc0de  success #43ac6a  warning #e99002  danger #f04124
+ *   secondary/light #eee (gray-200)   dark #333 (gray-800)
+ *   body-bg #fff  body-color #222  ->  neutral scheme, no hue tint
+ *   $border-radius: 0        -> flat / square corners
+ *   $min-contrast-ratio: 1.9 -> white text forced even on info/warning
+ *   link-decoration: underline
+ *
+ * This file is compiled by `build.ts` into a single CSS artifact per theme
+ * (the directory name is used as the theme name):
+ *   - dist/<theme>/theme.min.css  (Bulma bundle + variables on :root)
+ *
+ * Downstream consumers can also `@use` this file with `with (...)` to
+ * override individual values and run their own build.
+ */
+
+// --- scheme / text (Yeti body is #fff / #222 — neutral, no hue tint) ---
+$scheme-h: 0 !default;
+$scheme-s: 0% !default;
+$text-h: 0 !default;
+$text-s: 0% !default;
+
+// --- primary / link (Yeti's sky-blue #008cba; link-color aliases primary
+// and is underlined — see the underline block in the mixin) ---
+$primary-h: 195 !default;
+$primary-s: 100% !default;
+$primary-l: 36% !default;
+$primary-invert-l: 100% !default;
+$link-h: 195 !default;
+$link-s: 100% !default;
+$link-l: 36% !default;
+$link-invert-l: 100% !default;
+
+// body links share the saturated primary tone (Yeti link == primary)
+$link-on-scheme-l: $link-l !default;
+
+// --- secondary (library extension colour). Sourced: Yeti's $secondary is
+// $gray-200 (#eee), the same near-white grey as $light; text drawn on it is
+// $dark (#333), so pin invert-l to a dark tone (Bulma would otherwise be
+// close, but Yeti's `.badge.bg-secondary { color: $dark }` is explicit). ---
+$secondary-h: 0 !default;
+$secondary-s: 0% !default;
+$secondary-l: 93% !default;
+$secondary-invert-l: 20% !default;
+$custom-colors: ("secondary": (hsl($secondary-h, $secondary-s, $secondary-l))) !default;
+
+// --- dark / light modifier colours (Yeti $dark = $gray-800 #333,
+// $light = $gray-200 #eee — brighter than Bulma's near-black / near-white
+// defaults, so .is-dark / .is-light match the source) ---
+$dark-h: 0 !default;
+$dark-s: 0% !default;
+$dark-l: 20% !default;
+$dark-invert-l: 100% !default;
+$light-h: 0 !default;
+$light-s: 0% !default;
+$light-l: 93% !default;
+
+// --- admonition palette. Yeti's $min-contrast-ratio is 1.9 (low), and the
+// source forces white text on info + warning explicitly, so every invert-l
+// is pinned to 100% (white) rather than relying on the SCSS auto choice. ---
+$info-h: 194 !default;
+$info-s: 67% !default;
+$info-l: 61% !default;
+$info-invert-l: 100% !default;
+$success-h: 142 !default;
+$success-s: 44% !default;
+$success-l: 47% !default;
+$success-invert-l: 100% !default;
+$warning-h: 37 !default;
+$warning-s: 98% !default;
+$warning-l: 46% !default;
+$warning-invert-l: 100% !default;
+$danger-h: 9 !default;
+$danger-s: 87% !default;
+$danger-l: 54% !default;
+$danger-invert-l: 100% !default;
+
+// --- radius (Yeti is flat: $border-radius / -sm / -lg are all 0). All four
+// Bulma radius tokens are emitted as 0 at :root so every component that reads
+// --bulma-radius* directly (notification / message / tag / box / tabs) stays
+// square, not just the controls covered by the Pitfall-6 pin. ---
+$radius-small: 0 !default;
+$radius: 0 !default;
+$radius-medium: 0 !default;
+$radius-large: 0 !default;
+
+@mixin variables {
+  --bulma-scheme-h: #{$scheme-h};
+  --bulma-scheme-s: #{$scheme-s};
+  --bulma-text-h: #{$text-h};
+  --bulma-text-s: #{$text-s};
+  --bulma-primary-h: #{$primary-h};
+  --bulma-primary-s: #{$primary-s};
+  --bulma-primary-l: #{$primary-l};
+  --bulma-primary-invert-l: #{$primary-invert-l};
+  --bulma-secondary-invert-l: #{$secondary-invert-l};
+  --bulma-link-h: #{$link-h};
+  --bulma-link-s: #{$link-s};
+  --bulma-link-l: #{$link-l};
+  --bulma-link-invert-l: #{$link-invert-l};
+  --bulma-link-on-scheme-l: #{$link-on-scheme-l};
+  --bulma-dark-h: #{$dark-h};
+  --bulma-dark-s: #{$dark-s};
+  --bulma-dark-l: #{$dark-l};
+  --bulma-dark-invert-l: #{$dark-invert-l};
+  --bulma-light-h: #{$light-h};
+  --bulma-light-s: #{$light-s};
+  --bulma-light-l: #{$light-l};
+  --bulma-info-h: #{$info-h};
+  --bulma-info-s: #{$info-s};
+  --bulma-info-l: #{$info-l};
+  --bulma-info-invert-l: #{$info-invert-l};
+  --bulma-success-h: #{$success-h};
+  --bulma-success-s: #{$success-s};
+  --bulma-success-l: #{$success-l};
+  --bulma-success-invert-l: #{$success-invert-l};
+  --bulma-warning-h: #{$warning-h};
+  --bulma-warning-s: #{$warning-s};
+  --bulma-warning-l: #{$warning-l};
+  --bulma-warning-invert-l: #{$warning-invert-l};
+  --bulma-danger-h: #{$danger-h};
+  --bulma-danger-s: #{$danger-s};
+  --bulma-danger-l: #{$danger-l};
+  --bulma-danger-invert-l: #{$danger-invert-l};
+
+  // Flat radius: emit all four Bulma radius tokens as 0 so every component
+  // that reads --bulma-radius* directly (notification / message / tag / box /
+  // tabs) renders square, matching Yeti's $border-radius: 0.
+  --bulma-radius-small: #{$radius-small};
+  --bulma-radius: #{$radius};
+  --bulma-radius-medium: #{$radius-medium};
+  --bulma-radius-large: #{$radius-large};
+
+  // Pitfall 6: pin every --bulma-control-* on the shared control selector
+  // group so bare `.button` / `.input` / `.textarea` / `.select select` /
+  // `.pagination-*` and their icons resolve padding, border, height, and
+  // radius correctly. $radius is 0 (Yeti flat), so controls stay square.
+  .button,
+  .control,
+  .file-cta,
+  .file-name,
+  .input,
+  .pagination,
+  .pagination-ellipsis,
+  .pagination-link,
+  .pagination-next,
+  .pagination-previous,
+  .select,
+  .select select,
+  .textarea {
+    --bulma-control-border-width: 1px;
+    --bulma-control-height: 2.5em;
+    --bulma-control-padding-vertical: calc(0.5em - 1px);
+    --bulma-control-padding-horizontal: calc(0.75em - 1px);
+    --bulma-control-radius: #{$radius};
+  }
+
+  // --- Typography: Yeti's thin Open Sans look ($headings-font-weight: 300,
+  // $btn-font-weight: 300). Applied via Bulma's weight tokens (token-first).
+  // Headings keep the default dark text colour (Yeti does not tint them). ---
+  .title {
+    --bulma-title-weight: 300;
+  }
+
+  .subtitle {
+    --bulma-subtitle-weight: 300;
+  }
+
+  .content {
+    --bulma-content-heading-weight: 300;
+  }
+
+  .button {
+    --bulma-button-weight: 300;
+  }
+
+  // Pitfall 8: `--bulma-link-text` set on :root via hsl(var(...)) can fall
+  // back to the UA default on `<a>`; pin literally.
+  a {
+    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+  }
+
+  // --- Underlined body links (sourced: Yeti's --bs-link-decoration is
+  // `underline`). Bulma's base `a` is `text-decoration: none`, so underline
+  // `<a>` then reset it back off navigation / control chrome (which does not
+  // re-declare text-decoration and would otherwise inherit the underline). ---
+  a {
+    text-decoration: underline;
+  }
+
+  .navbar-item,
+  .navbar-link,
+  .menu-list a,
+  .pagination-previous,
+  .pagination-next,
+  .pagination-link,
+  .pagination-ellipsis,
+  .tabs a,
+  .dropdown-item,
+  .panel-block,
+  .panel-tabs a,
+  .card-footer-item,
+  .button,
+  .tag {
+    text-decoration: none;
+  }
+
+  // Framework-universal #1: Bootstrap `.btn-link` maps to Bulma's native
+  // `.button.is-ghost` (transparent, link-coloured), not to `.is-link`. Yeti
+  // underlines `.btn-link` at rest, so pin the ghost decoration token.
+  .button.is-ghost {
+    --bulma-button-ghost-decoration: underline;
+  }
+
+  // Pitfall 14 + Framework-universal #4: pin the breadcrumb link colour on
+  // the parent (var-chain fails at `.breadcrumb a`), mute the active item,
+  // and strip the underline off the active (current-page) item. Yeti also
+  // gives the breadcrumb its own chrome: a bordered box, uppercase, thin,
+  // small — a distinctive sourced container decoration.
+  .breadcrumb {
+    --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+    --bulma-breadcrumb-item-active-color: hsl(#{$scheme-h}, #{$scheme-s}, 45%);
+
+    padding: 0.5em 0.75em;
+    font-size: 0.875em;
+    font-weight: 300;
+    text-transform: uppercase;
+    border: 1px solid hsl($scheme-h, $scheme-s, 85%);
+  }
+
+  .breadcrumb .is-active a {
+    text-decoration: none;
+  }
+
+  // Pitfall 4: burger icon on .navbar.is-primary follows primary-invert.
+  .navbar.is-primary {
+    --bulma-navbar-burger-color: var(--bulma-primary-invert);
+  }
+
+  // Pitfall 9: pin <use>-pattern SVG icons inside .panel-icon to 1em so
+  // they sit in the icon slot instead of overflowing rightward.
+  .panel-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .panel-icon svg use {
+    width: 100%;
+    height: 100%;
+  }
+
+  // Pitfall 10: pin --bulma-shadow so shadowed containers keep their shadow.
+  // Framework-universal #7: Bootstrap cards/boxes are flat (1px border, no
+  // shadow), so drop `.box, .card` from the shadow pin and give them their
+  // own border instead — keep the shadow pin on dropdown / modal / panel.
+  .dropdown,
+  .modal-card-head,
+  .panel {
+    --bulma-shadow:
+      0 0.5em 1em -0.125em hsl(0deg 0% 4% / 10%),
+      0 0 0 1px hsl(0deg 0% 4% / 2%);
+  }
+
+  .box,
+  .card {
+    --bulma-shadow: none;
+
+    border: 1px solid hsl($scheme-h, $scheme-s, 85%);
+  }
+
+  // Pitfall 11: separator borders (`.card-footer` / `.panel-block` /
+  // `.panel-tabs` / `.dropdown-divider`) chain through --bulma-border-weak,
+  // and `.tabs a` / `.tabs ul` through --bulma-border. Pin literal hsl on
+  // the parents; children inherit the resolved value.
+  .card,
+  .dropdown,
+  .panel {
+    --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 93%);
+  }
+
+  .tabs {
+    --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 86%);
+
+    // Pitfall 12: pin the boxed-tab active background (else the ul underline
+    // bleeds through the active tab). 100% matches --bulma-scheme-main-l.
+    --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+  }
+
+  .card {
+    --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 4%, 10%);
+
+    // Pitfall 13: --bulma-card-radius is Bulma's SCSS-default 0.75rem, not
+    // tied to --bulma-radius. Pin it to $radius (0 — flat) on `.card`.
+    --bulma-card-radius: #{$radius};
+  }
+
+  // Pitfall 12: `.modal` registers the modal-card backgrounds from
+  // var(--bulma-scheme-main{,-bis}); the hsl(var(),var(),var()) chain fails
+  // at `.modal-card-{head,body,foot}`. Pin literal hsl (100% / 98%).
+  .modal {
+    --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 98%);
+  }
+
+  // Pitfall 13 (continued): mirror Bulma's `.card-image img` rounding for
+  // background-styled `<figure>` placeholders. Resolves to 0 (flat) here,
+  // kept for parallelism / downstream $radius overrides.
+  .card-image:first-child > figure {
+    border-start-start-radius: var(--bulma-card-radius);
+    border-start-end-radius: var(--bulma-card-radius);
+  }
+
+  .card-image:last-child > figure {
+    border-end-start-radius: var(--bulma-card-radius);
+    border-end-end-radius: var(--bulma-card-radius);
+  }
+
+  // Framework-universal #5: checkbox / radio = primary fill + white glyph
+  // (Bootstrap `.form-check-input`; Bulma has no token — restyle the native
+  // input directly with bare Sass vars per Pitfall 15). `appearance: none`
+  // removes the UA focus ring, so restore a :focus-visible ring.
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 1em;
+    height: 1em;
+    appearance: none;
+    vertical-align: -0.125em;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: 1px solid hsl($scheme-h, $scheme-s, 70%);
+  }
+
+  input[type="checkbox"] {
+    border-radius: 0.25em;
+  }
+
+  input[type="radio"] {
+    border-radius: 50%;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+    background-color: hsl($primary-h, $primary-s, $primary-l);
+    border-color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  }
+
+  input[type="radio"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+  }
+
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible {
+    outline: 2px solid hsl($primary-h, $primary-s, $primary-l);
+    outline-offset: 2px;
+  }
+
+  input[type="checkbox"]:disabled,
+  input[type="radio"]:disabled {
+    opacity: 0.5;
+  }
+
+  // Framework-universal #6: the control right-icon follows the input's state
+  // colour (Bulma leaves it a fixed muted grey). Left icon stays neutral.
+  .control.has-icons-right .input.is-primary ~ .icon.is-right,
+  .control.has-icons-right .select.is-primary ~ .icon.is-right {
+    color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  .control.has-icons-right .input.is-link ~ .icon.is-right {
+    color: hsl($link-h, $link-s, $link-l);
+  }
+
+  .control.has-icons-right .input.is-info ~ .icon.is-right {
+    color: hsl($info-h, $info-s, $info-l);
+  }
+
+  .control.has-icons-right .input.is-success ~ .icon.is-right {
+    color: hsl($success-h, $success-s, $success-l);
+  }
+
+  .control.has-icons-right .input.is-warning ~ .icon.is-right {
+    color: hsl($warning-h, $warning-s, $warning-l);
+  }
+
+  .control.has-icons-right .input.is-danger ~ .icon.is-right {
+    color: hsl($danger-h, $danger-s, $danger-l);
+  }
+
+  // Bulma registers `--bulma-code` on :root as the danger/red colour, so
+  // inline <code> reads as an error state. Repoint text + background into the
+  // brand primary hue so <code> reads as part of the palette (house style,
+  // matching the other themes in this repo).
+  code {
+    --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 25%);
+    --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 94%);
+  }
+
+  // --- Pagination (sourced: Bootswatch Yeti). Yeti's `.page-link` uses a
+  // transparent border and a muted text colour, sitting as a tight joined
+  // strip — visually a set of text-button-like numbers where only the current
+  // page carries the primary fill. This differs from the classic Bootstrap
+  // segmented set (source-notes #2), so instead of joining bordered items we
+  // drop the item margins (join) and make every non-current item borderless
+  // with muted text. The current page keeps Bulma's link-coloured fill. ---
+  .pagination:not(.is-rounded) .pagination-list {
+    .pagination-link,
+    .pagination-ellipsis {
+      margin: 0;
+      border-radius: 0;
+    }
+  }
+
+  .pagination-previous,
+  .pagination-next,
+  .pagination-ellipsis,
+  .pagination-link:not(.is-current) {
+    border-color: transparent;
+    box-shadow: none;
+    color: hsl($scheme-h, $scheme-s, 45%);
+
+    // Yeti's `.page-link:hover` gains a light neutral fill (no border/shadow).
+    &:hover {
+      background-color: hsl($scheme-h, $scheme-s, 96%);
+      border-color: transparent;
+      color: hsl($scheme-h, $scheme-s, 30%);
+    }
+  }
+
+  // --- Dark mode (rides Bulma's neutral dark canvas + brand accents; driven
+  // by [data-theme="dark"]). No scheme/text L is pinned, so Bulma's own
+  // [data-theme=dark] theme sets the canvas; only the light-only literal pins
+  // above need dark counterparts. `&` is :root -> `:root[data-theme="dark"]`.
+  &[data-theme="dark"] {
+    .dropdown,
+    .modal-card-head,
+    .panel {
+      --bulma-shadow:
+        0 0.5em 1em -0.125em hsl(0deg 0% 0% / 40%),
+        0 0 0 1px hsl(0deg 0% 100% / 10%);
+    }
+
+    .box,
+    .card {
+      --bulma-shadow: none;
+
+      border-color: hsl($scheme-h, $scheme-s, 24%);
+    }
+
+    .card,
+    .dropdown,
+    .panel {
+      --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 21%);
+    }
+
+    .tabs {
+      --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 24%);
+      --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+    }
+
+    .card {
+      --bulma-card-header-shadow: 0 0.125em 0.25em hsl(0deg 0% 0% / 30%);
+    }
+
+    .modal {
+      --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 11%);
+    }
+
+    .breadcrumb {
+      border-color: hsl($scheme-h, $scheme-s, 24%);
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      border-color: hsl($scheme-h, $scheme-s, 40%);
+    }
+
+    // Lift the muted pagination text off the dark ground.
+    .pagination-previous,
+    .pagination-next,
+    .pagination-ellipsis,
+    .pagination-link:not(.is-current) {
+      color: hsl($scheme-h, $scheme-s, 60%);
+
+      &:hover {
+        background-color: hsl($scheme-h, $scheme-s, 20%);
+        color: hsl($scheme-h, $scheme-s, 75%);
+      }
+    }
+
+    code {
+      --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 78%);
+      --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 16%);
+    }
+
+    // Yeti's link lightness (36%) is too dim on the dark canvas — lift the
+    // body-link and breadcrumb tones for legibility. (The `.is-link` button
+    // is a solid fill, so it stays legible without a restyle.)
+    a {
+      --bulma-link-text: hsl(#{$link-h}, #{$link-s}, 68%);
+    }
+
+    .breadcrumb {
+      --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, 68%);
+    }
+
+    // Yeti redefines `dark` to #333 (L=20%), close to the dark-mode
+    // background — give `.message.is-dark`'s body a lighter panel so its
+    // header and body do not collapse into one tone.
+    .message.is-dark .message-body {
+      background-color: hsl($dark-h, $dark-s, 26%);
+    }
+  }
+}
