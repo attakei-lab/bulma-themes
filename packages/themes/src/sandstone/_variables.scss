@@ -1,0 +1,574 @@
+/*
+ * Sandstone theme variables.
+ *
+ * Ported from Bootswatch "Sandstone" (https://bootswatch.com/sandstone/,
+ * Bootstrap 5.3.8). A warm, flat theme: pure-white canvas over earthy sand
+ * neutrals (tan borders #dfd7ca, cream fills #f8f5f0, olive-grey text
+ * #3e3f3a), a muted navy primary (#325d88) and — a Sandstone signature — a
+ * yellow-green link/success colour (#93c54b) that is distinct from primary.
+ * The other signature is typography: `_bootswatch.scss` applies a `.sandstone`
+ * mixin (uppercase, font-weight 500) to buttons, nav links, tabs, pagination,
+ * breadcrumb, and dropdown items. Chrome is flat (no gradients / raised
+ * edges); the breadcrumb sits in a 1px tan-bordered box.
+ *
+ * Ships a light default plus a `[data-theme="dark"]` dark variant (see the
+ * dark block at the end of the mixin). Sandstone has no native dark mode, so
+ * the variant rides Bulma's neutral dark canvas (no scheme/text L is pinned).
+ *
+ * This file is compiled by `build.ts` into a single CSS artifact per theme
+ * (the directory name is used as the theme name):
+ *   - dist/<theme>/theme.min.css  (Bulma bundle + variables on :root)
+ *
+ * Downstream consumers can also `@use` this file with `with (...)` to
+ * override individual values and run their own build.
+ */
+
+// --- scheme / text (Sandstone's canvas is pure white #fff, but its greys are
+// warm sand tones — tan borders, cream backgrounds — so tint the neutral
+// ramp warm rather than pinning a beige canvas. Body text is olive-grey
+// #3e3f3a; left to Bulma's default L, only hue-tinted warm) ---
+$scheme-h: 38 !default;
+$scheme-s: 20% !default;
+$text-h: 40 !default;
+$text-s: 8% !default;
+
+// --- primary (source $primary: $blue = #325d88, a muted navy) ---
+$primary-h: 210 !default;
+$primary-s: 46% !default;
+$primary-l: 37% !default;
+$primary-invert-l: 100% !default; // Pitfall 3: white on the navy fill
+
+// --- link (source $link-color: $success = #93c54b, yellow-green — NOT the
+// primary navy; body links and .button.is-link are green) ---
+$link-h: 85 !default;
+$link-s: 51% !default;
+$link-l: 53% !default;
+$link-invert-l: 100% !default; // white on green (source forces white on success)
+$link-on-scheme-l: $link-l !default; // faithful: body links are the bright green
+
+// --- secondary (library extension colour; see "Choosing a theme's
+// secondary" in .claude/themes-authoring.md). Sourced: Sandstone's
+// $secondary is $gray-600 (#8e8c84), a warm neutral grey, and
+// `.btn-secondary` renders it with white text (source $min-contrast-ratio 2)
+// — so pin --bulma-secondary-invert-l to white in the mixin. ---
+$secondary-h: 48 !default;
+$secondary-s: 4% !default;
+$secondary-l: 54% !default;
+$custom-colors: ("secondary": (hsl($secondary-h, $secondary-s, $secondary-l))) !default;
+
+// --- admonition palette (info #29abe0 / success #93c54b / warning #f47c3c /
+// danger #d9534f). success == link (both $success green). White text on every
+// fill (success/warning/danger per source; info pinned white by theme choice). ---
+$info-h: 197 !default;
+$info-s: 75% !default;
+$info-l: 52% !default;
+$info-invert-l: 100% !default;
+$success-h: 85 !default;
+$success-s: 51% !default;
+$success-l: 53% !default;
+$success-invert-l: 100% !default;
+$warning-h: 21 !default;
+$warning-s: 89% !default;
+$warning-l: 60% !default;
+$warning-invert-l: 100% !default;
+$danger-h: 2 !default;
+$danger-s: 64% !default;
+$danger-l: 58% !default;
+$danger-invert-l: 100% !default;
+
+// --- dark / light modifiers (source $dark: $gray-800 = #3e3f3a olive-grey,
+// $light: $gray-200 = #f8f5f0 warm cream) ---
+$dark-h: 40 !default;
+$dark-s: 6% !default;
+$dark-l: 24% !default;
+$dark-invert-l: 100% !default;
+$light-h: 38 !default;
+$light-s: 30% !default;
+$light-l: 96% !default;
+
+// --- radius (source --bs-border-radius 0.375rem matches Bulma's default;
+// only declared so the Pitfall 6 control-radius pin interpolates a literal) ---
+$radius: 0.375rem !default;
+
+@mixin variables {
+  --bulma-scheme-h: #{$scheme-h};
+  --bulma-scheme-s: #{$scheme-s};
+  --bulma-text-h: #{$text-h};
+  --bulma-text-s: #{$text-s};
+  --bulma-primary-h: #{$primary-h};
+  --bulma-primary-s: #{$primary-s};
+  --bulma-primary-l: #{$primary-l};
+  --bulma-primary-invert-l: #{$primary-invert-l};
+  --bulma-link-h: #{$link-h};
+  --bulma-link-s: #{$link-s};
+  --bulma-link-l: #{$link-l};
+  --bulma-link-invert-l: #{$link-invert-l};
+  --bulma-link-on-scheme-l: #{$link-on-scheme-l};
+  --bulma-info-h: #{$info-h};
+  --bulma-info-s: #{$info-s};
+  --bulma-info-l: #{$info-l};
+  --bulma-info-invert-l: #{$info-invert-l};
+  --bulma-success-h: #{$success-h};
+  --bulma-success-s: #{$success-s};
+  --bulma-success-l: #{$success-l};
+  --bulma-success-invert-l: #{$success-invert-l};
+  --bulma-warning-h: #{$warning-h};
+  --bulma-warning-s: #{$warning-s};
+  --bulma-warning-l: #{$warning-l};
+  --bulma-warning-invert-l: #{$warning-invert-l};
+  --bulma-danger-h: #{$danger-h};
+  --bulma-danger-s: #{$danger-s};
+  --bulma-danger-l: #{$danger-l};
+  --bulma-danger-invert-l: #{$danger-invert-l};
+
+  // Source `.btn-secondary` uses white text on the warm grey fill; Bulma's
+  // auto invert on this mid-grey would go dark, so pin it white.
+  --bulma-secondary-invert-l: 100%;
+  --bulma-dark-h: #{$dark-h};
+  --bulma-dark-s: #{$dark-s};
+  --bulma-dark-l: #{$dark-l};
+  --bulma-dark-invert-l: #{$dark-invert-l};
+  --bulma-light-h: #{$light-h};
+  --bulma-light-s: #{$light-s};
+  --bulma-light-l: #{$light-l};
+
+  // Pitfall 6: pin every --bulma-control-* on the shared control selector
+  // group so bare `.button` / `.input` / `.textarea` / `.select select` /
+  // `.pagination-*` resolve padding, border, height, and radius correctly.
+  // `.is-*` modifiers re-declare with higher specificity, so per-modifier
+  // behaviour is preserved.
+  .button,
+  .control,
+  .file-cta,
+  .file-name,
+  .input,
+  .pagination,
+  .pagination-ellipsis,
+  .pagination-link,
+  .pagination-next,
+  .pagination-previous,
+  .select,
+  .select select,
+  .textarea {
+    --bulma-control-border-width: 1px;
+    --bulma-control-height: 2.5em;
+    --bulma-control-padding-vertical: calc(0.5em - 1px);
+    --bulma-control-padding-horizontal: calc(0.75em - 1px);
+    --bulma-control-radius: #{$radius};
+  }
+
+  // --- Sandstone identity: uppercase, medium-weight typography ---
+  // Source `.sandstone` mixin (uppercase + font-weight 500) applied to
+  // buttons, nav links, tabs, pagination, breadcrumb, and dropdown items.
+  // Scoped to `.navbar-menu` so the navbar brand/logo keeps its own casing.
+  .button,
+  .navbar-menu .navbar-item,
+  .navbar-menu .navbar-link,
+  .tabs a,
+  .pagination-previous,
+  .pagination-next,
+  .pagination-link,
+  .pagination-ellipsis,
+  .breadcrumb,
+  .dropdown-item {
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  // Sandstone underlines body links (Bootstrap default, confirmed in the
+  // compiled `a { text-decoration: underline }`). Bulma's base `a` is
+  // `text-decoration: none`, so opt in here, then reset the underline off
+  // navigation / control chrome (which does not re-declare it and would
+  // otherwise inherit the bare `a` underline). Same specificity (:root a →
+  // 0,2,0) but declared later, so it wins the source-order tie.
+  a {
+    text-decoration: underline;
+  }
+
+  .navbar-item,
+  .navbar-link,
+  .menu-list a,
+  .pagination-previous,
+  .pagination-next,
+  .pagination-link,
+  .pagination-ellipsis,
+  .tabs a,
+  .dropdown-item,
+  .panel-block,
+  .panel-tabs a,
+  .card-footer-item,
+  .button,
+  .tag {
+    text-decoration: none;
+  }
+
+  // Pitfall 8: `--bulma-link-text` is set on :root via an hsl(var(...)) chain
+  // that can fall back to UA-default on `<a>`; pin literally to the green.
+  a {
+    --bulma-link-text: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+  }
+
+  // Bootstrap-derived universal default #1: `.btn-link` maps to Bulma's
+  // native `.button.is-ghost` (transparent, link-coloured), not `.is-link`
+  // (which stays Bulma's solid semantic colour). The source underlines
+  // `.btn-link` at rest, so pin the ghost decoration (token-first).
+  .button.is-ghost {
+    --bulma-button-ghost-decoration: underline;
+  }
+
+  // Pitfall 4: burger icon on .navbar.is-primary follows primary-invert.
+  .navbar.is-primary {
+    --bulma-navbar-burger-color: var(--bulma-primary-invert);
+  }
+
+  // Pitfall 9: pin <use>-pattern SVG icons inside .panel-icon to 1em so they
+  // sit in the icon slot instead of overflowing rightward.
+  .panel-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .panel-icon svg use {
+    width: 100%;
+    height: 100%;
+  }
+
+  // Pitfall 10: --bulma-shadow's hsl(var(...)) chain fails to resolve at the
+  // shadowed containers; pin a fully resolved two-stop shadow (warm, matching
+  // the sand scheme). `.box` / `.card` are excluded — see the border rule.
+  .dropdown,
+  .modal-card-head,
+  .panel {
+    --bulma-shadow:
+      0 0.5em 1em -0.125em hsl(#{$scheme-h} #{$scheme-s} 12% / 12%),
+      0 0 0 1px hsl(#{$scheme-h} #{$scheme-s} 12% / 3%);
+  }
+
+  // Bootstrap-derived universal default #7: source cards/boxes carry a 1px
+  // tan frame and no drop shadow; drop Bulma's shadow and use the border.
+  .box,
+  .card {
+    --bulma-shadow: none;
+
+    border: 1px solid hsl($scheme-h, $scheme-s, 82%);
+  }
+
+  // Pitfall 11: separator borders on card / panel / dropdown sub-components
+  // and the .tabs underline chain through --bulma-border-weak / --bulma-border
+  // and fail to resolve at the descendants. Pin literal warm greys.
+  .card,
+  .dropdown,
+  .panel {
+    --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 88%);
+  }
+
+  .tabs {
+    --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 80%);
+
+    // Pitfall 12: `.tabs.is-boxed li.is-active a` background chains through
+    // --bulma-scheme-main and fails; pin the light-mode literal (white).
+    --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+  }
+
+  .card {
+    --bulma-card-header-shadow: 0 0.125em 0.25em hsla(#{$scheme-h}, #{$scheme-s}, 12%, 10%);
+
+    // Pitfall 13: --bulma-card-radius is Bulma's hardcoded 0.75rem and is
+    // re-declared directly on .card; pin the theme radius here to win.
+    --bulma-card-radius: #{$radius};
+  }
+
+  // Pitfall 12: `.modal-card-*` backgrounds chain through --bulma-scheme-main
+  // and fall through to the dark overlay; pin light-mode literals.
+  .modal {
+    --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 100%);
+    --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 98%);
+  }
+
+  // Pitfall 13: Bulma only rounds <img> card-image children; mirror the rule
+  // for background-styled <figure> placeholders so they stay clipped.
+  .card-image:first-child > figure {
+    border-start-start-radius: var(--bulma-card-radius);
+    border-start-end-radius: var(--bulma-card-radius);
+  }
+
+  .card-image:last-child > figure {
+    border-end-start-radius: var(--bulma-card-radius);
+    border-end-end-radius: var(--bulma-card-radius);
+  }
+
+  // Widen the active tab's underline from Bulma's 1px to 3px so it reads as a
+  // clear accent under plain `.tabs`. Cancel the compensating margin so the
+  // row does not shift. Excludes `.is-toggle` (all-four-border active).
+  .tabs:not(.is-toggle) li.is-active a {
+    border-bottom-width: 3px;
+    margin-bottom: -3px;
+  }
+
+  // Bulma registers `--bulma-code` on :root as the danger/red colour, so
+  // inline <code> reads as an error state. Repoint text + background into the
+  // navy primary hue: a deep tone for the text over a pale chip.
+  code {
+    --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 30%);
+    --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 94%);
+  }
+
+  // Pitfall 14 + universal default #4: breadcrumb links keep the brand green;
+  // the active (current-page) item is muted warm grey and un-underlined. The
+  // source also wraps the breadcrumb in a 1px tan box, so add the frame,
+  // inner padding, and radius (Sandstone is flat — a plain border, no shadow).
+  // Breadcrumb reproduces the source (measured in bootstrap.css): a cream box
+  // (--bs-breadcrumb-bg #f8f5f0 = gray-200 = --bulma-light) with a tan gray-300
+  // frame (--bulma-border, which auto-shifts dark under [data-theme=dark]).
+  // Links stay brand green; the active item is the source's muted body text
+  // (--bs-breadcrumb-item-active-color = rgba(body,.75) ≈ the --bulma-text-weak
+  // tone). item/active colours are pinned as resolved literals (Pitfall 14: the
+  // hsl(var()) chain breaks at `.breadcrumb a` / `.is-active a`), their values
+  // still derived from the link / text palette axes.
+  .breadcrumb {
+    --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, #{$link-on-scheme-l});
+    --bulma-breadcrumb-item-active-color: hsl(#{$text-h}, #{$text-s}, 48%);
+
+    padding: 0.5em 0.75em;
+    border: 1px solid var(--bulma-border);
+    border-radius: #{$radius};
+    background-color: var(--bulma-light);
+  }
+
+  .breadcrumb .is-active a {
+    text-decoration: none;
+  }
+
+  // Pagination reproduces the source's subtle monochrome set (measured): every
+  // cell is a cream box (--bs-pagination-bg #f8f5f0 = --bulma-light) with a tan
+  // gray-300 frame (--bulma-border) and muted secondary-grey text
+  // (--bs-pagination-color #8e8c84 = --bulma-secondary). The current page is
+  // only a touch darker — a tan fill (--bs-pagination-active-bg #dfd7ca ≈
+  // --bulma-border) keeping the same grey text — a low-contrast active exactly
+  // as the source renders it. All colours are palette tokens.
+  .pagination-previous,
+  .pagination-next,
+  .pagination-link:not(.is-current),
+  .pagination-ellipsis {
+    background-color: var(--bulma-light);
+    border-color: var(--bulma-border);
+    color: var(--bulma-secondary);
+  }
+
+  .pagination-link.is-current {
+    background-color: var(--bulma-border);
+    border-color: var(--bulma-border);
+    color: var(--bulma-secondary);
+  }
+
+  // Bootstrap-derived universal default #2: joined pagination. Bootstrap page
+  // numbers are one segmented set (adjacent borders overlap, only the outer
+  // corners rounded). `.is-rounded` opts out.
+  .pagination:not(.is-rounded) .pagination-list {
+    .pagination-link,
+    .pagination-ellipsis {
+      margin: 0;
+      border-radius: 0;
+    }
+
+    li:not(:first-child) .pagination-link,
+    li:not(:first-child) .pagination-ellipsis {
+      margin-inline-start: -1px;
+    }
+
+    li:first-child :is(.pagination-link, .pagination-ellipsis) {
+      border-start-start-radius: #{$radius};
+      border-end-start-radius: #{$radius};
+    }
+
+    li:last-child :is(.pagination-link, .pagination-ellipsis) {
+      border-start-end-radius: #{$radius};
+      border-end-end-radius: #{$radius};
+    }
+  }
+
+  // Bootstrap-derived universal default #5: checkbox / radio fill with the
+  // primary navy and draw a white glyph when checked (Bootstrap's
+  // `.form-check-input`; Bulma has no token, so restyle the native input).
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 1em;
+    height: 1em;
+    appearance: none;
+    vertical-align: -0.125em;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: 1px solid hsl($scheme-h, $scheme-s, 72%);
+  }
+
+  input[type="checkbox"] {
+    border-radius: 0.25em;
+  }
+
+  input[type="radio"] {
+    border-radius: 50%;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+    background-color: hsl($primary-h, $primary-s, $primary-l);
+    border-color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  // `appearance: none` removes the native focus outline; restore a
+  // `:focus-visible` ring and dim the disabled state (keyboard a11y).
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible {
+    outline: 2px solid hsl($primary-h, $primary-s, $primary-l);
+    outline-offset: 2px;
+  }
+
+  input[type="checkbox"]:disabled,
+  input[type="radio"]:disabled {
+    opacity: 0.5;
+  }
+
+  input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  }
+
+  input[type="radio"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+  }
+
+  // Bootstrap-derived universal default #6: control right-icon follows the
+  // input's state colour (Bootstrap colours its validation icon; Bulma leaves
+  // it a fixed muted grey; no token — direct, per state). Left icon stays
+  // neutral.
+  .control.has-icons-right .input.is-primary ~ .icon.is-right {
+    color: hsl($primary-h, $primary-s, $primary-l);
+  }
+
+  .control.has-icons-right .input.is-link ~ .icon.is-right {
+    color: hsl($link-h, $link-s, $link-l);
+  }
+
+  .control.has-icons-right .input.is-info ~ .icon.is-right {
+    color: hsl($info-h, $info-s, $info-l);
+  }
+
+  .control.has-icons-right .input.is-success ~ .icon.is-right {
+    color: hsl($success-h, $success-s, $success-l);
+  }
+
+  .control.has-icons-right .input.is-warning ~ .icon.is-right {
+    color: hsl($warning-h, $warning-s, $warning-l);
+  }
+
+  .control.has-icons-right .input.is-danger ~ .icon.is-right {
+    color: hsl($danger-h, $danger-s, $danger-l);
+  }
+
+  // Tabs `.is-boxed` (source `.nav-tabs`): inactive tabs carry a warm cream
+  // fill with muted grey text; the active tab is white with dark text and
+  // connects to the panel (open bottom). Colours are token-first where a
+  // token exists.
+  .tabs.is-boxed {
+    --bulma-tabs-link-active-color: hsl(#{$dark-h}, #{$dark-s}, #{$dark-l});
+  }
+
+  .tabs.is-boxed li:not(.is-active) a {
+    background-color: hsl($scheme-h, $scheme-s, 96%);
+    color: hsl($secondary-h, $secondary-s, 45%);
+  }
+
+  // --- Dark mode (rides Bulma's neutral dark canvas; Sandstone pins no
+  // scheme/text L, so Bulma's own [data-theme=dark] theme sets the canvas).
+  // `&` is :root, so this compiles to `:root[data-theme="dark"] …`. ---
+  &[data-theme="dark"] {
+    .dropdown,
+    .modal-card-head,
+    .panel {
+      --bulma-shadow:
+        0 0.5em 1em -0.125em hsl(0deg 0% 0% / 40%),
+        0 0 0 1px hsl(0deg 0% 100% / 10%);
+    }
+
+    // Cards/boxes keep the frame-not-shadow treatment; lift the warm border
+    // onto the dark canvas.
+    .box,
+    .card {
+      border-color: hsl($scheme-h, $scheme-s, 28%);
+    }
+
+    .card,
+    .dropdown,
+    .panel {
+      --bulma-border-weak: hsl(#{$scheme-h}, #{$scheme-s}, 22%);
+    }
+
+    .tabs {
+      --bulma-border: hsl(#{$scheme-h}, #{$scheme-s}, 26%);
+      --bulma-tabs-boxed-link-active-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+    }
+
+    .card {
+      --bulma-card-header-shadow: 0 0.125em 0.25em hsl(0deg 0% 0% / 30%);
+    }
+
+    .modal {
+      --bulma-modal-card-head-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-body-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 9%);
+      --bulma-modal-card-foot-background-color: hsl(#{$scheme-h}, #{$scheme-s}, 11%);
+    }
+
+    code {
+      --bulma-code: hsl(#{$primary-h}, #{$primary-s}, 78%);
+      --bulma-code-background: hsl(#{$primary-h}, #{$primary-s}, 18%);
+    }
+
+    // The green link at L53 stays legible on the dark canvas, but lift it a
+    // touch for comfort.
+    a {
+      --bulma-link-text: hsl(#{$link-h}, #{$link-s}, 60%);
+    }
+
+    .breadcrumb {
+      --bulma-breadcrumb-item-color: hsl(#{$link-h}, #{$link-s}, 60%);
+      --bulma-breadcrumb-item-active-color: hsl(#{$text-h}, #{$text-s}, 62%);
+
+      // The cream box (var(--bulma-light)) does not scheme-flip, so drop it to
+      // a dark warm box on the dark canvas. The frame rides var(--bulma-border)
+      // (auto dark). Scheme-hue interpolation keeps it palette-consistent.
+      background-color: hsl($scheme-h, $scheme-s, 15%);
+    }
+
+    // The unchecked checkbox/radio frame lifts off the light tan onto the
+    // dark canvas.
+    input[type="checkbox"],
+    input[type="radio"] {
+      border-color: hsl($scheme-h, $scheme-s, 42%);
+    }
+
+    // The light-mode cream fill (var(--bulma-light)) does not scheme-flip, so
+    // lift the non-current cells onto a dark grey (secondary-dark) with its
+    // near-white invert text. The current cell rides var(--bulma-border)
+    // (dark = hsl(38,20%,24%)) from the light block, staying the darker cell,
+    // and its var(--bulma-secondary) grey text carries over — all tokens.
+    .pagination-previous,
+    .pagination-next,
+    .pagination-link:not(.is-current),
+    .pagination-ellipsis {
+      background-color: var(--bulma-secondary-dark);
+      color: var(--bulma-secondary-dark-invert);
+      border-color: var(--bulma-border);
+    }
+
+    .tabs.is-boxed {
+      --bulma-tabs-link-active-color: hsl(#{$scheme-h}, #{$scheme-s}, 90%);
+    }
+
+    .tabs.is-boxed li:not(.is-active) a {
+      background-color: hsl($scheme-h, $scheme-s, 14%);
+      color: hsl($scheme-h, $scheme-s, 60%);
+    }
+  }
+}
