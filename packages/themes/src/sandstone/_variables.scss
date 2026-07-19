@@ -44,7 +44,11 @@ $link-h: 85 !default;
 $link-s: 51% !default;
 $link-l: 53% !default;
 $link-invert-l: 100% !default; // white on green (source forces white on success)
-$link-on-scheme-l: $link-l !default; // faithful: body links are the bright green
+// The source renders body/breadcrumb links at the bright green $link-l (#93c54b),
+// but that is only ~2.0:1 on white — below the 3:1 large-text floor. Darken the
+// on-scheme link text to 40% (#6f9a32 ≈ 3.3:1); the .is-link/.button fill keeps
+// the full $link-l green, so the brand tone is unchanged on coloured surfaces.
+$link-on-scheme-l: 40% !default;
 
 // --- secondary (library extension colour; see "Choosing a theme's
 // secondary" in .claude/themes-authoring.md). Sourced: Sandstone's
