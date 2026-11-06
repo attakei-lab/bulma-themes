@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@11ty/eleventy": "^3.1.6",
-    "@11ty/font-awesome": "^1.0.1",
+    "@11ty/font-awesome": "^2.0.0",
     "@attakei/bulma-themes": "workspace:*",
     "eleventy-plugin-markdown-copy-button": "^0.7.0"
   },
